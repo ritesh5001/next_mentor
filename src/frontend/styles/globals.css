@@ -9,19 +9,13 @@
 @theme {
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  /* Dashboard density (8/10). Marketing pages use the --space-section-* scale. */
-  --spacing-xs: 0.125rem; /* 2px  */
-  --spacing-sm: 0.25rem; /* 4px  */
-  --spacing-md: 0.5rem; /* 8px  */
-  --spacing-lg: 0.75rem; /* 12px */
-  --spacing-xl: 1rem; /* 16px */
-  --spacing-2xl: 1.5rem; /* 24px */
-  --spacing-3xl: 2rem; /* 32px */
-
-  /* Marketing rhythm — deliberately looser than the dashboard. */
-  --spacing-section-sm: 1.5rem; /* 24px */
-  --spacing-section-md: 3rem; /* 48px */
-  --spacing-section-lg: 6rem; /* 96px */
+  /* NOTE: do NOT define --spacing-<name> here.
+     In Tailwind v4 the --spacing-* namespace backs the NAMED size scale, so a
+     token like --spacing-lg silently redefines max-w-lg, w-md, h-sm and every
+     other named width/height utility. An earlier version of this file set
+     --spacing-xs…3xl, which compiled max-w-lg down to 12px and collapsed every
+     constrained paragraph in the app to one word per line.
+     Use Tailwind's numeric scale (gap-4, p-6) for spacing instead. */
 
   --radius-card: 0.75rem;
   --radius-control: 0.5rem;
@@ -33,10 +27,11 @@
 }
 
 :root {
-  --color-primary: #0d9488;
+  /* Brand blue, taken from the NextMentor logo wordmark. */
+  --color-primary: #1b3fa0;
   --color-on-primary: #ffffff;
-  --color-primary-hover: #0f766e;
-  --color-primary-subtle: #ccfbf1;
+  --color-primary-hover: #16337f;
+  --color-primary-subtle: #e6edfb;
 
   /* Amber is reserved exclusively for money: earnings, commission,
      wallet balance, payout state. Never use it as a generic CTA colour. */
@@ -59,17 +54,34 @@
   --color-destructive-subtle: #fee2e2;
   --color-on-destructive: #ffffff;
 
-  --color-ring: #0d9488;
+  --color-ring: #1b3fa0;
   --color-overlay: rgb(15 23 42 / 0.5);
+
+  /* Marketing-only. The logo's arrow gradient: blue into green. Used for
+     accent headline words and primary CTAs on the public site — never in the
+     dashboard, where amber alone signals money. */
+  --brand-ink: #101a47;
+  --brand-blue: #1b3fa0;
+  --brand-blue-bright: #2e6fd4;
+  --brand-green: #22c55e;
+  --brand-green-deep: #12a150;
+  --brand-gradient: linear-gradient(
+    100deg,
+    #1b3fa0 0%,
+    #2e6fd4 32%,
+    #22c55e 68%,
+    #12a150 100%
+  );
+  --brand-hero-wash: linear-gradient(165deg, #f2f7ff 0%, #eefaf3 55%, #f8fbff 100%);
 
   color-scheme: light;
 }
 
 .dark {
-  --color-primary: #2dd4bf;
-  --color-on-primary: #042f2e;
-  --color-primary-hover: #5eead4;
-  --color-primary-subtle: #134e4a;
+  --color-primary: #6f9bef;
+  --color-on-primary: #0a1330;
+  --color-primary-hover: #93b4f4;
+  --color-primary-subtle: #16224e;
 
   --color-accent: #f59e0b;
   --color-on-accent: #451a03;
@@ -90,8 +102,22 @@
   --color-destructive-subtle: #450a0a;
   --color-on-destructive: #450a0a;
 
-  --color-ring: #2dd4bf;
+  --color-ring: #6f9bef;
   --color-overlay: rgb(2 6 23 / 0.7);
+
+  --brand-ink: #f8fafc;
+  --brand-blue: #6f9bef;
+  --brand-blue-bright: #93b4f4;
+  --brand-green: #34d399;
+  --brand-green-deep: #22c55e;
+  --brand-gradient: linear-gradient(
+    100deg,
+    #6f9bef 0%,
+    #93b4f4 32%,
+    #34d399 68%,
+    #22c55e 100%
+  );
+  --brand-hero-wash: linear-gradient(165deg, #0f1a38 0%, #0d2130 55%, #0f172a 100%);
 
   color-scheme: dark;
 }
@@ -169,6 +195,34 @@
   .surface-blur {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Gradient headline word — the reference site clips a gradient to the text
+     of the emphasised word in every section heading. */
+  .brand-gradient-text {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Painting the real colour first means the word is still readable if
+       background-clip fails, rather than rendering as an invisible gap. */
+    -webkit-text-fill-color: transparent;
+  }
+
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .brand-gradient-text {
+      color: var(--brand-blue);
+      -webkit-text-fill-color: currentColor;
+    }
+  }
+
+  .brand-gradient-bg {
+    background: var(--brand-gradient);
+  }
+
+  /* Fully-rounded pill CTA, matching the reference site's 500px radius. */
+  .pill {
+    border-radius: 500px;
   }
 
   .stagger-in > * {

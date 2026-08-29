@@ -153,4 +153,6 @@ Recharts is correctly split into its own chunk and never loads on marketing page
 
 - **A mentorship meeting URL is stripped server-side unless the viewer holds a booking.** Hiding it in the UI would leave it in the page payload.
 
+- **Never define `--spacing-<name>` in `@theme`.** Tailwind v4 uses the `--spacing-*` namespace for the NAMED size scale, so `--spacing-lg` silently redefines `max-w-lg`, `w-md`, `h-sm` and every other named width/height utility. An earlier version of `globals.css` set `--spacing-xs…3xl`, which compiled `max-w-lg` to **12px** and collapsed every constrained paragraph in the app to one word per line — across 70 usages, not just the homepage. Use the numeric scale (`gap-4`, `p-6`) instead.
+
 - **Amber (`--color-accent`) is reserved for money** — earnings, commission, wallet, payouts. Using it as a generic CTA colour destroys the one signal that makes money scannable on a teal page.
