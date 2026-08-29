@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Alert } from "@/components/ui/alert";
-import { GoogleButton } from "@/components/ui/google-button";
+import { Alert } from "@/frontend/components/ui/alert";
+import { GoogleButton } from "@/frontend/components/ui/google-button";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {

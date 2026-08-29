@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 /**
- * Fail fast at boot rather than at 2am inside a webhook handler.
+ * Server-only secrets. Fail fast at boot rather than at 2am inside a webhook.
  *
- * Split into two schemas because Cloudflare/Razorpay/Resend credentials are
- * only needed by server code — validating them in a client bundle would both
- * fail and leak their names.
+ * Public NEXT_PUBLIC_* variables live in src/shared/env.ts. Keeping them apart
+ * means a frontend file can never reach a secret by importing "the env module":
+ * this file is server-only and frontend/ is blocked from importing backend/.
  */
 
 const serverSchema = z.object({
@@ -38,11 +38,6 @@ const serverSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
-const clientSchema = z.object({
-  NEXT_PUBLIC_APP_URL: z.string().url(),
-  NEXT_PUBLIC_RAZORPAY_KEY_ID: z.string().min(1),
-});
-
 function parseServerEnv() {
   const parsed = serverSchema.safeParse(process.env);
   if (!parsed.success) {
@@ -62,15 +57,10 @@ let cachedServerEnv: z.infer<typeof serverSchema> | null = null;
 
 export function serverEnv() {
   if (typeof window !== "undefined") {
-    throw new Error("serverEnv() was called in the browser. This is a bug — check for a missing 'server-only' import.");
+    throw new Error(
+      "serverEnv() was called in the browser. This is a bug — check for a missing 'server-only' import.",
+    );
   }
   cachedServerEnv ??= parseServerEnv();
   return cachedServerEnv;
 }
-
-// Next.js inlines NEXT_PUBLIC_* at build time only for literal property
-// accesses, so these must be written out longhand rather than looped over.
-export const clientEnv = clientSchema.parse({
-  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-  NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-});

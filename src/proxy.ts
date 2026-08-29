@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { REFERRAL_COOKIE, REFERRAL_TTL_DAYS } from "@/lib/constants";
+import { REFERRAL_COOKIE, REFERRAL_TTL_DAYS } from "@/shared/constants";
 
 /**
  * Two jobs, both cheap enough to run at the edge on every request:

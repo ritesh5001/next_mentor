@@ -3,7 +3,7 @@ import "server-only";
 import { Resend } from "resend";
 
 import { serverEnv } from "./env";
-import { clientEnv } from "./env";
+import { clientEnv } from "@/shared/env";
 
 let client: Resend | null = null;
 

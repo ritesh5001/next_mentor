@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
+import "@/frontend/styles/globals.css";
 
 // Self-hosted by next/font — no render-blocking request to fonts.googleapis.com.
 // Weights are limited to the five the design system actually uses; each extra

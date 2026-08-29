@@ -4,8 +4,8 @@ import { and, eq, isNull, or, gt } from "drizzle-orm";
 import { forbidden, unauthorized } from "next/navigation";
 
 import { auth } from "./auth";
-import { db } from "@/db";
-import { enrollments, lessons, modules, users } from "@/db/schema";
+import { db } from "@/backend/db";
+import { enrollments, lessons, modules, users } from "@/backend/db/schema";
 
 /**
  * The authorization boundary for the entire application.

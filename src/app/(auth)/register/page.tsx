@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 import { eq, and } from "drizzle-orm";
 import { Gift } from "lucide-react";
 
-import { db } from "@/db";
-import { users } from "@/db/schema";
-import { normalizeReferralCode } from "@/lib/referral-code";
-import { REFERRAL_COOKIE } from "@/lib/constants";
-import { GoogleButton } from "@/components/ui/google-button";
+import { db } from "@/backend/db";
+import { users } from "@/backend/db/schema";
+import { normalizeReferralCode } from "@/backend/lib/referral-code";
+import { REFERRAL_COOKIE } from "@/shared/constants";
+import { GoogleButton } from "@/frontend/components/ui/google-button";
 import { RegisterForm } from "./register-form";
 
 export const metadata: Metadata = {

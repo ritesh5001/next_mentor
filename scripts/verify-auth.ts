@@ -9,10 +9,10 @@
  */
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { users, authTokens } from "@/db/schema";
-import { generateUniqueReferralCode } from "@/lib/referral-code";
-import { issueToken, consumeToken } from "@/lib/tokens";
+import { db } from "@/backend/db";
+import { users, authTokens } from "@/backend/db/schema";
+import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
+import { issueToken, consumeToken } from "@/backend/lib/tokens";
 
 let failures = 0;
 function check(label: string, ok: boolean, detail = "") {

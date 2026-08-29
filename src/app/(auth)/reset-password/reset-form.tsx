@@ -3,10 +3,10 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { resetPasswordAction, type ActionState } from "@/actions/auth";
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { PasswordField } from "@/components/ui/password-field";
+import { resetPasswordAction, type ActionState } from "@/backend/actions/auth";
+import { Alert } from "@/frontend/components/ui/alert";
+import { Button } from "@/frontend/components/ui/button";
+import { PasswordField } from "@/frontend/components/ui/password-field";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

@@ -6,8 +6,8 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { db } from "@/db";
-import { accounts, sessions, users, verificationTokens } from "@/db/schema";
+import { db } from "@/backend/db";
+import { accounts, sessions, users, verificationTokens } from "@/backend/db/schema";
 import { generateUniqueReferralCode } from "./referral-code";
 
 declare module "next-auth" {

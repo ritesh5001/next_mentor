@@ -3,8 +3,8 @@ import "server-only";
 import crypto from "node:crypto";
 import { and, eq, gt, isNull } from "drizzle-orm";
 
-import { db } from "@/db";
-import { authTokens } from "@/db/schema";
+import { db } from "@/backend/db";
+import { authTokens } from "@/backend/db/schema";
 
 /**
  * Single-use, expiring tokens for email verification and password reset.

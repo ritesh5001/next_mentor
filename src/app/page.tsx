@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, GraduationCap } from "lucide-react";
 
-import { buttonClasses } from "@/components/ui/button";
+import { buttonClasses } from "@/frontend/components/ui/button";
 
 /**
  * Placeholder home page.

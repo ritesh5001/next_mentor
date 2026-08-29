@@ -4,11 +4,11 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 
-import { loginAction, type ActionState } from "@/actions/auth";
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { PasswordField } from "@/components/ui/password-field";
+import { loginAction, type ActionState } from "@/backend/actions/auth";
+import { Alert } from "@/frontend/components/ui/alert";
+import { Button } from "@/frontend/components/ui/button";
+import { Field } from "@/frontend/components/ui/field";
+import { PasswordField } from "@/frontend/components/ui/password-field";
 
 function SubmitButton() {
   // useFormStatus must be read from a child of the <form>, which is the only

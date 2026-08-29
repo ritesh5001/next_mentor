@@ -6,13 +6,13 @@ import { and, eq, isNull } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
-import { db } from "@/db";
-import { users } from "@/db/schema";
-import { signIn } from "@/lib/auth";
-import { generateUniqueReferralCode, normalizeReferralCode } from "@/lib/referral-code";
-import { issueToken, consumeToken } from "@/lib/tokens";
-import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/email";
-import { REFERRAL_COOKIE } from "@/lib/constants";
+import { db } from "@/backend/db";
+import { users } from "@/backend/db/schema";
+import { signIn } from "@/backend/lib/auth";
+import { generateUniqueReferralCode, normalizeReferralCode } from "@/backend/lib/referral-code";
+import { issueToken, consumeToken } from "@/backend/lib/tokens";
+import { sendPasswordResetEmail, sendVerificationEmail } from "@/backend/lib/email";
+import { REFERRAL_COOKIE } from "@/shared/constants";
 
 export type ActionState = { error?: string; success?: string } | null;
 

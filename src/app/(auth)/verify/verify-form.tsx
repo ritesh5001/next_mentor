@@ -3,9 +3,9 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { confirmEmailAction, type ActionState } from "@/actions/auth";
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { confirmEmailAction, type ActionState } from "@/backend/actions/auth";
+import { Alert } from "@/frontend/components/ui/alert";
+import { Button } from "@/frontend/components/ui/button";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
