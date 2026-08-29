@@ -134,11 +134,13 @@ export default async function AdminOverviewPage() {
         </Suspense>
       </section>
 
-      <nav aria-label="Admin sections" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <nav aria-label="Admin sections" className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
         {[
           { href: "/admin/courses", label: "Courses" },
           { href: "/admin/plans", label: "Plans" },
           { href: "/admin/coupons", label: "Coupons" },
+          { href: "/admin/kyc", label: "KYC" },
+          { href: "/admin/payouts", label: "Payouts" },
           { href: "/admin/users", label: "Users" },
           { href: "/admin/orders", label: "Orders" },
         ].map((l) => (

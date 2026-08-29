@@ -9,7 +9,9 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/backend/db";
-import { users, courses, modules, lessons, plans, coupons } from "@/backend/db/schema";
+import {
+  users, courses, modules, lessons, plans, coupons, achievements,
+} from "@/backend/db/schema";
 import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
 
 const ADMIN_EMAIL = "admin@nextmentor.local";
@@ -144,6 +146,37 @@ async function main() {
     if (!exists) {
       await db.insert(coupons).values(c);
       console.log(`Created coupon  ${c.code}`);
+    }
+  }
+
+  // ----------------------------------------------------------- achievements
+  const badgeSeed = [
+    { code: "first_lesson", title: "First steps", description: "Complete your first lesson.",
+      icon: "Footprints", tier: "bronze", position: 0,
+      criteria: { metric: "lessons_completed", threshold: 1 } },
+    { code: "ten_lessons", title: "Getting serious", description: "Complete 10 lessons.",
+      icon: "Flame", tier: "bronze", position: 1,
+      criteria: { metric: "lessons_completed", threshold: 10 } },
+    { code: "first_certificate", title: "Certified", description: "Earn your first certificate.",
+      icon: "Award", tier: "silver", position: 2,
+      criteria: { metric: "certificates_earned", threshold: 1 } },
+    { code: "first_referral", title: "Word of mouth", description: "Refer your first sign-up.",
+      icon: "UserPlus", tier: "bronze", position: 3,
+      criteria: { metric: "referrals_signed_up", threshold: 1 } },
+    { code: "five_buyers", title: "Closer", description: "Five of your referrals made a purchase.",
+      icon: "Handshake", tier: "silver", position: 4,
+      criteria: { metric: "referrals_purchased", threshold: 5 } },
+    { code: "earned_10k", title: "Ten thousand", description: "Earn ₹10,000 in cleared commission.",
+      icon: "Trophy", tier: "gold", position: 5,
+      criteria: { metric: "commission_earned_paise", threshold: 1000000 } },
+  ];
+
+  for (const b of badgeSeed) {
+    const [exists] = await db.select({ id: achievements.id }).from(achievements)
+      .where(eq(achievements.code, b.code)).limit(1);
+    if (!exists) {
+      await db.insert(achievements).values(b);
+      console.log(`Created badge   ${b.title}`);
     }
   }
 

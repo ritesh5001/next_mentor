@@ -3,6 +3,7 @@ import "server-only";
 import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "@/backend/db";
+import { awardCommission, reverseCommissionsForOrder } from "@/backend/lib/referral";
 import {
   courses,
   coupons,
@@ -24,7 +25,14 @@ import {
  */
 
 export type FulfilResult =
-  | { status: "granted"; orderId: string; userId: string; itemType: "course" | "plan" }
+  | {
+      status: "granted";
+      orderId: string;
+      userId: string;
+      itemType: "course" | "plan";
+      /** Non-null when this sale generated affiliate commission. */
+      commissionInPaise: number | null;
+    }
   | { status: "already_granted"; orderId: string }
   | { status: "unknown_order" }
   | { status: "amount_mismatch"; expected: number; received: number };
@@ -120,11 +128,23 @@ export async function fulfilPaidOrder(params: {
       });
     }
 
+    // Commission runs inside this same transaction. If it were awarded
+    // afterwards, a crash in between would leave a paid order with no
+    // commission and no record that one was owed.
+    const commission = await awardCommission(tx, {
+      orderId: order.id,
+      buyerId: order.userId,
+      // The amount actually charged, never the list price. Paying a percentage
+      // of a price nobody paid comes straight out of the platform's margin.
+      netAmountInPaise: order.amountInPaise,
+    });
+
     return {
       status: "granted" as const,
       orderId: order.id,
       userId: order.userId,
       itemType: order.itemType,
+      commissionInPaise: commission.status === "created" ? commission.amountInPaise : null,
     };
   });
 }
@@ -211,6 +231,11 @@ export async function reverseRefundedOrder(razorpayPaymentId: string) {
       .update(orders)
       .set({ status: "refunded", refundedAt: new Date(), updatedAt: new Date() })
       .where(eq(orders.id, order.id));
+
+    // Claw back any commission this sale generated. This is why the maturity
+    // window exists — inside it the money is still in `pending` and can simply
+    // be taken back.
+    await reverseCommissionsForOrder(tx, order.id);
 
     if (order.itemType === "course" && order.courseId) {
       await tx

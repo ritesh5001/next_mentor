@@ -44,6 +44,10 @@ export function proxy(request: NextRequest) {
       // if a later link is clicked before signup.
       const existing = request.cookies.get(REFERRAL_COOKIE)?.value;
       if (!existing) {
+        // Signal to the landing page that this is a fresh click worth logging.
+        // The write itself happens in a Server Component, not here — the proxy
+        // runs on every request and must not touch the database.
+        response.headers.set("x-nm-new-referral", normalized);
         response.cookies.set(REFERRAL_COOKIE, normalized, {
           maxAge: REFERRAL_TTL_DAYS * 24 * 60 * 60,
           httpOnly: true,

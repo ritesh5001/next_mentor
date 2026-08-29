@@ -125,11 +125,11 @@ async function main() {
 
   // ------------------------------------ coupon counted only once money lands
   const rzpOrder = `order_p2_${stamp}`;
-  const [order] = await db.insert(orders).values({
+  await db.insert(orders).values({
     userId: buyer.id, itemType: "course", courseId: course.id,
     listPriceInPaise: 249900, discountInPaise: 37485, couponId: pct.id,
     amountInPaise: 212415, razorpayOrderId: rzpOrder, status: "created",
-  }).returning({ id: orders.id });
+  });
 
   const [beforePay] = await db.select({ used: coupons.usedCount })
     .from(coupons).where(eq(coupons.id, pct.id));
