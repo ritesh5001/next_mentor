@@ -16,7 +16,10 @@ import { REFERRAL_COOKIE, REFERRAL_TTL_DAYS } from "@/shared/constants";
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  const isGated = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+  const isGated =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/learn");
   const hasSessionCookie =
     request.cookies.has("authjs.session-token") ||
     request.cookies.has("__Secure-authjs.session-token");

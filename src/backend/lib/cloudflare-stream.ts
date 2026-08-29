@@ -1,6 +1,6 @@
 import "server-only";
 
-import { serverEnv } from "./env";
+import { env } from "./env";
 
 const API_BASE = "https://api.cloudflare.com/client/v4";
 
@@ -11,11 +11,11 @@ type CfResponse<T> = {
 };
 
 async function cf<T>(path: string, init?: RequestInit): Promise<T> {
-  const env = serverEnv();
-  const res = await fetch(`${API_BASE}/accounts/${env.CLOUDFLARE_ACCOUNT_ID}${path}`, {
+  const cfg = env("cloudflare");
+  const res = await fetch(`${API_BASE}/accounts/${cfg.CLOUDFLARE_ACCOUNT_ID}${path}`, {
     ...init,
     headers: {
-      Authorization: `Bearer ${env.CLOUDFLARE_STREAM_TOKEN}`,
+      Authorization: `Bearer ${cfg.CLOUDFLARE_STREAM_TOKEN}`,
       "Content-Type": "application/json",
       ...init?.headers,
     },
@@ -75,10 +75,10 @@ export async function getVideoDetails(videoId: string): Promise<StreamVideoDetai
 }
 
 export async function deleteVideo(videoId: string): Promise<void> {
-  const env = serverEnv();
-  const res = await fetch(`${API_BASE}/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/stream/${videoId}`, {
+  const cfg = env("cloudflare");
+  const res = await fetch(`${API_BASE}/accounts/${cfg.CLOUDFLARE_ACCOUNT_ID}/stream/${videoId}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${env.CLOUDFLARE_STREAM_TOKEN}` },
+    headers: { Authorization: `Bearer ${cfg.CLOUDFLARE_STREAM_TOKEN}` },
     cache: "no-store",
   });
   // A 404 means it is already gone, which is the state we wanted.
@@ -109,10 +109,10 @@ export async function signPlaybackToken(
   videoId: string,
   options: { expiresInSeconds?: number; downloadable?: boolean } = {},
 ): Promise<string> {
-  const env = serverEnv();
+  const cfg = env("cloudflare");
   const expiresIn = options.expiresInSeconds ?? 2 * 60 * 60;
 
-  const pem = Buffer.from(env.CLOUDFLARE_STREAM_SIGNING_KEY_PEM, "base64").toString("utf8");
+  const pem = Buffer.from(cfg.CLOUDFLARE_STREAM_SIGNING_KEY_PEM, "base64").toString("utf8");
   const der = pemToArrayBuffer(pem);
 
   const key = await crypto.subtle.importKey(
@@ -124,12 +124,12 @@ export async function signPlaybackToken(
   );
 
   const header = base64url(
-    JSON.stringify({ alg: "RS256", kid: env.CLOUDFLARE_STREAM_SIGNING_KEY_ID }),
+    JSON.stringify({ alg: "RS256", kid: cfg.CLOUDFLARE_STREAM_SIGNING_KEY_ID }),
   );
   const payload = base64url(
     JSON.stringify({
       sub: videoId,
-      kid: env.CLOUDFLARE_STREAM_SIGNING_KEY_ID,
+      kid: cfg.CLOUDFLARE_STREAM_SIGNING_KEY_ID,
       exp: Math.floor(Date.now() / 1000) + expiresIn,
       nbf: Math.floor(Date.now() / 1000) - 30, // tolerate minor clock skew
       downloadable: options.downloadable ?? false,

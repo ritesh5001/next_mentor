@@ -62,14 +62,29 @@ createdb nextmentor_dev
 | `pnpm db:push` | Sync schema to the database |
 | `pnpm db:studio` | Drizzle Studio |
 | `pnpm verify:auth` | Smoke-test auth primitives against the real database |
+| `pnpm verify:commerce` | Smoke-test orders, webhook idempotency, refunds |
+| `pnpm seed:demo` | Create a demo admin, student and published course |
 
 ## Status
 
-**Phase 1 — foundation: done.** Design tokens, schema + indexes, Auth.js v5 (credentials + Google), email verification, password reset, first-touch referral capture, `permissions.ts` authorization layer, Cloudflare Stream / Razorpay / Resend clients.
+**Phase 1 is complete.** The full loop works: an admin creates a course and uploads video, a student finds it in the catalog, pays through Razorpay, and watches it behind a signed playback token.
 
-**Phase 1 — remaining:** course catalog + detail pages, Razorpay checkout and webhook, video player, student dashboard, admin course CRUD and upload flow, marketing landing page.
+Built: design tokens, schema + indexes, Auth.js v5 (credentials + Google), email verification, password reset, first-touch referral capture, the `permissions.ts` authorization layer, admin course/module/lesson CRUD, Cloudflare Stream direct-creator-upload, catalog and course detail pages, Razorpay checkout, the fulfilment webhook, the HLS player with progress tracking, and the student dashboard.
+
+Verified against a real database: 16 auth checks (`pnpm verify:auth`) and 17 commerce checks (`pnpm verify:commerce`), including webhook idempotency, underpayment refusal and refund reversal.
+
+**Not yet wired:** R2 thumbnail upload (courses render a placeholder), and the 16 sidebar items marked "Soon".
 
 Phases 2–4 (plans and coupons, the affiliate system, engagement features) are specified in the plan file.
+
+### Local demo
+
+```bash
+pnpm seed:demo   # admin@nextmentor.local / Admin123!
+                 # student@nextmentor.local / Student123!
+```
+
+Seeded lessons have no video — a real Cloudflare Stream upload is needed before they play.
 
 ## Things that will bite you if you change them
 
@@ -84,5 +99,9 @@ Phases 2–4 (plans and coupons, the affiliate system, engagement features) are 
 - **Email verification is a POST, not a GET.** Corporate mail scanners fetch every link in an outgoing email; consuming a single-use token on GET burns it before the recipient clicks.
 
 - **`src/frontend/` must never import `src/backend/`.** ESLint blocks it. If a component needs server data, a Server Component in `src/app/` should fetch it and pass it down as props. If a value is genuinely needed on both sides, it belongs in `src/shared/`.
+
+- **`env("razorpay")` is grouped on purpose.** Secrets are validated per service, not in one schema. A single combined parse meant verifying a Razorpay signature threw because an unrelated Cloudflare key was unset. Add new secrets to the right group in `src/backend/lib/env.ts`.
+
+- **A course with orders cannot be deleted.** `orders.courseId` is `RESTRICT` because a paid order is a financial record. `deleteCourseAction` checks for orders and tells the admin to archive instead — do not "fix" this by relaxing the constraint.
 
 - **Amber (`--color-accent`) is reserved for money** — earnings, commission, wallet, payouts. Using it as a generic CTA colour destroys the one signal that makes money scannable on a teal page.

@@ -3,15 +3,15 @@ import "server-only";
 import Razorpay from "razorpay";
 import crypto from "node:crypto";
 
-import { serverEnv } from "./env";
+import { env } from "./env";
 
 let client: Razorpay | null = null;
 
 export function razorpay(): Razorpay {
-  const env = serverEnv();
+  const cfg = env("razorpay");
   client ??= new Razorpay({
-    key_id: env.RAZORPAY_KEY_ID,
-    key_secret: env.RAZORPAY_KEY_SECRET,
+    key_id: cfg.RAZORPAY_KEY_ID,
+    key_secret: cfg.RAZORPAY_KEY_SECRET,
   });
   return client;
 }
@@ -50,7 +50,7 @@ export function verifyWebhookSignature(rawBody: string, signature: string | null
   if (!signature) return false;
 
   const expected = crypto
-    .createHmac("sha256", serverEnv().RAZORPAY_WEBHOOK_SECRET)
+    .createHmac("sha256", env("razorpay").RAZORPAY_WEBHOOK_SECRET)
     .update(rawBody)
     .digest("hex");
 
@@ -74,7 +74,7 @@ export function verifyCheckoutSignature(params: {
   signature: string;
 }): boolean {
   const expected = crypto
-    .createHmac("sha256", serverEnv().RAZORPAY_KEY_SECRET)
+    .createHmac("sha256", env("razorpay").RAZORPAY_KEY_SECRET)
     .update(`${params.razorpayOrderId}|${params.razorpayPaymentId}`)
     .digest("hex");
 

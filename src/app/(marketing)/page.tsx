@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, GraduationCap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { buttonClasses } from "@/frontend/components/ui/button";
 
@@ -12,16 +12,7 @@ import { buttonClasses } from "@/frontend/components/ui/button";
  */
 export default function HomePage() {
   return (
-    <main id="main" className="mx-auto flex min-h-dvh max-w-2xl flex-col justify-center gap-8 px-6">
-      <div className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
-        <GraduationCap
-          className="size-6 text-[var(--color-primary)]"
-          strokeWidth={1.5}
-          aria-hidden="true"
-        />
-        NextMentor
-      </div>
-
+    <div className="mx-auto flex max-w-2xl flex-col justify-center gap-8 px-6 py-24">
       <div className="flex flex-col gap-4">
         <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
           Learn digital skills that actually pay.
@@ -33,12 +24,12 @@ export default function HomePage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <Link href="/register" className={buttonClasses({ size: "lg" })}>
-          Create your account
+        <Link href="/courses" className={buttonClasses({ size: "lg" })}>
+          Browse courses
           <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden="true" />
         </Link>
-        <Link href="/login" className={buttonClasses({ variant: "secondary", size: "lg" })}>
-          Sign in
+        <Link href="/register" className={buttonClasses({ variant: "secondary", size: "lg" })}>
+          Create an account
         </Link>
       </div>
 
@@ -47,6 +38,6 @@ export default function HomePage() {
         Accounts, email verification and referral tracking are live. Course catalog, checkout and
         the video player are next.
       </p>
-    </main>
+    </div>
   );
 }

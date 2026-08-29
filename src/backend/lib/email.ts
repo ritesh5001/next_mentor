@@ -2,13 +2,13 @@ import "server-only";
 
 import { Resend } from "resend";
 
-import { serverEnv } from "./env";
-import { clientEnv } from "@/shared/env";
+import { env } from "./env";
+import { appUrl } from "@/shared/env";
 
 let client: Resend | null = null;
 
 function resend(): Resend {
-  client ??= new Resend(serverEnv().RESEND_API_KEY);
+  client ??= new Resend(env("email").RESEND_API_KEY);
   return client;
 }
 
@@ -28,7 +28,7 @@ async function send(opts: {
 }): Promise<{ ok: boolean; id?: string; error?: string }> {
   try {
     const { data, error } = await resend().emails.send({
-      from: serverEnv().EMAIL_FROM,
+      from: env("email").EMAIL_FROM,
       to: opts.to,
       subject: opts.subject,
       html: opts.html,
@@ -82,7 +82,7 @@ function layout(heading: string, body: string, cta?: { label: string; url: strin
 }
 
 export function sendVerificationEmail(to: string, token: string, name?: string | null) {
-  const url = `${clientEnv.NEXT_PUBLIC_APP_URL}/verify?token=${encodeURIComponent(token)}`;
+  const url = `${appUrl()}/verify?token=${encodeURIComponent(token)}`;
   return send({
     to,
     subject: "Confirm your email — NextMentor",
@@ -96,7 +96,7 @@ export function sendVerificationEmail(to: string, token: string, name?: string |
 }
 
 export function sendPasswordResetEmail(to: string, token: string) {
-  const url = `${clientEnv.NEXT_PUBLIC_APP_URL}/reset-password?token=${encodeURIComponent(token)}`;
+  const url = `${appUrl()}/reset-password?token=${encodeURIComponent(token)}`;
   return send({
     to,
     subject: "Reset your password — NextMentor",
@@ -117,7 +117,7 @@ export function sendPurchaseReceiptEmail(params: {
   amountFormatted: string;
   orderId: string;
 }) {
-  const url = `${clientEnv.NEXT_PUBLIC_APP_URL}/learn/${params.courseSlug}`;
+  const url = `${appUrl()}/learn/${params.courseSlug}`;
   return send({
     to: params.to,
     subject: `You're enrolled in ${params.courseTitle}`,

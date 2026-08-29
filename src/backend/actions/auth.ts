@@ -14,7 +14,9 @@ import { issueToken, consumeToken } from "@/backend/lib/tokens";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/backend/lib/email";
 import { REFERRAL_COOKIE } from "@/shared/constants";
 
-export type ActionState = { error?: string; success?: string } | null;
+import type { ActionState } from "@/shared/action-state";
+
+export type { ActionState };
 
 const BCRYPT_ROUNDS = 12;
 

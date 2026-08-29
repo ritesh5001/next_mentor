@@ -11,7 +11,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
-    "verify:auth": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/verify-auth.ts"
+    "verify:auth": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/verify-auth.ts",
+    "verify:commerce": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/verify-commerce.ts",
+    "seed:demo": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/seed-demo.ts"
   },
   "dependencies": {
     "@auth/core": "0.41.3",
@@ -20,6 +22,7 @@
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
+    "hls.js": "^1.7.1",
     "lucide-react": "^1.35.0",
     "next": "16.3.3",
     "next-auth": "5.0.0-beta.32",
