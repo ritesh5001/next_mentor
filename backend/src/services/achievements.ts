@@ -1,8 +1,6 @@
-import "server-only";
-
 import { and, asc, eq, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   achievements,
   certificates,
@@ -10,7 +8,7 @@ import {
   lessonProgress,
   userAchievements,
   users,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 
 /**
  * Badge evaluation.

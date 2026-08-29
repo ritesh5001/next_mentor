@@ -1,169 +1,241 @@
-import NextAuth, { type DefaultSession } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
-import { z } from "zod";
+import { SignJWT, jwtVerify } from "jose";
+import type { AuthSession, JwtClaims, LoginResult, Role } from "@nextmentor/shared";
 
-import { db } from "@/backend/db";
-import { accounts, sessions, users, verificationTokens } from "@/backend/db/schema";
-import { generateUniqueReferralCode } from "./referral-code";
+import { db } from "@/db";
+import { users } from "@/db/schema";
+import { env } from "./env";
+import { generateUniqueReferralCode, normalizeReferralCode } from "./referral-code";
+import { issueToken } from "./tokens";
+import { sendVerificationEmail } from "./email";
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      role: "student" | "instructor" | "admin";
-      referralCode: string;
-    } & DefaultSession["user"];
+/**
+ * Authentication, owned entirely by this service.
+ *
+ * Auth.js was bound to the Drizzle adapter, so when the database moved here it
+ * came with it. The frontend now holds no database credentials at all: it posts
+ * credentials to /auth/login, receives a signed JWT, and forwards that token as
+ * a Bearer on every later request.
+ *
+ * The JWT is short-lived and stateless — there is no session table to look up,
+ * which is what keeps the frontend from ever needing the database.
+ */
+
+const BCRYPT_ROUNDS = 12;
+
+/** 7 days. Long enough not to nag, short enough that a leaked token expires. */
+export const TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60;
+
+function secret(): Uint8Array {
+  return new TextEncoder().encode(env("auth").AUTH_SECRET);
+}
+
+export async function signSessionToken(claims: {
+  sub: string;
+  email: string;
+  role: Role;
+  referralCode: string;
+}): Promise<string> {
+  return new SignJWT({
+    email: claims.email,
+    role: claims.role,
+    referralCode: claims.referralCode,
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(claims.sub)
+    .setIssuedAt()
+    .setIssuer("nextmentor-api")
+    .setAudience("nextmentor-web")
+    .setExpirationTime(`${TOKEN_TTL_SECONDS}s`)
+    .sign(secret());
+}
+
+/**
+ * Verifies a Bearer token. Returns null rather than throwing so callers can
+ * treat "no token", "bad token" and "expired token" identically — the client
+ * should not learn which of the three it hit.
+ */
+export async function verifySessionToken(token: string): Promise<JwtClaims | null> {
+  try {
+    const { payload } = await jwtVerify(token, secret(), {
+      issuer: "nextmentor-api",
+      audience: "nextmentor-web",
+    });
+
+    if (!payload.sub || typeof payload.role !== "string") return null;
+
+    return {
+      sub: payload.sub,
+      email: String(payload.email ?? ""),
+      role: payload.role as Role,
+      referralCode: String(payload.referralCode ?? ""),
+      iat: Number(payload.iat ?? 0),
+      exp: Number(payload.exp ?? 0),
+    };
+  } catch {
+    return null;
   }
 }
 
-declare module "@auth/core/jwt" {
-  interface JWT {
-    id: string;
-    role: "student" | "instructor" | "admin";
-    referralCode: string;
-  }
+async function toSession(user: {
+  id: string;
+  email: string;
+  name: string | null;
+  role: Role;
+  referralCode: string;
+  image: string | null;
+}): Promise<AuthSession> {
+  return {
+    token: await signSessionToken({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      referralCode: user.referralCode,
+    }),
+    expiresIn: TOKEN_TTL_SECONDS,
+    user,
+  };
 }
 
-const credentialsSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
-});
+export async function login(input: {
+  email: string;
+  password: string;
+}): Promise<LoginResult> {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, input.email.toLowerCase()))
+    .limit(1);
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
+  // Compare against a dummy hash when the account is absent so a missing user
+  // and a wrong password take the same time. Skipping this leaks which emails
+  // are registered through response timing.
+  if (!user?.passwordHash) {
+    await bcrypt.compare(
+      input.password,
+      "$2b$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalidinv",
+    );
+    return { status: "invalid_credentials" };
+  }
 
-  // JWT rather than database sessions: every page in the dashboard needs the
-  // role, and a DB round-trip per request to fetch it would be the single
-  // biggest tax on the speed budget.
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
+  if (!(await bcrypt.compare(input.password, user.passwordHash))) {
+    return { status: "invalid_credentials" };
+  }
 
-  pages: {
-    signIn: "/login",
-    error: "/login",
-    verifyRequest: "/verify",
-  },
+  if (user.isBlocked) return { status: "blocked" };
+  if (!user.emailVerified) return { status: "email_not_verified" };
 
-  providers: [
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-      allowDangerousEmailAccountLinking: false,
+  return {
+    status: "ok",
+    session: await toSession({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      referralCode: user.referralCode,
+      image: user.image,
     }),
+  };
+}
 
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(raw) {
-        const parsed = credentialsSchema.safeParse(raw);
-        if (!parsed.success) return null;
+export type RegisterResult =
+  | { status: "created" }
+  | { status: "email_taken" };
 
-        const { email, password } = parsed.data;
+export async function register(input: {
+  name: string;
+  email: string;
+  password: string;
+  referralCode?: string;
+}): Promise<RegisterResult> {
+  const email = input.email.toLowerCase();
 
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email.toLowerCase()))
-          .limit(1);
+  const [existing] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
 
-        // Compare against a dummy hash when the user is absent so that a
-        // missing account and a wrong password take the same amount of time.
-        // Skipping this leaks account existence through response timing.
-        if (!user?.passwordHash) {
-          await bcrypt.compare(password, "$2b$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalidinv");
-          return null;
-        }
+  // Deliberately the same message the route turns into a vague error: telling
+  // callers an address is registered turns this into an enumeration oracle.
+  if (existing) return { status: "email_taken" };
 
-        if (user.isBlocked) return null;
+  let referredById: string | null = null;
+  if (input.referralCode) {
+    const [referrer] = await db
+      .select({ id: users.id, isBlocked: users.isBlocked })
+      .from(users)
+      .where(eq(users.referralCode, normalizeReferralCode(input.referralCode)))
+      .limit(1);
 
-        const valid = await bcrypt.compare(password, user.passwordHash);
-        if (!valid) return null;
+    if (referrer && !referrer.isBlocked) referredById = referrer.id;
+  }
 
-        // Unverified users are rejected here rather than at the page level so
-        // there is no window in which a session exists for an unverified email.
-        if (!user.emailVerified) {
-          throw new Error("EMAIL_NOT_VERIFIED");
-        }
+  let userId: string;
+  try {
+    const [created] = await db
+      .insert(users)
+      .values({
+        name: input.name,
+        email,
+        passwordHash: await bcrypt.hash(input.password, BCRYPT_ROUNDS),
+        referralCode: await generateUniqueReferralCode(),
+        referredById,
+        referredAt: referredById ? new Date() : null,
+      })
+      .returning({ id: users.id });
+    userId = created.id;
+  } catch {
+    // The UNIQUE index on email is the real guard against the race between the
+    // check above and this insert.
+    return { status: "email_taken" };
+  }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-        };
-      },
-    }),
-  ],
+  const token = await issueToken(userId, "email_verification");
+  await sendVerificationEmail(email, token, input.name);
 
-  callbacks: {
-    /**
-     * OAuth users never pass through the registration Server Action, so they
-     * arrive without a referral code. Backfill it on first sign-in.
-     */
-    async signIn({ user, account }) {
-      if (account?.provider === "credentials") return true;
-      if (!user.id) return true;
+  return { status: "created" };
+}
 
-      const [row] = await db
-        .select({ referralCode: users.referralCode, isBlocked: users.isBlocked })
-        .from(users)
-        .where(eq(users.id, user.id))
-        .limit(1);
+/** Re-reads the user so a role change takes effect on the next token refresh. */
+export async function getSessionUser(userId: string) {
+  const [user] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      role: users.role,
+      referralCode: users.referralCode,
+      image: users.image,
+      isBlocked: users.isBlocked,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
 
-      if (row?.isBlocked) return false;
+  if (!user || user.isBlocked) return null;
+  return user;
+}
 
-      if (row && !row.referralCode) {
-        await db
-          .update(users)
-          .set({ referralCode: await generateUniqueReferralCode() })
-          .where(eq(users.id, user.id));
-      }
+/**
+ * Issues a fresh token for an already-authenticated user.
+ *
+ * The claims in a JWT are frozen at signing time, so a promotion to admin only
+ * lands when the token is reissued. The frontend calls this on session refresh.
+ */
+export async function refreshSession(userId: string): Promise<AuthSession | null> {
+  const user = await getSessionUser(userId);
+  if (!user) return null;
 
-      return true;
-    },
+  return toSession({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    referralCode: user.referralCode,
+    image: user.image,
+  });
+}
 
-    async jwt({ token, user, trigger }) {
-      // On sign-in, and on an explicit session.update(), re-read the role from
-      // the database. Without the `trigger` branch a user promoted to admin
-      // would keep a stale student token for up to 30 days.
-      if (user?.id || trigger === "update") {
-        const id = user?.id ?? token.id;
-        if (id) {
-          const [row] = await db
-            .select({ id: users.id, role: users.role, referralCode: users.referralCode })
-            .from(users)
-            .where(eq(users.id, id))
-            .limit(1);
-
-          if (row) {
-            token.id = row.id;
-            token.role = row.role;
-            token.referralCode = row.referralCode;
-          }
-        }
-      }
-      return token;
-    },
-
-    async session({ session, token }) {
-      if (token.id) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.referralCode = token.referralCode;
-      }
-      return session;
-    },
-  },
-
-  trustHost: true,
-});
+export { BCRYPT_ROUNDS };

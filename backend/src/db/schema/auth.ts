@@ -11,7 +11,6 @@ import {
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import type { AdapterAccountType } from "next-auth/adapters";
 
 export const userRoleEnum = pgEnum("user_role", ["student", "instructor", "admin"]);
 
@@ -59,7 +58,8 @@ export const accounts = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: text("type").$type<AdapterAccountType>().notNull(),
+    // OAuth account type, kept for the accounts table shape.
+    type: text("type").$type<"oauth" | "oidc" | "email" | "webauthn">().notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("provider_account_id").notNull(),
     refresh_token: text("refresh_token"),

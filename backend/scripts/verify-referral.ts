@@ -8,16 +8,16 @@
  */
 import { eq, and } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   users, courses, plans, subscriptions, orders, enrollments,
   commissions, wallets, walletLedger, kycSubmissions, payoutRequests,
-} from "@/backend/db/schema";
-import { fulfilPaidOrder, reverseRefundedOrder } from "@/backend/services/orders";
-import { maturePendingCommissions, reconcileWallet } from "@/backend/lib/referral";
-import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
-import { uniqueSlug } from "@/backend/services/courses";
-import { encryptSecret, decryptSecret, hashIp } from "@/backend/lib/crypto";
+} from "@/db/schema";
+import { fulfilPaidOrder, reverseRefundedOrder } from "@/services/orders";
+import { maturePendingCommissions, reconcileWallet } from "@/lib/referral";
+import { generateUniqueReferralCode } from "@/lib/referral-code";
+import { uniqueSlug } from "@/services/courses";
+import { encryptSecret, decryptSecret, hashIp } from "@/lib/crypto";
 
 let failures = 0;
 function check(label: string, ok: boolean, detail = "") {

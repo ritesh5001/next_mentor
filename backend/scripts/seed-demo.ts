@@ -8,11 +8,11 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   users, courses, modules, lessons, plans, coupons, achievements,
-} from "@/backend/db/schema";
-import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
+} from "@/db/schema";
+import { generateUniqueReferralCode } from "@/lib/referral-code";
 
 const ADMIN_EMAIL = "admin@nextmentor.local";
 const ADMIN_PASSWORD = "Admin123!";

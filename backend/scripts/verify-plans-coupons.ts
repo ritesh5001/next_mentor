@@ -9,15 +9,15 @@
  */
 import { eq } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   users, courses, plans, subscriptions, coupons, couponRedemptions, orders, enrollments,
-} from "@/backend/db/schema";
-import { validateCoupon } from "@/backend/services/coupons";
-import { fulfilPaidOrder, reverseRefundedOrder } from "@/backend/services/orders";
-import { getActiveSubscription, getCommissionRateBps } from "@/backend/services/plans";
-import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
-import { uniqueSlug } from "@/backend/services/courses";
+} from "@/db/schema";
+import { validateCoupon } from "@/services/coupons";
+import { fulfilPaidOrder, reverseRefundedOrder } from "@/services/orders";
+import { getActiveSubscription, getCommissionRateBps } from "@/services/plans";
+import { generateUniqueReferralCode } from "@/lib/referral-code";
+import { uniqueSlug } from "@/services/courses";
 
 let failures = 0;
 function check(label: string, ok: boolean, detail = "") {

@@ -1,0 +1,49 @@
+{
+  "name": "@nextmentor/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "build": "tsc --noEmit",
+    "start": "tsx --env-file=.env src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "seed:demo": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/seed-demo.ts",
+    "verify:auth": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-auth.ts",
+    "verify:commerce": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-commerce.ts",
+    "verify:phase2": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-plans-coupons.ts",
+    "verify:referral": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-referral.ts",
+    "verify:engagement": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-engagement.ts",
+    "verify:all": "pnpm verify:auth && pnpm verify:commerce && pnpm verify:phase2 && pnpm verify:referral && pnpm verify:engagement"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1121.0",
+    "@aws-sdk/s3-request-presigner": "^3.1121.0",
+    "@hono/node-server": "^1.13.7",
+    "@neondatabase/serverless": "^1.1.0",
+    "@nextmentor/shared": "workspace:*",
+    "bcryptjs": "^3.0.3",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.6.14",
+    "jose": "^5.9.6",
+    "pdf-lib": "^1.17.1",
+    "pg": "^8.23.0",
+    "razorpay": "^2.9.8",
+    "resend": "^6.25.0",
+    "ws": "^8.21.3",
+    "zod": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pg": "^8.23.1",
+    "@types/ws": "^8.18.1",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9",
+    "tsx": "^4.23.12",
+    "typescript": "^5"
+  }
+}

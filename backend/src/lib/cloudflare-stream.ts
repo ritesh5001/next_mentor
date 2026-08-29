@@ -1,5 +1,3 @@
-import "server-only";
-
 import { env } from "./env";
 
 const API_BASE = "https://api.cloudflare.com/client/v4";
@@ -19,8 +17,6 @@ async function cf<T>(path: string, init?: RequestInit): Promise<T> {
       "Content-Type": "application/json",
       ...init?.headers,
     },
-    // Never cache an authenticated Cloudflare API call.
-    cache: "no-store",
   });
 
   const body = (await res.json()) as CfResponse<T>;
@@ -79,7 +75,6 @@ export async function deleteVideo(videoId: string): Promise<void> {
   const res = await fetch(`${API_BASE}/accounts/${cfg.CLOUDFLARE_ACCOUNT_ID}/stream/${videoId}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${cfg.CLOUDFLARE_STREAM_TOKEN}` },
-    cache: "no-store",
   });
   // A 404 means it is already gone, which is the state we wanted.
   if (!res.ok && res.status !== 404) {

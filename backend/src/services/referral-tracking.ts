@@ -1,8 +1,6 @@
-import "server-only";
-
-import { db } from "@/backend/db";
-import { referralClicks } from "@/backend/db/schema";
-import { hashIp } from "@/backend/lib/crypto";
+import { db } from "@/db";
+import { referralClicks } from "@/db/schema";
+import { hashIp } from "@/lib/crypto";
 
 /**
  * Logs an affiliate link click.

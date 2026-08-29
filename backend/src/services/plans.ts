@@ -1,10 +1,8 @@
-import "server-only";
-
 import { and, asc, desc, eq, gt, isNull, or, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { cached } from "@/lib/cache";
 
-import { db } from "@/backend/db";
-import { plans, subscriptions } from "@/backend/db/schema";
+import { db } from "@/db";
+import { plans, subscriptions } from "@/db/schema";
 
 export const PLANS_TAG = "plans";
 
@@ -33,10 +31,7 @@ async function queryActivePlans() {
 }
 
 /** Identical for every visitor, so cached and invalidated by tag on edit. */
-export const getActivePlans = unstable_cache(queryActivePlans, ["plans"], {
-  tags: [PLANS_TAG],
-  revalidate: 3600,
-});
+export const getActivePlans = cached(queryActivePlans, ["plans"].join(":"), { tags: [PLANS_TAG], ttlSeconds: 3600 });
 
 export type ActivePlan = Awaited<ReturnType<typeof queryActivePlans>>[number];
 

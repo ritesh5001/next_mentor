@@ -6,20 +6,20 @@
  */
 import { eq, and } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   users, courses, modules, lessons, enrollments, lessonProgress,
   certificates, achievements, userAchievements, leads,
   communityPosts, communityComments, mentorshipSlots, mentorshipBookings,
   plans, subscriptions,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 import {
   issueCertificate, getCourseCompletion, getCertificateBySerial, renderCertificatePdf,
-} from "@/backend/services/certificates";
-import { evaluateAchievements, getUserMetrics } from "@/backend/services/achievements";
-import { getMentorshipSlots } from "@/backend/services/engagement";
-import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
-import { uniqueSlug } from "@/backend/services/courses";
+} from "@/services/certificates";
+import { evaluateAchievements, getUserMetrics } from "@/services/achievements";
+import { getMentorshipSlots } from "@/services/engagement";
+import { generateUniqueReferralCode } from "@/lib/referral-code";
+import { uniqueSlug } from "@/services/courses";
 
 let failures = 0;
 function check(label: string, ok: boolean, detail = "") {

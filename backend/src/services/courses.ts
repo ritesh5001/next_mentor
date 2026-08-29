@@ -1,10 +1,8 @@
-import "server-only";
-
 import { and, asc, desc, eq, isNull, or, gt, sql } from "drizzle-orm";
-import { unstable_cache } from "next/cache";
+import { cached } from "@/lib/cache";
 
-import { db } from "@/backend/db";
-import { courses, modules, lessons, enrollments, lessonProgress } from "@/backend/db/schema";
+import { db } from "@/db";
+import { courses, modules, lessons, enrollments, lessonProgress } from "@/db/schema";
 
 /**
  * Read + write paths for course content.
@@ -64,10 +62,7 @@ async function queryCatalog(): Promise<CatalogCourse[]> {
  * by tag when an admin publishes or edits a course — see revalidateCatalog().
  * Next 15+ does not cache anything by default, so this has to be explicit.
  */
-export const getCatalog = unstable_cache(queryCatalog, ["catalog"], {
-  tags: [CATALOG_TAG],
-  revalidate: 3600,
-});
+export const getCatalog = cached(queryCatalog, ["catalog"].join(":"), { tags: [CATALOG_TAG], ttlSeconds: 3600 });
 
 export type CourseDetail = NonNullable<Awaited<ReturnType<typeof queryCourseBySlug>>>;
 
@@ -156,10 +151,7 @@ async function queryCourseBySlug(slug: string) {
 }
 
 export function getCourseBySlug(slug: string) {
-  return unstable_cache(() => queryCourseBySlug(slug), ["course", slug], {
-    tags: [courseTag(slug), CATALOG_TAG],
-    revalidate: 3600,
-  })();
+  return cached(() => queryCourseBySlug(slug), ["course", slug].join(":"), { tags: [courseTag(slug), CATALOG_TAG], ttlSeconds: 3600 })();
 }
 
 /** Admin/instructor view — includes drafts, and never cached. */

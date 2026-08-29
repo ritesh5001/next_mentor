@@ -1,11 +1,9 @@
-import "server-only";
-
 import { and, asc, eq, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
-import { courses, lessons, lessonProgress, modules } from "@/backend/db/schema";
-import { authorizeLessonPlayback } from "@/backend/lib/permissions";
-import { signPlaybackToken, hlsManifestUrl } from "@/backend/lib/cloudflare-stream";
+import { db } from "@/db";
+import { courses, lessons, lessonProgress, modules } from "@/db/schema";
+import { authorizeLessonPlayback } from "@/lib/permissions";
+import { signPlaybackToken, hlsManifestUrl } from "@/lib/cloudflare-stream";
 
 /**
  * Turns a lesson into a playable stream URL — but only for someone entitled to it.
@@ -15,11 +13,14 @@ import { signPlaybackToken, hlsManifestUrl } from "@/backend/lib/cloudflare-stre
  * here runs on the server; a client-side entitlement check would be free video
  * for anyone who opens devtools.
  */
-export async function getPlayback(lessonId: string): Promise<
+export async function getPlayback(
+  lessonId: string,
+  viewer: { id: string; role: string } | null,
+): Promise<
   | { ok: true; manifestUrl: string; expiresInSeconds: number }
   | { ok: false; reason: "not_found" | "not_ready" | "forbidden" }
 > {
-  const auth = await authorizeLessonPlayback(lessonId);
+  const auth = await authorizeLessonPlayback(lessonId, viewer);
 
   if (!auth.streamVideoId) return { ok: false, reason: "not_found" };
   if (!auth.allowed) return { ok: false, reason: "forbidden" };

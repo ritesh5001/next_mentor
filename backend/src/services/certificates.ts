@@ -1,10 +1,8 @@
-import "server-only";
-
 import crypto from "node:crypto";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   certificates,
   courses,
@@ -13,8 +11,8 @@ import {
   lessons,
   modules,
   users,
-} from "@/backend/db/schema";
-import { appUrl } from "@/shared/env";
+} from "@/db/schema";
+import { appUrl } from "@/lib/env";
 
 /**
  * Course completion certificates.

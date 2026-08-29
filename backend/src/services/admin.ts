@@ -1,9 +1,7 @@
-import "server-only";
-
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
-import { courses, orders, plans, subscriptions, users } from "@/backend/db/schema";
+import { db } from "@/db";
+import { courses, orders, plans, subscriptions, users } from "@/db/schema";
 
 /** Read paths for the admin area. Every caller must guard with requireAdmin(). */
 

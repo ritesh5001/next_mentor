@@ -1,8 +1,6 @@
-import "server-only";
-
 import { and, asc, desc, eq, gt, isNull, or, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   communityComments,
   communityPosts,
@@ -14,7 +12,7 @@ import {
   subscriptions,
   trainingModules,
   users,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 
 /** Read paths for the Phase 4 surfaces. */
 

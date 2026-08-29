@@ -43,9 +43,22 @@ function createDb(): NeonDatabase<typeof schema> {
     return drizzleNeon(pool, { schema });
   }
 
+  // Pool size depends on how the app is hosted, not just on NODE_ENV.
+  //
+  // On a long-lived server (Render, a VPS, `next start`) there is ONE process,
+  // so a pool of 10 is right. On serverless (Vercel) every concurrent function
+  // instance builds its own pool, so 10 there means 10 x N connections — which
+  // exhausts a managed Postgres connection cap (Render allows ~97) under very
+  // ordinary traffic. One connection per instance is the correct setting.
+  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
   const pool = (globalForDb.__nmPool ??= new NodePool({
     connectionString: url,
-    max: process.env.NODE_ENV === "production" ? 10 : 3,
+    max: isServerless ? 1 : process.env.NODE_ENV === "production" ? 10 : 3,
+    // Serverless instances freeze between invocations; a short idle timeout
+    // returns the connection rather than holding it open against the cap.
+    idleTimeoutMillis: isServerless ? 10_000 : 30_000,
+    connectionTimeoutMillis: 10_000,
   })) as NodePool;
 
   // node-postgres and neon-serverless expose the same Drizzle surface for

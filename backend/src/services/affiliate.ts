@@ -1,8 +1,6 @@
-import "server-only";
-
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   commissions,
   kycSubmissions,
@@ -12,7 +10,7 @@ import {
   users,
   wallets,
   walletLedger,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 
 // Re-exported so existing callers keep one import path; it is defined next to
 // the payout logic that enforces it.

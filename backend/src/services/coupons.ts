@@ -1,9 +1,7 @@
-import "server-only";
-
 import { and, eq, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
-import { coupons, couponRedemptions } from "@/backend/db/schema";
+import { db } from "@/db";
+import { coupons, couponRedemptions } from "@/db/schema";
 
 /**
  * Coupon validation.

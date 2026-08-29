@@ -1,9 +1,7 @@
-import "server-only";
-
 import { Resend } from "resend";
 
 import { env } from "./env";
-import { appUrl } from "@/shared/env";
+import { appUrl } from "@/lib/env";
 
 let client: Resend | null = null;
 

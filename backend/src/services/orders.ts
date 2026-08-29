@@ -1,9 +1,7 @@
-import "server-only";
-
 import { and, eq, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
-import { awardCommission, reverseCommissionsForOrder } from "@/backend/lib/referral";
+import { db } from "@/db";
+import { awardCommission, reverseCommissionsForOrder } from "@/lib/referral";
 import {
   courses,
   coupons,
@@ -13,7 +11,7 @@ import {
   plans,
   subscriptions,
   users,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 
 /**
  * Order fulfilment.

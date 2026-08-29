@@ -1,15 +1,13 @@
-import "server-only";
-
 import { and, eq, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   commissions,
   kycSubmissions,
   payoutRequests,
   wallets,
   walletLedger,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 
 /**
  * Payout accounting.

@@ -8,13 +8,13 @@
  */
 import { eq } from "drizzle-orm";
 
-import { db } from "@/backend/db";
-import { users, courses, modules, lessons, orders, enrollments } from "@/backend/db/schema";
-import { fulfilPaidOrder, reverseRefundedOrder } from "@/backend/services/orders";
-import { isEnrolled } from "@/backend/lib/permissions";
-import { generateUniqueReferralCode, } from "@/backend/lib/referral-code";
-import { uniqueSlug } from "@/backend/services/courses";
-import { verifyWebhookSignature } from "@/backend/lib/razorpay";
+import { db } from "@/db";
+import { users, courses, modules, lessons, orders, enrollments } from "@/db/schema";
+import { fulfilPaidOrder, reverseRefundedOrder } from "@/services/orders";
+import { isEnrolled } from "@/lib/permissions";
+import { generateUniqueReferralCode, } from "@/lib/referral-code";
+import { uniqueSlug } from "@/services/courses";
+import { verifyWebhookSignature } from "@/lib/razorpay";
 import crypto from "node:crypto";
 
 let failures = 0;

@@ -1,8 +1,6 @@
-import "server-only";
-
 import { and, eq, sql } from "drizzle-orm";
 
-import { db } from "@/backend/db";
+import { db } from "@/db";
 import {
   commissions,
   plans,
@@ -10,7 +8,7 @@ import {
   users,
   wallets,
   walletLedger,
-} from "@/backend/db/schema";
+} from "@/db/schema";
 
 /**
  * The commission engine — the single source of truth for what anyone earns.
