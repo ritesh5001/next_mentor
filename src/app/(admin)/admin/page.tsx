@@ -139,6 +139,7 @@ export default async function AdminOverviewPage() {
           { href: "/admin/courses", label: "Courses" },
           { href: "/admin/plans", label: "Plans" },
           { href: "/admin/coupons", label: "Coupons" },
+          { href: "/admin/content", label: "Content" },
           { href: "/admin/kyc", label: "KYC" },
           { href: "/admin/payouts", label: "Payouts" },
           { href: "/admin/users", label: "Users" },

@@ -7,7 +7,10 @@ import {
   reverseRefundedOrder,
   getOrderReceiptData,
 } from "@/backend/services/orders";
-import { sendPurchaseReceiptEmail } from "@/backend/lib/email";
+import {
+  sendPurchaseReceiptEmail,
+  sendCommissionEarnedEmail,
+} from "@/backend/lib/email";
 import { revalidatePath } from "next/cache";
 
 /**
@@ -26,6 +29,59 @@ import { revalidatePath } from "next/cache";
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+/**
+ * Emails the affiliate about commission they just earned.
+ *
+ * Never throws: the money is already recorded, and a mail failure must not turn
+ * a successful webhook into a 500 that Razorpay then retries.
+ */
+async function notifyCommissionEarned(orderId: string, amountInPaise: number) {
+  try {
+    const { db } = await import("@/backend/db");
+    const { commissions, users } = await import("@/backend/db/schema");
+    const { eq } = await import("drizzle-orm");
+    const { formatPaise } = await import("@/backend/lib/razorpay");
+
+    const rows = await db
+      .select({
+        earnerId: commissions.earnerId,
+        sourceUserId: commissions.sourceUserId,
+        maturesAt: commissions.maturesAt,
+      })
+      .from(commissions)
+      .where(eq(commissions.orderId, orderId))
+      .limit(1);
+
+    const commission = rows[0];
+    if (!commission) return;
+
+    const [earner] = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, commission.earnerId))
+      .limit(1);
+
+    const [buyer] = await db
+      .select({ name: users.name, email: users.email })
+      .from(users)
+      .where(eq(users.id, commission.sourceUserId))
+      .limit(1);
+
+    if (!earner) return;
+
+    await sendCommissionEarnedEmail({
+      to: earner.email,
+      amountFormatted: formatPaise(amountInPaise),
+      // First name only — an affiliate does not need their referral's full
+      // contact details pushed to them by email.
+      buyerName: buyer?.name?.split(" ")[0] ?? "Someone",
+      clearsOn: commission.maturesAt,
+    });
+  } catch (err) {
+    console.error("[razorpay-webhook] Commission notification failed", orderId, err);
+  }
+}
 
 type RazorpayEntity = {
   id?: string;
@@ -92,6 +148,12 @@ export async function POST(request: Request) {
               orderId: receipt.orderId,
             });
           }
+          // Tell the affiliate they earned, if they did. After the receipt so
+          // the buyer's email is never delayed by the affiliate's.
+          if (result.commissionInPaise !== null) {
+            await notifyCommissionEarned(result.orderId, result.commissionInPaise);
+          }
+
           revalidatePath("/dashboard");
           console.info("[razorpay-webhook] Enrollment granted", result.orderId);
         } else if (result.status === "amount_mismatch") {

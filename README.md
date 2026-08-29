@@ -82,6 +82,8 @@ Verified against a real database: 16 auth checks (`pnpm verify:auth`) and 17 com
 
 **Phase 4** added engagement: verifiable certificates (PDF rendered with pdf-lib, public `/verify/<serial>` page), achievement badges evaluated nightly, an affiliate lead pipeline, the community hub with moderation, plan-gated mentorship booking, and the promotional-material and training libraries. 37 checks in `pnpm verify:engagement`.
 
+**Admin content management** (`/admin/content`) creates the promotional material, training modules and mentorship sessions those dashboard pages read — without it they render their empty states forever. Course thumbnail upload is wired into the course editor. Every KYC and payout state change now emails the affiliate, as does earning commission.
+
 **One sidebar item is still unbuilt: Industrial Earn.** It needs a spec — nothing in the reference dashboard says what it does, and guessing at a feature that sounds like it pays people would be a mistake. Everything else on the sidebar is live.
 
 ### Local demo
@@ -92,6 +94,20 @@ pnpm seed:demo   # admin@nextmentor.local / Admin123!
 ```
 
 Seeded lessons have no video — a real Cloudflare Stream upload is needed before they play.
+
+## Measured performance
+
+Production build, measured locally:
+
+| Route | JS shipped (gzipped) | TTFB |
+| --- | --- | --- |
+| `/` | 174 KB | ~4 ms |
+| `/courses` | 179 KB | ~4 ms |
+| `/dashboard` | 191 KB | — |
+
+Recharts is correctly split into its own chunk and never loads on marketing pages. The `import * as Icons from "lucide-react"` in the achievements page is safe because that file is a Server Component — icon resolution happens on the server and the namespace never reaches the browser.
+
+**Not yet measured: LCP and CLS.** The plan set a budget of LCP < 2.0s and CLS < 0.1 on 4G. That needs a real browser run against a deployed instance with real images; the numbers above are payload and server timing only.
 
 ## Things that will bite you if you change them
 

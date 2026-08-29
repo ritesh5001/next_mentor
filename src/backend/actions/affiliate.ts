@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/backend/db";
-import { kycSubmissions } from "@/backend/db/schema";
+import { kycSubmissions, payoutRequests, users } from "@/backend/db/schema";
 import { requireUser, requireAdmin } from "@/backend/lib/permissions";
 import { encryptSecret } from "@/backend/lib/crypto";
 import {
@@ -15,6 +15,14 @@ import {
   rejectPayout,
 } from "@/backend/services/payouts";
 import { createImageUpload } from "@/backend/lib/r2";
+import {
+  sendKycApprovedEmail,
+  sendKycRejectedEmail,
+  sendPayoutApprovedEmail,
+  sendPayoutPaidEmail,
+  sendPayoutRejectedEmail,
+} from "@/backend/lib/email";
+import { formatPaise } from "@/backend/lib/razorpay";
 import type { ActionState } from "@/shared/action-state";
 
 export type { ActionState };
@@ -152,7 +160,7 @@ export async function reviewKycAction(
     return { error: "Give a reason so the user knows what to correct." };
   }
 
-  await db
+  const [updated] = await db
     .update(kycSubmissions)
     .set({
       status: decision,
@@ -161,7 +169,26 @@ export async function reviewKycAction(
       reviewedAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(kycSubmissions.id, kycId));
+    .where(eq(kycSubmissions.id, kycId))
+    .returning({ userId: kycSubmissions.userId });
+
+  // Tell them. A status that changes silently in a dashboard nobody has open
+  // reads as nothing happening — and this one gates their ability to withdraw.
+  if (updated) {
+    const [person] = await db
+      .select({ email: users.email, name: users.name })
+      .from(users)
+      .where(eq(users.id, updated.userId))
+      .limit(1);
+
+    if (person) {
+      if (decision === "approved") {
+        await sendKycApprovedEmail(person.email, person.name);
+      } else {
+        await sendKycRejectedEmail(person.email, reason ?? "Please check your details.");
+      }
+    }
+  }
 
   revalidatePath("/admin/kyc");
   return { success: decision === "approved" ? "KYC approved" : "KYC rejected" };
@@ -206,8 +233,48 @@ export async function approvePayoutAction(payoutId: string): Promise<ActionState
   const admin = await requireAdmin();
   const result = await approvePayout(payoutId, admin.id);
 
+  if (result.ok) await notifyPayout(payoutId, "approved");
+
   revalidatePath("/admin/payouts");
   return result.ok ? { success: result.message } : { error: result.error };
+}
+
+/**
+ * Emails the affiliate about a payout transition.
+ *
+ * Runs after the transaction has committed, and never throws — a mail failure
+ * must not undo a transfer that actually happened.
+ */
+async function notifyPayout(
+  payoutId: string,
+  event: "approved" | "paid" | "rejected",
+  detail?: string,
+) {
+  try {
+    const [row] = await db
+      .select({
+        amountInPaise: payoutRequests.amountInPaise,
+        utrNumber: payoutRequests.utrNumber,
+        email: users.email,
+      })
+      .from(payoutRequests)
+      .innerJoin(users, eq(users.id, payoutRequests.userId))
+      .where(eq(payoutRequests.id, payoutId))
+      .limit(1);
+
+    if (!row) return;
+    const amount = formatPaise(row.amountInPaise);
+
+    if (event === "approved") {
+      await sendPayoutApprovedEmail(row.email, amount);
+    } else if (event === "paid") {
+      await sendPayoutPaidEmail(row.email, amount, row.utrNumber ?? detail ?? "—");
+    } else {
+      await sendPayoutRejectedEmail(row.email, amount, detail ?? "No reason given.");
+    }
+  } catch (err) {
+    console.error("[payout] Notification failed", payoutId, event, err);
+  }
 }
 
 export async function markPayoutPaidAction(
@@ -216,6 +283,8 @@ export async function markPayoutPaidAction(
 ): Promise<ActionState> {
   const admin = await requireAdmin();
   const result = await markPayoutPaid({ payoutId, adminId: admin.id, utrNumber });
+
+  if (result.ok) await notifyPayout(payoutId, "paid", utrNumber);
 
   revalidatePath("/admin/payouts");
   return result.ok ? { success: result.message } : { error: result.error };
@@ -227,6 +296,8 @@ export async function rejectPayoutAction(
 ): Promise<ActionState> {
   const admin = await requireAdmin();
   const result = await rejectPayout({ payoutId, adminId: admin.id, reason });
+
+  if (result.ok) await notifyPayout(payoutId, "rejected", reason);
 
   revalidatePath("/admin/payouts");
   return result.ok ? { success: result.message } : { error: result.error };

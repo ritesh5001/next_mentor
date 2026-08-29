@@ -134,3 +134,117 @@ export function sendPurchaseReceiptEmail(params: {
     ),
   });
 }
+
+/* ------------------------------------------------- affiliate notifications */
+
+/**
+ * Every KYC and payout state change is emailed.
+ *
+ * These are money events on someone else's earnings. A status that changes
+ * silently in a dashboard nobody has open reads as "nothing is happening",
+ * which turns into a support ticket — or worse, a suspicion that the platform
+ * is sitting on their money.
+ */
+
+export function sendKycApprovedEmail(to: string, name: string | null) {
+  return send({
+    to,
+    subject: "Your KYC is approved — NextMentor",
+    html: layout(
+      "You're verified",
+      `<p style="margin:0">${name ? `${name}, your` : "Your"} KYC has been approved.
+       You can now withdraw your earnings to the bank account you registered.</p>`,
+      { label: "Withdraw earnings", url: `${appUrl()}/dashboard/earnings` },
+    ),
+  });
+}
+
+export function sendKycRejectedEmail(to: string, reason: string) {
+  return send({
+    to,
+    subject: "Action needed on your KYC — NextMentor",
+    html: layout(
+      "We couldn't verify your details",
+      `<p style="margin:0">Your KYC submission was not approved for this reason:</p>
+       <p style="margin:12px 0;padding:12px;background:#fef3c7;border-radius:8px;color:#92400e">${reason}</p>
+       <p style="margin:0">Correct the details and resubmit — it only takes a minute.</p>`,
+      { label: "Update my KYC", url: `${appUrl()}/dashboard/kyc` },
+    ),
+  });
+}
+
+export function sendPayoutApprovedEmail(to: string, amountFormatted: string) {
+  return send({
+    to,
+    subject: `Withdrawal approved — ${amountFormatted}`,
+    html: layout(
+      "Your withdrawal is approved",
+      `<p style="margin:0">We're transferring <strong>${amountFormatted}</strong> to your
+       registered bank account. Transfers usually land within 3 working days.</p>`,
+      { label: "View earnings", url: `${appUrl()}/dashboard/earnings` },
+    ),
+  });
+}
+
+export function sendPayoutPaidEmail(
+  to: string,
+  amountFormatted: string,
+  utrNumber: string,
+) {
+  return send({
+    to,
+    subject: `${amountFormatted} sent — NextMentor`,
+    html: layout(
+      "Your money is on its way",
+      `<p style="margin:0">We've transferred <strong>${amountFormatted}</strong> to your bank account.</p>
+       <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;font-size:14px">
+         <tr><td style="padding:6px 0;color:#64748b">Amount</td><td align="right" style="padding:6px 0;font-weight:600">${amountFormatted}</td></tr>
+         <tr><td style="padding:6px 0;color:#64748b">Bank reference (UTR)</td><td align="right" style="padding:6px 0;font-family:ui-monospace,monospace;font-size:13px">${utrNumber}</td></tr>
+       </table>
+       <p style="margin:16px 0 0;font-size:13px;color:#64748b">Quote that reference if you
+       need to trace the payment with your bank.</p>`,
+      { label: "View earnings", url: `${appUrl()}/dashboard/earnings` },
+    ),
+  });
+}
+
+export function sendPayoutRejectedEmail(
+  to: string,
+  amountFormatted: string,
+  reason: string,
+) {
+  return send({
+    to,
+    subject: "Your withdrawal was not processed — NextMentor",
+    html: layout(
+      "Withdrawal not processed",
+      `<p style="margin:0">Your request for <strong>${amountFormatted}</strong> was not
+       processed for this reason:</p>
+       <p style="margin:12px 0;padding:12px;background:#fee2e2;border-radius:8px;color:#991b1b">${reason}</p>
+       <p style="margin:0"><strong>The funds have been returned to your wallet</strong> and
+       you can request a new withdrawal at any time.</p>`,
+      { label: "View earnings", url: `${appUrl()}/dashboard/earnings` },
+    ),
+  });
+}
+
+export function sendCommissionEarnedEmail(params: {
+  to: string;
+  amountFormatted: string;
+  buyerName: string;
+  clearsOn: Date;
+}) {
+  return send({
+    to: params.to,
+    subject: `You earned ${params.amountFormatted} — NextMentor`,
+    html: layout(
+      "You just earned commission",
+      `<p style="margin:0"><strong>${params.buyerName}</strong> made a purchase through your
+       affiliate link, and you earned <strong>${params.amountFormatted}</strong>.</p>
+       <p style="margin:12px 0 0;color:#64748b">It clears for withdrawal on
+       ${params.clearsOn.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })},
+       once the refund window closes.</p>`,
+      { label: "View earnings", url: `${appUrl()}/dashboard/earnings` },
+    ),
+  });
+}

@@ -5,6 +5,11 @@ import { ChevronLeft, ExternalLink } from "lucide-react";
 
 import { getCourseForEditor } from "@/backend/services/courses";
 import {
+  requestThumbnailUploadAction,
+  setCourseThumbnailAction,
+} from "@/backend/actions/admin";
+import { publicUrl } from "@/backend/lib/r2";
+import {
   updateCourseAction,
   createModuleAction,
   deleteModuleAction,
@@ -14,6 +19,7 @@ import {
   setCourseStatusAction,
 } from "@/backend/actions/courses";
 import { CourseForm } from "@/frontend/components/admin/course-form";
+import { ThumbnailUpload } from "@/frontend/components/admin/thumbnail-upload";
 import { CurriculumEditor } from "@/frontend/components/admin/curriculum-editor";
 import { PublishControls } from "@/frontend/components/admin/publish-controls";
 import { Badge } from "@/frontend/components/ui/badge";
@@ -78,6 +84,16 @@ export default async function EditCoursePage({
           />
         </div>
       </div>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-lg font-bold tracking-tight">Thumbnail</h2>
+        <ThumbnailUpload
+          courseId={course.id}
+          currentUrl={publicUrl(course.thumbnailKey)}
+          requestUpload={requestThumbnailUploadAction}
+          setThumbnail={setCourseThumbnailAction}
+        />
+      </section>
 
       <section className="flex flex-col gap-4">
         <h2 className="text-lg font-bold tracking-tight">Curriculum</h2>
