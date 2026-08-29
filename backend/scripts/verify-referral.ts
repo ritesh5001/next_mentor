@@ -211,7 +211,7 @@ async function main() {
   // Actions call once they have authenticated.
   const {
     createPayoutRequest, approvePayout, markPayoutPaid, rejectPayout, MIN_PAYOUT_IN_PAISE,
-  } = await import("@/backend/services/payouts");
+  } = await import("@/services/payouts");
 
   // Reset to a clean, positive balance — recorded in the ledger as well as the
   // wallet. Injecting a balance into only one of the two would make the

@@ -178,7 +178,7 @@ async function main() {
   await db.update(communityPosts)
     .set({ commentCount: 1 }).where(eq(communityPosts.id, post.id));
 
-  const { getCommunityFeed, getPostWithComments } = await import("@/backend/services/engagement");
+  const { getCommunityFeed, getPostWithComments } = await import("@/services/engagement");
 
   check("post appears in the feed",
     (await getCommunityFeed()).some((p) => p.id === post.id));
