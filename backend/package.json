@@ -11,12 +11,12 @@
     "lint": "eslint src",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "seed:demo": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/seed-demo.ts",
-    "verify:auth": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-auth.ts",
-    "verify:commerce": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-commerce.ts",
-    "verify:phase2": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-plans-coupons.ts",
-    "verify:referral": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-referral.ts",
-    "verify:engagement": "tsx --tsconfig scripts/tsconfig.json --env-file=.env scripts/verify-engagement.ts",
+    "seed:demo": "tsx --env-file=.env scripts/seed-demo.ts",
+    "verify:auth": "tsx --env-file=.env scripts/verify-auth.ts",
+    "verify:commerce": "tsx --env-file=.env scripts/verify-commerce.ts",
+    "verify:phase2": "tsx --env-file=.env scripts/verify-plans-coupons.ts",
+    "verify:referral": "tsx --env-file=.env scripts/verify-referral.ts",
+    "verify:engagement": "tsx --env-file=.env scripts/verify-engagement.ts",
     "verify:all": "pnpm verify:auth && pnpm verify:commerce && pnpm verify:phase2 && pnpm verify:referral && pnpm verify:engagement"
   },
   "dependencies": {
