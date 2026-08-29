@@ -75,11 +75,19 @@ export async function POST(request: Request) {
           // never happened.
           const receipt = await getOrderReceiptData(result.orderId);
           if (receipt) {
+            // A course order links to the player; a plan order links to the
+            // dashboard, since a plan is not a single piece of content.
             await sendPurchaseReceiptEmail({
               to: receipt.email,
               name: receipt.name,
-              courseTitle: receipt.courseTitle,
-              courseSlug: receipt.courseSlug,
+              itemName:
+                receipt.itemType === "plan"
+                  ? (receipt.planName ?? "your plan")
+                  : (receipt.courseTitle ?? "your course"),
+              destinationPath:
+                receipt.itemType === "plan" || !receipt.courseSlug
+                  ? "/dashboard"
+                  : `/learn/${receipt.courseSlug}`,
               amountFormatted: formatPaise(receipt.amountInPaise),
               orderId: receipt.orderId,
             });

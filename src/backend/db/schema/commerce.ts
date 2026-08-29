@@ -1,5 +1,7 @@
 import { relations } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
+  check,
   index,
   integer,
   pgEnum,
@@ -10,6 +12,11 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 import { courses, lessons } from "./courses";
+import { plans } from "./plans";
+import { coupons } from "./coupons";
+
+/** An order buys exactly one of these. */
+export const orderItemTypeEnum = pgEnum("order_item_type", ["course", "plan"]);
 
 export const orderStatusEnum = pgEnum("order_status", [
   "created", // Razorpay order exists, payment not confirmed
@@ -27,15 +34,27 @@ export const orders = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    courseId: text("course_id")
-      .notNull()
-      .references(() => courses.id, { onDelete: "restrict" }),
 
-    // Snapshot of the price at purchase time. Reading the current course price
-    // when issuing a refund or computing commission would be wrong the moment
-    // an admin edits the price.
+    /**
+     * An order buys either a course or a plan, never both.
+     *
+     * Both id columns are nullable and a CHECK constraint enforces that
+     * exactly the matching one is set. The alternative — a second orders
+     * table — would mean every revenue query, refund path and (in Phase 3)
+     * commission calculation had to be written twice and kept in step.
+     */
+    itemType: orderItemTypeEnum("item_type").notNull().default("course"),
+    courseId: text("course_id").references(() => courses.id, { onDelete: "restrict" }),
+    planId: text("plan_id").references(() => plans.id, { onDelete: "restrict" }),
+
+    // Snapshot of the price at purchase time. Reading the current price when
+    // issuing a refund or computing commission would be wrong the moment an
+    // admin edits it.
     listPriceInPaise: integer("list_price_in_paise").notNull(),
     discountInPaise: integer("discount_in_paise").notNull().default(0),
+
+    /** Which code produced discountInPaise, if any. */
+    couponId: text("coupon_id").references(() => coupons.id, { onDelete: "set null" }),
     // The amount actually charged. Phase 3 commission is computed on THIS,
     // never on list price or MRP.
     amountInPaise: integer("amount_in_paise").notNull(),
@@ -59,7 +78,16 @@ export const orders = pgTable(
     uniqueIndex("orders_razorpay_payment_id_unique").on(t.razorpayPaymentId),
     index("orders_user_status_idx").on(t.userId, t.status),
     index("orders_course_idx").on(t.courseId),
+    index("orders_plan_idx").on(t.planId),
     index("orders_created_at_idx").on(t.createdAt),
+    index("orders_coupon_idx").on(t.couponId),
+    // Exactly one target, matching itemType. Enforced by the database so no
+    // code path can create a half-formed order.
+    check(
+      "orders_item_target_check",
+      sql`(${t.itemType} = 'course' AND ${t.courseId} IS NOT NULL AND ${t.planId} IS NULL)
+       OR (${t.itemType} = 'plan'   AND ${t.planId}   IS NOT NULL AND ${t.courseId} IS NULL)`,
+    ),
   ],
 );
 
@@ -120,6 +148,8 @@ export const lessonProgress = pgTable(
 export const ordersRelations = relations(orders, ({ one }) => ({
   user: one(users, { fields: [orders.userId], references: [users.id] }),
   course: one(courses, { fields: [orders.courseId], references: [courses.id] }),
+  plan: one(plans, { fields: [orders.planId], references: [plans.id] }),
+  coupon: one(coupons, { fields: [orders.couponId], references: [coupons.id] }),
 }));
 
 export const enrollmentsRelations = relations(enrollments, ({ one }) => ({

@@ -63,19 +63,20 @@ createdb nextmentor_dev
 | `pnpm db:studio` | Drizzle Studio |
 | `pnpm verify:auth` | Smoke-test auth primitives against the real database |
 | `pnpm verify:commerce` | Smoke-test orders, webhook idempotency, refunds |
+| `pnpm verify:phase2` | Smoke-test coupon arithmetic, plan grants, renewals |
 | `pnpm seed:demo` | Create a demo admin, student and published course |
 
 ## Status
 
-**Phase 1 is complete.** The full loop works: an admin creates a course and uploads video, a student finds it in the catalog, pays through Razorpay, and watches it behind a signed playback token.
+**Phases 1 and 2 are complete.** The full loop works: an admin creates a course and uploads video, a student finds it in the catalog, pays through Razorpay, and watches it behind a signed playback token.
 
 Built: design tokens, schema + indexes, Auth.js v5 (credentials + Google), email verification, password reset, first-touch referral capture, the `permissions.ts` authorization layer, admin course/module/lesson CRUD, Cloudflare Stream direct-creator-upload, catalog and course detail pages, Razorpay checkout, the fulfilment webhook, the HLS player with progress tracking, and the student dashboard.
 
 Verified against a real database: 16 auth checks (`pnpm verify:auth`) and 17 commerce checks (`pnpm verify:commerce`), including webhook idempotency, underpayment refusal and refund reversal.
 
-**Not yet wired:** R2 thumbnail upload (courses render a placeholder), and the 16 sidebar items marked "Soon".
+**Phase 2** added membership plans with per-tier commission rates, coupon codes with server-side validation, the profile page (avatar upload to R2, password change), and admin depth: plans, coupons, user management, an order ledger and a revenue overview. 24 more checks in `pnpm verify:phase2`.
 
-Phases 2–4 (plans and coupons, the affiliate system, engagement features) are specified in the plan file.
+**Not yet wired:** the 13 sidebar items still marked "Soon" — the affiliate system (Phase 3) and engagement features (Phase 4), both specified in the plan file.
 
 ### Local demo
 
@@ -103,5 +104,13 @@ Seeded lessons have no video — a real Cloudflare Stream upload is needed befor
 - **`env("razorpay")` is grouped on purpose.** Secrets are validated per service, not in one schema. A single combined parse meant verifying a Razorpay signature threw because an unrelated Cloudflare key was unset. Add new secrets to the right group in `src/backend/lib/env.ts`.
 
 - **A course with orders cannot be deleted.** `orders.courseId` is `RESTRICT` because a paid order is a financial record. `deleteCourseAction` checks for orders and tells the admin to archive instead — do not "fix" this by relaxing the constraint.
+
+- **`orders` is polymorphic and the database enforces it.** An order buys a course *or* a plan; `orders_item_target_check` rejects any row that sets both or neither. Do not drop that constraint to make an insert pass — fix the insert.
+
+- **Coupons are counted at payment, not at checkout.** `usedCount` and the redemption row are written inside the webhook transaction. Incrementing at order-creation would let anyone burn a limited code by opening the modal and walking away.
+
+- **Discounts are computed only in `validateCoupon`.** Percentages are basis points and all arithmetic stays in integer paise. A discount calculated anywhere else — especially in the browser — is a free-money bug.
+
+- **Early renewal extends from the current expiry, not from today.** Paying before a plan lapses must never cost the member days they already own.
 
 - **Amber (`--color-accent`) is reserved for money** — earnings, commission, wallet, payouts. Using it as a generic CTA colour destroys the one signal that makes money scannable on a teal page.

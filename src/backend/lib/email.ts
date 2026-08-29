@@ -112,18 +112,20 @@ export function sendPasswordResetEmail(to: string, token: string) {
 export function sendPurchaseReceiptEmail(params: {
   to: string;
   name: string | null;
-  courseTitle: string;
-  courseSlug: string;
+  /** Course title or plan name — an order buys one or the other. */
+  itemName: string;
+  /** Where the CTA goes: the player for a course, the dashboard for a plan. */
+  destinationPath: string;
   amountFormatted: string;
   orderId: string;
 }) {
-  const url = `${appUrl()}/learn/${params.courseSlug}`;
+  const url = `${appUrl()}${params.destinationPath}`;
   return send({
     to: params.to,
-    subject: `You're enrolled in ${params.courseTitle}`,
+    subject: `Your purchase: ${params.itemName}`,
     html: layout(
       "Payment received",
-      `<p style="margin:0">You now have full access to <strong>${params.courseTitle}</strong>.</p>
+      `<p style="margin:0">You now have full access to <strong>${params.itemName}</strong>.</p>
        <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;font-size:14px">
          <tr><td style="padding:6px 0;color:#64748b">Amount paid</td><td align="right" style="padding:6px 0;font-weight:600">${params.amountFormatted}</td></tr>
          <tr><td style="padding:6px 0;color:#64748b">Order ID</td><td align="right" style="padding:6px 0;font-family:ui-monospace,monospace;font-size:13px">${params.orderId}</td></tr>

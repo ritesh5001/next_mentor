@@ -9,7 +9,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/backend/db";
-import { users, courses, modules, lessons } from "@/backend/db/schema";
+import { users, courses, modules, lessons, plans, coupons } from "@/backend/db/schema";
 import { generateUniqueReferralCode } from "@/backend/lib/referral-code";
 
 const ADMIN_EMAIL = "admin@nextmentor.local";
@@ -91,6 +91,60 @@ async function main() {
     console.log(`Created course /courses/${slug} with 2 sections, 4 lessons`);
   } else {
     console.log(`Course already exists  /courses/${slug}`);
+  }
+
+  // ------------------------------------------------------------------ plans
+  const planSeed = [
+    {
+      slug: "starter", name: "Starter", tagline: "Get going with the essentials",
+      priceInPaise: 99900, mrpInPaise: 199900, durationDays: 365,
+      commissionRateBps: 500, position: 0, isFeatured: false, grantsAllCourses: false,
+      features: ["Access to 3 starter courses", "Community access", "Certificate on completion"],
+    },
+    {
+      slug: "pro", name: "Pro", tagline: "The full catalog, plus real commission",
+      priceInPaise: 249900, mrpInPaise: 499900, durationDays: 365,
+      commissionRateBps: 1500, position: 1, isFeatured: true, grantsAllCourses: true,
+      features: ["Every course, forever updated", "10% referral commission", "Priority support", "Monthly live Q&A"],
+    },
+    {
+      slug: "premium-pro", name: "Premium Pro", tagline: "Highest commission and 1:1 mentorship",
+      priceInPaise: 599900, mrpInPaise: 999900, durationDays: null,
+      commissionRateBps: 2500, position: 2, isFeatured: false, grantsAllCourses: true,
+      features: ["Lifetime access to everything", "25% referral commission", "1:1 mentorship calls", "Done-with-you campaign reviews"],
+    },
+  ];
+
+  for (const p of planSeed) {
+    const [exists] = await db.select({ id: plans.id }).from(plans)
+      .where(eq(plans.slug, p.slug)).limit(1);
+    if (!exists) {
+      await db.insert(plans).values(p);
+      console.log(`Created plan    ${p.name}`);
+    }
+  }
+
+  // ---------------------------------------------------------------- coupons
+  const couponSeed = [
+    {
+      code: "LAUNCH20", description: "Launch week — 20% off anything",
+      discountType: "percent" as const, value: 2000,
+      maxDiscountInPaise: 100000, minOrderInPaise: 0, perUserLimit: 1, scope: "all" as const,
+    },
+    {
+      code: "FIRST500", description: "₹500 off your first course",
+      discountType: "flat" as const, value: 50000,
+      minOrderInPaise: 150000, perUserLimit: 1, scope: "all" as const,
+    },
+  ];
+
+  for (const c of couponSeed) {
+    const [exists] = await db.select({ id: coupons.id }).from(coupons)
+      .where(eq(coupons.code, c.code)).limit(1);
+    if (!exists) {
+      await db.insert(coupons).values(c);
+      console.log(`Created coupon  ${c.code}`);
+    }
   }
 
   console.log("\nNote: lessons have no video (videoStatus=pending) — a real");

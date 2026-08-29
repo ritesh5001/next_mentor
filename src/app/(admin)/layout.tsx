@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { GraduationCap, LayoutList } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 
 import { requireAdmin } from "@/backend/lib/permissions";
 
@@ -31,13 +31,24 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </span>
           </div>
 
-          <Link
-            href="/admin/courses"
-            className="inline-flex items-center gap-1.5 rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-          >
-            <LayoutList className="size-4" strokeWidth={1.5} aria-hidden="true" />
-            Courses
-          </Link>
+          <div className="flex items-center gap-0.5 overflow-x-auto">
+            {[
+              { href: "/admin", label: "Overview" },
+              { href: "/admin/courses", label: "Courses" },
+              { href: "/admin/plans", label: "Plans" },
+              { href: "/admin/coupons", label: "Coupons" },
+              { href: "/admin/users", label: "Users" },
+              { href: "/admin/orders", label: "Orders" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="whitespace-nowrap rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </header>
 

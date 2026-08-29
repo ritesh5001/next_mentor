@@ -13,11 +13,14 @@
     "db:generate": "drizzle-kit generate",
     "verify:auth": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/verify-auth.ts",
     "verify:commerce": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/verify-commerce.ts",
-    "seed:demo": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/seed-demo.ts"
+    "seed:demo": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/seed-demo.ts",
+    "verify:phase2": "tsx --tsconfig scripts/tsconfig.json --env-file=.env.local scripts/verify-plans-coupons.ts"
   },
   "dependencies": {
     "@auth/core": "0.41.3",
     "@auth/drizzle-adapter": "^1.11.3",
+    "@aws-sdk/client-s3": "^3.1121.0",
+    "@aws-sdk/s3-request-presigner": "^3.1121.0",
     "@neondatabase/serverless": "^1.1.0",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -30,6 +33,7 @@
     "razorpay": "^2.9.8",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "recharts": "^3.10.1",
     "resend": "^6.25.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.6.0",

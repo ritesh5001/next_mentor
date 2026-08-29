@@ -6,7 +6,11 @@ import { BookOpen, CheckCircle2, Clock, Lock, PlayCircle } from "lucide-react";
 
 import { getCourseBySlug } from "@/backend/services/courses";
 import { getSessionUser, isEnrolled } from "@/backend/lib/permissions";
-import { createCheckoutAction, pollEnrollmentAction } from "@/backend/actions/checkout";
+import {
+  createCheckoutAction,
+  previewCouponAction,
+  pollOwnershipAction,
+} from "@/backend/actions/checkout";
 import { Badge } from "@/frontend/components/ui/badge";
 import { buttonClasses } from "@/frontend/components/ui/button";
 import { BuyButton } from "@/frontend/components/marketing/buy-button";
@@ -240,13 +244,14 @@ export default async function CourseDetailPage({ params }: Params) {
               </Link>
             ) : user ? (
               <BuyButton
-                courseSlug={course.slug}
-                priceLabel={
-                  course.priceInPaise === 0 ? "Free" : formatPrice(course.priceInPaise)
-                }
+                itemType="course"
+                slug={course.slug}
+                priceInPaise={course.priceInPaise}
                 razorpayKeyId={process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? ""}
+                successPath={`/learn/${course.slug}`}
                 createCheckout={createCheckoutAction}
-                pollEnrollment={pollEnrollmentAction}
+                previewCoupon={previewCouponAction}
+                pollOwnership={pollOwnershipAction}
               />
             ) : (
               <div className="flex flex-col gap-2">
