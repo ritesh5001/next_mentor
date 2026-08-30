@@ -119,15 +119,33 @@ export const authTokens = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    /** SHA-256 of the 6-digit code. Never the code itself. */
     tokenHash: text("token_hash").notNull(),
     purpose: authTokenPurposeEnum("purpose").notNull(),
+
+    /**
+     * Wrong guesses against this code.
+     *
+     * A 6-digit code is only a million possibilities, so without a cap an
+     * attacker walks the whole space in minutes. The code is burned once this
+     * reaches MAX_OTP_ATTEMPTS — see lib/otp.ts.
+     */
+    attemptCount: integer("attempt_count").notNull().default(0),
+
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     consumedAt: timestamp("consumed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
-    uniqueIndex("auth_tokens_hash_unique").on(t.tokenHash),
+    // NOTE: tokenHash is deliberately NOT unique.
+    //
+    // It was, back when this held 256-bit random tokens. With 6-digit codes
+    // two users will eventually be issued the same one, and a unique index
+    // would make the second person's signup fail with a database error.
+    // Codes are looked up by (userId, purpose) instead, which is also what
+    // stops an attacker brute-forcing a code without knowing whose it is.
     index("auth_tokens_user_purpose_idx").on(t.userId, t.purpose),
+    index("auth_tokens_lookup_idx").on(t.userId, t.purpose, t.consumedAt),
   ],
 );
 

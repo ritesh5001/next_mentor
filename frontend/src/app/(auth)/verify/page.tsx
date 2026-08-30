@@ -2,51 +2,28 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
 
-import { Alert } from "@/components/ui/alert";
 import { buttonClasses } from "@/components/ui/button";
 import { VerifyForm } from "./verify-form";
 
 export const metadata: Metadata = {
-  title: "Confirm your email",
+  title: "Verify your email",
   robots: { index: false, follow: false },
 };
 
+/**
+ * Email verification by 6-digit code.
+ *
+ * The old flow put a single-use token in a link. Corporate mail scanners
+ * (Outlook Safe Links, spam filters, chat unfurlers) fetch every URL in an
+ * email before the recipient sees it, which burned the token before the human
+ * clicked. A code the user types cannot be consumed by a scanner.
+ */
 export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ token?: string; sent?: string; expired?: string }>;
+  searchParams: Promise<{ email?: string }>;
 }) {
-  const { token, sent, expired } = await searchParams;
-
-  // Token present: render a button rather than consuming it during this GET.
-  //
-  // Corporate mail scanners (Outlook Safe Links, spam filters, chat unfurlers)
-  // fetch every URL in an email before the recipient ever sees it. Consuming a
-  // single-use token on GET means those users open the link to "invalid or
-  // expired" every time. Requiring an explicit POST keeps the token intact
-  // until a human actually clicks.
-  if (token) {
-    return (
-      <div className="flex flex-col items-center gap-6 text-center">
-        <div className="flex size-14 items-center justify-center rounded-full bg-[var(--color-primary-subtle)]">
-          <MailCheck
-            className="size-7 text-[var(--color-primary)]"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-extrabold tracking-tight">Confirm your email</h1>
-          <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-            One last step — confirm this is your address to activate your account.
-          </p>
-        </div>
-
-        <VerifyForm token={token} />
-      </div>
-    );
-  }
+  const { email } = await searchParams;
 
   return (
     <div className="flex flex-col items-center gap-6 text-center">
@@ -59,26 +36,23 @@ export default async function VerifyPage({
       </div>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-extrabold tracking-tight">Check your inbox</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">Check your email</h1>
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-          {sent === "1"
-            ? "We've sent you a confirmation link. Open it to activate your account."
-            : "Open the confirmation link we emailed you to activate your account."}
-        </p>
-        <p className="text-sm text-[var(--color-muted-foreground)]">
-          Nothing yet? Check your spam folder — the link is valid for 24 hours.
+          {email ? (
+            <>
+              We sent a 6-digit code to <strong>{email}</strong>.
+            </>
+          ) : (
+            "Enter your email and the 6-digit code we sent you."
+          )}
         </p>
       </div>
 
-      {expired === "1" && (
-        <Alert tone="error" className="text-left">
-          That confirmation link is invalid or has expired. Sign in to have a new one sent.
-        </Alert>
-      )}
+      <VerifyForm email={email} />
 
       <Link
         href="/login"
-        className={buttonClasses({ variant: "secondary", size: "lg", className: "w-full" })}
+        className={buttonClasses({ variant: "ghost", size: "sm" })}
       >
         Back to sign in
       </Link>

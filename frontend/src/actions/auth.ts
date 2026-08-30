@@ -49,6 +49,7 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
 export async function registerAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const store = await cookies();
   const referralCode = store.get(REFERRAL_COOKIE)?.value;
+  const email = String(formData.get("email") ?? "");
 
   try {
     await api("/api/auth/register", {
@@ -56,7 +57,7 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
       anonymous: true,
       body: {
         name: String(formData.get("name") ?? ""),
-        email: String(formData.get("email") ?? ""),
+        email,
         password: String(formData.get("password") ?? ""),
         confirmPassword: String(formData.get("confirmPassword") ?? ""),
         referralCode,
@@ -69,24 +70,61 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
 
   // Attribution is now recorded against the user row; the cookie has done its job.
   store.delete(REFERRAL_COOKIE);
-  redirect("/verify?sent=1");
+  redirect(`/verify?email=${encodeURIComponent(email)}`);
 }
 
-export async function confirmEmailAction(
+export async function verifyEmailAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const email = String(formData.get("email") ?? "");
+
   try {
-    await api("/api/auth/confirm-email", {
+    await api("/api/auth/verify-email", {
       method: "POST",
       anonymous: true,
-      body: { token: String(formData.get("token") ?? "") },
+      body: { email, code: String(formData.get("code") ?? "") },
     });
   } catch (err) {
-    return { error: err instanceof ApiError ? err.message : "That link is not valid." };
+    // The API's message already carries the useful detail — how many attempts
+    // remain, or that the code is dead and a new one is needed.
+    return { error: err instanceof ApiError ? err.message : "That code is not valid." };
   }
 
   redirect("/login?verified=1");
+}
+
+/**
+ * Sends a fresh code.
+ *
+ * Always reports success, including when the API says we are inside the resend
+ * cooldown: the previous code is still valid and still in their inbox, so
+ * "sent" is true from the user's point of view.
+ */
+export async function resendOtpAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const email = String(formData.get("email") ?? "");
+  const purpose = String(formData.get("purpose") ?? "email_verification");
+
+  try {
+    const result = await api<{ status: string; retryAfterSeconds?: number }>(
+      "/api/auth/resend-otp",
+      { method: "POST", anonymous: true, body: { email, purpose } },
+    );
+
+    if (result.status === "cooldown" && result.retryAfterSeconds) {
+      return {
+        success: `A code was just sent. You can request another in ${result.retryAfterSeconds}s.`,
+      };
+    }
+  } catch (err) {
+    if (err instanceof ApiError && err.code === "validation") return { error: err.message };
+    // Anything else is swallowed on purpose — see requestPasswordResetAction.
+  }
+
+  return { success: "If that email has an account, a new code is on its way." };
 }
 
 export async function requestPasswordResetAction(
@@ -105,7 +143,7 @@ export async function requestPasswordResetAction(
     // this form into a way to enumerate registered addresses.
   }
 
-  return { success: "If that email has an account, a reset link is on its way." };
+  return { success: "If that email has an account, a 6-digit code is on its way." };
 }
 
 export async function resetPasswordAction(
@@ -117,7 +155,8 @@ export async function resetPasswordAction(
       method: "POST",
       anonymous: true,
       body: {
-        token: String(formData.get("token") ?? ""),
+        email: String(formData.get("email") ?? ""),
+        code: String(formData.get("code") ?? ""),
         password: String(formData.get("password") ?? ""),
         confirmPassword: String(formData.get("confirmPassword") ?? ""),
       },

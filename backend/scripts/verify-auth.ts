@@ -12,7 +12,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users, authTokens } from "@/db/schema";
 import { generateUniqueReferralCode } from "@/lib/referral-code";
-import { issueToken, consumeToken } from "@/lib/tokens";
+import { issueOtp, verifyOtp } from "@/lib/otp";
 
 let failures = 0;
 function check(label: string, ok: boolean, detail = "") {
@@ -52,26 +52,40 @@ async function main() {
   } catch { dupRejected = true; }
   check("duplicate email rejected by UNIQUE index", dupRejected);
 
-  // --- token: single use ---
-  const raw = await issueToken(referred.id, "email_verification");
+  // --- OTP: single use ---
+  // The dedicated OTP suite (verify:otp) covers attempt limits, expiry and
+  // cooldown. These are the properties the auth flow itself depends on.
+  await db.delete(authTokens).where(eq(authTokens.userId, referred.id));
+  const issued = await issueOtp(referred.id, "email_verification");
+  if (issued.status !== "issued") throw new Error("expected a code");
+
   const [stored] = await db.select().from(authTokens).where(eq(authTokens.userId, referred.id));
-  check("raw token never stored in DB", stored.tokenHash !== raw);
-  check("token hash is sha256 hex", /^[0-9a-f]{64}$/.test(stored.tokenHash));
+  check("raw code never stored in DB", stored.tokenHash !== issued.code);
+  check("code hash is sha256 hex", /^[0-9a-f]{64}$/.test(stored.tokenHash));
 
-  const first = await consumeToken(raw, "email_verification");
-  check("valid token consumes once", first?.userId === referred.id);
-  const second = await consumeToken(raw, "email_verification");
-  check("replayed token is rejected", second === null);
+  check("valid code verifies once",
+    (await verifyOtp(referred.id, issued.code, "email_verification")).status === "ok");
+  check("replayed code is rejected",
+    (await verifyOtp(referred.id, issued.code, "email_verification")).status !== "ok");
 
-  // --- token: purpose is enforced ---
-  const resetRaw = await issueToken(referred.id, "password_reset");
-  check("token bound to its purpose", (await consumeToken(resetRaw, "email_verification")) === null);
-  check("correct purpose still works", (await consumeToken(resetRaw, "password_reset"))?.userId === referred.id);
+  // --- OTP: purpose is enforced ---
+  await db.delete(authTokens).where(eq(authTokens.userId, referred.id));
+  const reset = await issueOtp(referred.id, "password_reset");
+  if (reset.status !== "issued") throw new Error("expected a code");
 
-  // --- token: issuing a new one invalidates the old ---
-  const oldTok = await issueToken(referred.id, "password_reset");
-  await issueToken(referred.id, "password_reset");
-  check("re-issuing invalidates the previous token", (await consumeToken(oldTok, "password_reset")) === null);
+  check("code bound to its purpose",
+    (await verifyOtp(referred.id, reset.code, "email_verification")).status !== "ok");
+  check("correct purpose still works",
+    (await verifyOtp(referred.id, reset.code, "password_reset")).status === "ok");
+
+  // --- OTP: issuing a new one invalidates the old ---
+  await db.delete(authTokens).where(eq(authTokens.userId, referred.id));
+  const older = await issueOtp(referred.id, "password_reset");
+  await db.delete(authTokens).where(eq(authTokens.userId, referred.id));
+  const newer = await issueOtp(referred.id, "password_reset");
+  if (older.status !== "issued" || newer.status !== "issued") throw new Error("expected codes");
+  check("re-issuing invalidates the previous code",
+    (await verifyOtp(referred.id, older.code, "password_reset")).status !== "ok");
 
   // --- password hashing ---
   const [u] = await db.select({ h: users.passwordHash }).from(users).where(eq(users.id, referred.id));

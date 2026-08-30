@@ -7,7 +7,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { env } from "./env";
 import { generateUniqueReferralCode, normalizeReferralCode } from "./referral-code";
-import { issueToken } from "./tokens";
+import { issueOtp } from "./otp";
 import { sendVerificationEmail } from "./email";
 
 /**
@@ -192,8 +192,15 @@ export async function register(input: {
     return { status: "email_taken" };
   }
 
-  const token = await issueToken(userId, "email_verification");
-  await sendVerificationEmail(email, token, input.name);
+  const issued = await issueOtp(userId, "email_verification");
+  if (issued.status === "issued") {
+    await sendVerificationEmail(
+      email,
+      issued.code,
+      Math.round(issued.expiresInSeconds / 60),
+      input.name,
+    );
+  }
 
   return { status: "created" };
 }

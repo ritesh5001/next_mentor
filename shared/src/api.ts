@@ -61,9 +61,27 @@ export const requestResetSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),
 });
 
+/** A 6-digit one-time code. Spaces and dashes are stripped before validation. */
+export const otpCodeSchema = z
+  .string()
+  .trim()
+  .transform((v) => v.replace(/\D/g, ""))
+  .refine((v) => v.length === 6, { message: "Enter the 6-digit code" });
+
+export const verifyEmailOtpSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Enter a valid email address"),
+  code: otpCodeSchema,
+});
+
+export const resendOtpSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Enter a valid email address"),
+  purpose: z.enum(["email_verification", "password_reset"]),
+});
+
 export const resetPasswordSchema = z
   .object({
-    token: z.string().min(1),
+    email: z.string().trim().toLowerCase().email("Enter a valid email address"),
+    code: otpCodeSchema,
     password: z
       .string()
       .min(8, "Use at least 8 characters")
@@ -78,7 +96,23 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export const confirmEmailSchema = z.object({ token: z.string().min(1) });
+/**
+ * What the API returns after a code is submitted.
+ *
+ * A discriminated union rather than a bare boolean: the UI has to say something
+ * different for "wrong code, 3 tries left" than for "that code is dead, request
+ * a new one", and a boolean cannot carry that.
+ */
+export type OtpResult =
+  | { status: "ok" }
+  | { status: "invalid"; attemptsLeft: number }
+  | { status: "expired" }
+  | { status: "too_many_attempts" }
+  | { status: "no_code" };
+
+export type OtpSent =
+  | { status: "sent"; expiresInSeconds: number }
+  | { status: "cooldown"; retryAfterSeconds: number };
 
 /** What the backend returns on a successful login. */
 export type AuthSession = {

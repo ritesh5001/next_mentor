@@ -1,49 +1,36 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { Alert } from "@/components/ui/alert";
-import { buttonClasses } from "@/components/ui/button";
-import { ResetPasswordForm } from "./reset-form";
+import { ResetForm } from "./reset-form";
 
 export const metadata: Metadata = {
   title: "Choose a new password",
   robots: { index: false, follow: false },
 };
 
+/**
+ * Password reset by 6-digit code.
+ *
+ * There is no longer a token in the URL, so there is no "missing token" state
+ * to handle — someone can land here directly, type the code from their email
+ * and reset. The API scopes the code to the email, so both are required.
+ */
 export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ token?: string }>;
+  searchParams: Promise<{ email?: string }>;
 }) {
-  const { token } = await searchParams;
-
-  if (!token) {
-    return (
-      <div className="flex flex-col gap-6">
-        <h1 className="text-2xl font-extrabold tracking-tight">Link not valid</h1>
-        <Alert tone="error">
-          This reset link is missing its token. Request a new one and use the most recent email.
-        </Alert>
-        <Link
-          href="/forgot-password"
-          className={buttonClasses({ size: "lg", className: "w-full" })}
-        >
-          Request a new link
-        </Link>
-      </div>
-    );
-  }
+  const { email } = await searchParams;
 
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-extrabold tracking-tight">Choose a new password</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
-          Pick something you have not used here before.
+          Enter the code we emailed you, then pick a new password.
         </p>
       </header>
 
-      <ResetPasswordForm token={token} />
+      <ResetForm email={email} />
     </div>
   );
 }

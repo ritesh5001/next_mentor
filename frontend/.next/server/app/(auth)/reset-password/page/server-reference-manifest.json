@@ -10,6 +10,17 @@
       },
       "exportedName": "resetPasswordAction",
       "filename": "frontend/src/actions/auth.ts"
+    },
+    "604cf504aa60182c7cb0879b2def6a66aa9333564b": {
+      "workers": {
+        "app/(auth)/reset-password/page": {
+          "moduleId": 98012,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "resendOtpAction",
+      "filename": "frontend/src/actions/auth.ts"
     }
   },
   "edge": {}

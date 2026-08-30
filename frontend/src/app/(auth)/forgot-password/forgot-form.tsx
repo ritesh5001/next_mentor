@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import Link from "next/link";
 import { useFormStatus } from "react-dom";
 
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClasses } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { requestPasswordResetAction } from "@/actions/auth";
 import type { ActionState } from "@nextmentor/shared";
@@ -23,11 +24,26 @@ export function ForgotPasswordForm() {
     requestPasswordResetAction,
     null,
   );
+  const [email, setEmail] = useState("");
 
   // On success the form is replaced entirely — leaving the input on screen
   // invites people to submit again and again while they wait for the email.
+  //
+  // The onward link carries the email so the reset page can prefill it: the
+  // code is scoped to an account, so that page needs the address as well as
+  // the digits.
   if (state?.success) {
-    return <Alert tone="success">{state.success}</Alert>;
+    return (
+      <div className="flex flex-col gap-4">
+        <Alert tone="success">{state.success}</Alert>
+        <Link
+          href={`/reset-password?email=${encodeURIComponent(email)}`}
+          className={buttonClasses({ size: "lg", className: "w-full" })}
+        >
+          Enter my code
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -42,6 +58,8 @@ export function ForgotPasswordForm() {
         autoComplete="email"
         inputMode="email"
         placeholder="you@example.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
 
       <SubmitButton />

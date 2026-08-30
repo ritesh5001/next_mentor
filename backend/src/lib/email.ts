@@ -79,30 +79,50 @@ function layout(heading: string, body: string, cta?: { label: string; url: strin
 </body></html>`;
 }
 
-export function sendVerificationEmail(to: string, token: string, name?: string | null) {
-  const url = `${appUrl()}/verify?token=${encodeURIComponent(token)}`;
+/**
+ * Renders the code as a big, spaced, selectable block.
+ *
+ * Monospace with wide letter-spacing so 0/O and 1/7 cannot be misread, and
+ * plain selectable text rather than an image so it can be copied — and so it
+ * still arrives in clients that block images by default.
+ */
+function codeBlock(code: string): string {
+  return `<div style="margin:28px 0;padding:20px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:12px;text-align:center">
+    <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:34px;font-weight:700;letter-spacing:10px;color:#101a47">${code}</div>
+  </div>`;
+}
+
+export function sendVerificationEmail(
+  to: string,
+  code: string,
+  expiresInMinutes: number,
+  name?: string | null,
+) {
   return send({
     to,
-    subject: "Confirm your email — NextMentor",
+    // The code is in the subject too: it is often all someone needs, straight
+    // from the notification, without opening the message.
+    subject: `${code} is your NextMentor verification code`,
     html: layout(
       `Welcome${name ? `, ${name}` : ""}`,
-      `<p style="margin:0">Confirm your email address to activate your account and start learning.</p>
-       <p style="margin:12px 0 0">This link expires in 24 hours.</p>`,
-      { label: "Confirm email", url },
+      `<p style="margin:0">Enter this code to confirm your email and activate your account.</p>
+       ${codeBlock(code)}
+       <p style="margin:0;color:#64748b">This code expires in ${expiresInMinutes} minutes and can be used once.</p>
+       <p style="margin:12px 0 0;color:#64748b">If you did not create an account, you can ignore this email.</p>`,
     ),
   });
 }
 
-export function sendPasswordResetEmail(to: string, token: string) {
-  const url = `${appUrl()}/reset-password?token=${encodeURIComponent(token)}`;
+export function sendPasswordResetEmail(to: string, code: string, expiresInMinutes: number) {
   return send({
     to,
-    subject: "Reset your password — NextMentor",
+    subject: `${code} is your NextMentor password reset code`,
     html: layout(
       "Reset your password",
-      `<p style="margin:0">Click below to choose a new password. This link expires in 1 hour.</p>
-       <p style="margin:12px 0 0;color:#64748b">If you did not request this, you can ignore this email — your password will not change.</p>`,
-      { label: "Reset password", url },
+      `<p style="margin:0">Enter this code to choose a new password.</p>
+       ${codeBlock(code)}
+       <p style="margin:0;color:#64748b">This code expires in ${expiresInMinutes} minutes and can be used once.</p>
+       <p style="margin:12px 0 0;color:#64748b"><strong>If you did not request this, ignore this email</strong> — your password will not change. Nobody can reset it without this code.</p>`,
     ),
   });
 }

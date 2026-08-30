@@ -17,6 +17,7 @@
     "verify:phase2": "pnpm --filter backend verify:phase2",
     "verify:referral": "pnpm --filter backend verify:referral",
     "verify:engagement": "pnpm --filter backend verify:engagement",
-    "verify:all": "pnpm --filter backend verify:all"
+    "verify:all": "pnpm --filter backend verify:all",
+    "verify:otp": "pnpm --filter backend verify:otp"
   }
 }

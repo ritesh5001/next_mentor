@@ -1716,7 +1716,23 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "resetPasswordAction"
     },
-    "60d6f129183a19f2870adfb3be7920959a1440fddc": {
+    "604cf504aa60182c7cb0879b2def6a66aa9333564b": {
+      "workers": {
+        "app/(auth)/reset-password/page": {
+          "moduleId": 98012,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(auth)/verify/page": {
+          "moduleId": 77520,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/auth.ts",
+      "exportedName": "resendOtpAction"
+    },
+    "6063bdd887bf80b3bffb8bf18ba940aa0f18e9a7f0": {
       "workers": {
         "app/(auth)/verify/page": {
           "moduleId": 77520,
@@ -1725,7 +1741,7 @@
         }
       },
       "filename": "frontend/src/actions/auth.ts",
-      "exportedName": "confirmEmailAction"
+      "exportedName": "verifyEmailAction"
     },
     "4053bb34c860b7a7fb193a3f5aa0959af624f4da02": {
       "workers": {
