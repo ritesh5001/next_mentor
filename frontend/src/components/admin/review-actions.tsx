@@ -3,9 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import type { ActionState } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import type { ActionState } from "@nextmentor/shared";
 
 /**
  * Approve / reject pair where rejection requires a written reason.

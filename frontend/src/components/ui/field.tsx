@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/frontend/lib/cn";
+import { cn } from "@/lib/cn";
 
 /**
  * Form field with a visible label, persistent helper text, and an error slot

@@ -1,30 +1,17 @@
 import type { Metadata } from "next";
-import { asc, desc, eq } from "drizzle-orm";
 import { CalendarClock, FileText, GraduationCap, Lock } from "lucide-react";
 
-import { db } from "@/backend/db";
-import { mentorshipSlots, plans, promoAssets, trainingModules } from "@/backend/db/schema";
-import { requireAdmin } from "@/backend/lib/permissions";
-import {
-  createPromoAssetAction,
-  setPromoAssetActiveAction,
-  deletePromoAssetAction,
-  requestPromoUploadAction,
-  createTrainingModuleAction,
-  deleteTrainingModuleAction,
-  requestTrainingUploadAction,
-  createMentorshipSlotAction,
-  cancelMentorshipSlotAction,
-} from "@/backend/actions/content";
 import {
   PromoAssetForm,
   TrainingModuleForm,
   MentorshipSlotForm,
   TrainingUploadButton,
-} from "@/frontend/components/admin/content-forms";
-import { ActionButton } from "@/frontend/components/admin/row-actions";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatDuration } from "@/frontend/lib/format";
+} from "@/components/admin/content-forms";
+import { ActionButton } from "@/components/admin/row-actions";
+import { Badge } from "@/components/ui/badge";
+import { formatDuration, formatDate, formatDateTime, isPast } from "@/lib/format";
+import { cancelMentorshipSlotAction, createMentorshipSlotAction, createPromoAssetAction, createTrainingModuleAction, deletePromoAssetAction, deleteTrainingModuleAction, requestPromoUploadAction, requestTrainingUploadAction, setPromoAssetActiveAction } from "@/actions/admin";
+import { requireAdmin, getAdminContent } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Content",
@@ -34,16 +21,7 @@ export const metadata: Metadata = {
 export default async function AdminContentPage() {
   await requireAdmin();
 
-  const [planList, assets, modules, slots] = await Promise.all([
-    db
-      .select({ id: plans.id, name: plans.name })
-      .from(plans)
-      .where(eq(plans.isActive, true))
-      .orderBy(asc(plans.position)),
-    db.select().from(promoAssets).orderBy(asc(promoAssets.position)),
-    db.select().from(trainingModules).orderBy(asc(trainingModules.position)),
-    db.select().from(mentorshipSlots).orderBy(desc(mentorshipSlots.startsAt)),
-  ]);
+  const { plans: planList, assets, modules, slots } = await getAdminContent();
 
   return (
     <div className="flex flex-col gap-10">
@@ -200,7 +178,7 @@ export default async function AdminContentPage() {
         {slots.length > 0 && (
           <ul className="flex flex-col gap-2">
             {slots.map((s) => {
-              const past = s.startsAt <= new Date();
+              const past = isPast(s.startsAt);
               return (
                 <li
                   key={s.id}
@@ -214,13 +192,7 @@ export default async function AdminContentPage() {
                       {s.planRequiredId && <Badge tone="primary">Gated</Badge>}
                     </div>
                     <span className="text-xs text-[var(--color-muted-foreground)]">
-                      {s.startsAt.toLocaleString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}
+                      {formatDateTime(s.startsAt)}
                       {" · "}
                       <span className="tabular">
                         {s.bookedCount}/{s.capacity} booked

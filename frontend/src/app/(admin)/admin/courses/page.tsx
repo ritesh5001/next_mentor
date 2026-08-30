@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Plus, Users } from "lucide-react";
 
-import { listCoursesForAdmin } from "@/backend/services/courses";
-import { Badge } from "@/frontend/components/ui/badge";
-import { buttonClasses } from "@/frontend/components/ui/button";
-import { formatPrice } from "@/frontend/lib/format";
+import { Badge } from "@/components/ui/badge";
+import { buttonClasses } from "@/components/ui/button";
+import { formatPrice } from "@/lib/format";
+import { listCoursesForAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Courses",

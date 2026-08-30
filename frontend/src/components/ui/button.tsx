@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "@/frontend/lib/cn";
+import { cn } from "@/lib/cn";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger" | "money";
 type Size = "sm" | "md" | "lg";

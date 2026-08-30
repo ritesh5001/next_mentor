@@ -6,11 +6,11 @@ import {
   InstagramIcon,
   LinkedinIcon,
   YoutubeIcon,
-} from "@/frontend/components/marketing/social-icons";
+} from "@/components/marketing/social-icons";
 
-import { auth } from "@/backend/lib/auth";
-import { Logo } from "@/frontend/components/brand/logo";
-import { MarketingNav } from "@/frontend/components/marketing/marketing-nav";
+import { Logo } from "@/components/brand/logo";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
+import { auth } from "@/lib/queries";
 
 const USEFUL_LINKS = [
   { href: "/about", label: "About Us" },
@@ -39,7 +39,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--color-background)]">
-      <MarketingNav isSignedIn={Boolean(session?.user)} />
+      <MarketingNav isSignedIn={Boolean(session)} />
 
       <main id="main" className="flex-1">
         {children}

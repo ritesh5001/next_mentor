@@ -2,8 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen, Clock, PlayCircle } from "lucide-react";
 
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatDuration, formatPrice, discountPercent, assetUrl } from "@/frontend/lib/format";
+import { Badge } from "@/components/ui/badge";
+import { formatDuration, formatPrice, discountPercent, assetUrl } from "@/lib/format";
 
 export type CourseCardData = {
   slug: string;

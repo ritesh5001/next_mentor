@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import { Award, Download, ExternalLink } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getMyCertificates, getCertificateCandidates } from "@/backend/services/certificates";
-import { issueCertificateAction } from "@/backend/actions/engagement";
-import { ActionButton } from "@/frontend/components/admin/row-actions";
-import { buttonClasses } from "@/frontend/components/ui/button";
-import { Badge } from "@/frontend/components/ui/badge";
+import { ActionButton } from "@/components/admin/row-actions";
+import { buttonClasses } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { requireUser, getMyCertificates } from "@/lib/queries";
+import { issueCertificateAction } from "@/actions";
+
 
 export const metadata: Metadata = {
   title: "Certificates",
@@ -15,10 +16,7 @@ export const metadata: Metadata = {
 
 export default async function CertificatesPage() {
   const user = await requireUser();
-  const [issued, candidates] = await Promise.all([
-    getMyCertificates(user.id),
-    getCertificateCandidates(user.id),
-  ]);
+  const { issued, candidates } = await getMyCertificates();
 
   const pending = candidates.filter((c) => !c.certificateSerial);
 
@@ -53,7 +51,7 @@ export default async function CertificatesPage() {
                   <h3 className="font-bold leading-snug">{c.courseTitle}</h3>
                   <p className="text-xs text-[var(--color-muted-foreground)]">
                     Issued{" "}
-                    {c.issuedAt.toLocaleDateString("en-IN", {
+                    {formatDate(c.issuedAt, {
                       day: "numeric",
                       month: "short",
                       year: "numeric",

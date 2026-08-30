@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { getActivePlans } from "@/lib/queries";
 
-import { getActivePlans } from "@/backend/services/plans";
 import {
   Hero,
   FeatureStrip,
   Stats,
   WhyChooseUs,
-} from "@/frontend/components/marketing/home-sections";
+} from "@/components/marketing/home-sections";
 import {
   Packages,
   Founders,
@@ -16,7 +16,7 @@ import {
   SkillsCloud,
   Faq,
   Newsletter,
-} from "@/frontend/components/marketing/home-sections-2";
+} from "@/components/marketing/home-sections-2";
 
 export const metadata: Metadata = {
   title: "NextMentor — Learn, Create, Monetize",

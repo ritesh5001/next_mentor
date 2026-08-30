@@ -1,0 +1,368 @@
+{
+  "node": {
+    "4010d639b0c8cd171938212de4cdc8092968649164": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "approvePayoutAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "40176d5e9f4354f296e26043b123495ecb766c465c": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "requestLessonUploadAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "402901219178f20f040a94d6a617febda0b7031c78": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "requestTrainingUploadAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "402a314162af795e726f2f6b4338631bdfa0344fd8": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deletePromoAssetAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "403f6f3a578c97b9be4c39b9b996f25625c5d6a2c2": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deleteTrainingModuleAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "406ca440ccd77b2a0a2ea23aa9350c2fcdaec2cca4": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "requestPromoUploadAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "4082dad750863c5de06c3b48fd4ddf8af381f2f02c": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "requestThumbnailUploadAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "40953e85bbfd388d60cad2a77da146a72e8c169088": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deleteLessonAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "4098157f977aa2ea332df3b2bc438253e7adbca224": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deleteCouponAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "40bc20f8f18ff6a51f948ecd9bf82d1f8504234eb8": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deleteModuleAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "40e28c64f4f90f61e8181e005d1bd80bba5e8e182c": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "cancelMentorshipSlotAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "40ea7ba3e1d09cb9a46368e0075d346474a1bb6f8e": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "deleteCourseAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "6011acd0a5f2ecbf7d944207e32a28b5b092ef6dc4": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "rejectPayoutAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60124d15f95758033a8b4ad77760402d1fb7b7745d": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setUserBlockedAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "603030dc1d59be7b5d68328f76b405836e2c7741cf": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "updateLessonAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "6030ec7ccccc12137930c940afc32ae64182f03b2b": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setUserRoleAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60370f9673b6dfb851f190fafd347b0af0e3edfd46": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "updateCourseAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "603bc6c3d9a573de9cd79f477463fa91fb0efd2263": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setPlanActiveAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "603f6d5531d62ceef89468cbc379f1f7c7b2479e1a": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createCourseAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60466a0e0ed15e4191c4a2123ca46770ab696ace19": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createLessonAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "604da579212af28b318f4f0768f0d2a6ec010bab76": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createMentorshipSlotAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60523b228a308fbda46e4cf449f6fc27f493a510fa": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createPlanAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60532003fe23ec8a40efd9e4c79f6d82808da7a7a6": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setCourseThumbnailAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "605c08c6cd4c48c47abc899b9f23a25d1e9533aa5b": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "updatePlanAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "607637bae8ff183b4bcf2b3e42d454b4f6bb3aea11": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createCouponAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "6084bcc6dee5281d5fae5226fb35c37b14f9bdea96": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createModuleAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "609e68b45dfa90059954255332cc749a92a1cc8006": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createTrainingModuleAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60aaee7cfcc38217bf3b8d50a91c1a3f551906513a": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setPromoAssetActiveAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60abbe588c294c9574dac693d9ac8e28ee6171fe65": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "markPayoutPaidAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60ac0dae36f22148197f52c2c5fa775e3d47fba9e1": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "createPromoAssetAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60e6893c606cd3b4600c983f1ba430f8b7d255b1ce": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setCourseStatusAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "60ea01382c1f4e2c5566448fc6d7c47d775b5380c2": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "setCouponActiveAction",
+      "filename": "frontend/src/actions/admin.ts"
+    },
+    "707ca557bbf302235ba1b73c3abef0ff845d052399": {
+      "workers": {
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 92183,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "reviewKycAction",
+      "filename": "frontend/src/actions/admin.ts"
+    }
+  },
+  "edge": {}
+}

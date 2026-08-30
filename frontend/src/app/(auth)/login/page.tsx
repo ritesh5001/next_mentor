@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { GoogleButton } from "@/frontend/components/ui/google-button";
+import { Alert } from "@/components/ui/alert";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = {
@@ -44,16 +43,6 @@ export default async function LoginPage({
       )}
 
       <LoginForm callbackUrl={callbackUrl} />
-
-      <div className="flex items-center gap-3">
-        <span className="h-px flex-1 bg-[var(--color-border)]" />
-        <span className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
-          or
-        </span>
-        <span className="h-px flex-1 bg-[var(--color-border)]" />
-      </div>
-
-      <GoogleButton callbackUrl={callbackUrl} label="Sign in with Google" />
 
       <p className="text-center text-sm text-[var(--color-muted-foreground)]">
         New here?{" "}

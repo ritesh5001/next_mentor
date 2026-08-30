@@ -9,7 +9,7 @@ import {
   TrendingUp, Trophy, UserCircle, Users, X, type LucideIcon,
 } from "lucide-react";
 
-import { cn } from "@/frontend/lib/cn";
+import { cn } from "@/lib/cn";
 
 const ICONS: Record<string, LucideIcon> = {
   LayoutDashboard, UserCircle, ShieldCheck, Coins, Trophy, Gift, Sparkles,

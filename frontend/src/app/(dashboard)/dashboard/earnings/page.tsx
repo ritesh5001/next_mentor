@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
 import { Coins, Clock, Wallet as WalletIcon, TrendingUp } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import {
-  getWalletSummary,
-  getCommissionHistory,
-  getLedger,
-  getMyKyc,
-  getMyPayouts,
-  MIN_PAYOUT_IN_PAISE,
-} from "@/backend/services/affiliate";
-import { requestPayoutAction } from "@/backend/actions/affiliate";
-import { PayoutForm } from "@/frontend/components/dashboard/payout-form";
-import { Badge } from "@/frontend/components/ui/badge";
-import { Alert } from "@/frontend/components/ui/alert";
-import { formatPrice } from "@/frontend/lib/format";
+import { PayoutForm } from "@/components/dashboard/payout-form";
+import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
+import { formatPrice, formatDate, formatDateTime } from "@/lib/format";
+import { requireUser, getEarnings } from "@/lib/queries";
+import { requestPayoutAction } from "@/actions";
+
 
 export const metadata: Metadata = {
   title: "Associates & earnings",
@@ -38,13 +31,8 @@ const PAYOUT_TONE = {
 export default async function EarningsPage() {
   const user = await requireUser();
 
-  const [wallet, commissions, ledger, kyc, payouts] = await Promise.all([
-    getWalletSummary(user.id),
-    getCommissionHistory(user.id, 25),
-    getLedger(user.id, 25),
-    getMyKyc(user.id),
-    getMyPayouts(user.id),
-  ]);
+  const { wallet, commissions, ledger, kyc, payouts, minPayoutInPaise } =
+    await getEarnings();
 
   const hasPendingRequest = payouts.some(
     (p) => p.status === "requested" || p.status === "approved",
@@ -159,7 +147,7 @@ export default async function EarningsPage() {
                         <td className="px-4 py-3">
                           <div className="font-medium">{c.sourceName ?? "—"}</div>
                           <div className="text-xs text-[var(--color-muted-foreground)]">
-                            {c.createdAt.toLocaleDateString("en-IN", {
+                            {formatDate(c.createdAt, {
                               day: "numeric",
                               month: "short",
                               year: "numeric",
@@ -179,7 +167,7 @@ export default async function EarningsPage() {
                           {c.status === "pending" && (
                             <div className="mt-0.5 text-xs text-[var(--color-muted-foreground)]">
                               clears{" "}
-                              {c.maturesAt.toLocaleDateString("en-IN", {
+                              {formatDate(c.maturesAt, {
                                 day: "numeric",
                                 month: "short",
                               })}
@@ -203,7 +191,7 @@ export default async function EarningsPage() {
                     <div className="min-w-0">
                       <div className="truncate text-sm font-medium">{e.note ?? e.referenceType}</div>
                       <div className="text-xs text-[var(--color-muted-foreground)]">
-                        {e.createdAt.toLocaleDateString("en-IN", {
+                        {formatDate(e.createdAt, {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -235,7 +223,7 @@ export default async function EarningsPage() {
             <PayoutForm
               action={requestPayoutAction}
               availableInPaise={wallet.availableInPaise}
-              minimumInPaise={MIN_PAYOUT_IN_PAISE}
+              minimumInPaise={minPayoutInPaise}
               kycApproved={kyc?.status === "approved"}
               hasPendingRequest={hasPendingRequest}
             />
@@ -256,7 +244,7 @@ export default async function EarningsPage() {
                       </Badge>
                     </div>
                     <span className="text-xs text-[var(--color-muted-foreground)]">
-                      {p.createdAt.toLocaleDateString("en-IN", {
+                      {formatDate(p.createdAt, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

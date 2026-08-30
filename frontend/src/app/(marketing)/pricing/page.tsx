@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { getActivePlans } from "@/backend/services/plans";
-import { getSessionUser } from "@/backend/lib/permissions";
-import { PlanCard } from "@/frontend/components/marketing/plan-card";
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { PlanCard } from "@/components/marketing/plan-card";
+import { buttonClasses } from "@/components/ui/button";
+import { getActivePlans, getSessionUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Pricing",

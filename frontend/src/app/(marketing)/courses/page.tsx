@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BookOpen } from "lucide-react";
 
-import { getCatalog } from "@/backend/services/courses";
-import { CourseCard } from "@/frontend/components/marketing/course-card";
+import { CourseCard } from "@/components/marketing/course-card";
+import { getCatalog } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "All courses",

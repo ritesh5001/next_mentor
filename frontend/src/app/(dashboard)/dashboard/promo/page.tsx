@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Download, FileText, Image as ImageIcon, Lock, Megaphone, Video } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getPromoAssets } from "@/backend/services/engagement";
-import { publicUrl } from "@/backend/lib/r2";
-import { CopyButton } from "@/frontend/components/ui/copy-button";
-import { Badge } from "@/frontend/components/ui/badge";
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { publicUrl } from "@/lib/queries";
+import { CopyButton } from "@/components/ui/copy-button";
+import { Badge } from "@/components/ui/badge";
+import { buttonClasses } from "@/components/ui/button";
+import { getPromoAssets, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Promotional material",
@@ -23,7 +22,7 @@ const TYPE_ICON = {
 
 export default async function PromoPage() {
   const user = await requireUser();
-  const assets = await getPromoAssets(user.id);
+  const assets = await getPromoAssets();
 
   return (
     <div className="flex flex-col gap-6">

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { buttonClasses } from "@/components/ui/button";
 import { VerifyForm } from "./verify-form";
 
 export const metadata: Metadata = {

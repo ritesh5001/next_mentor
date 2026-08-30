@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { listKycForAdmin } from "@/backend/services/affiliate";
-import { reviewKycAction } from "@/backend/actions/affiliate";
-import { ReviewControls } from "@/frontend/components/admin/review-actions";
-import { Badge } from "@/frontend/components/ui/badge";
+import { ReviewControls } from "@/components/admin/review-actions";
+import { Badge } from "@/components/ui/badge";
+import { reviewKycAction } from "@/actions/admin";
+import { listKycForAdmin, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "KYC review",
@@ -88,7 +88,7 @@ export default async function AdminKycPage({
 
                 <span className="text-xs text-[var(--color-muted-foreground)]">
                   Submitted{" "}
-                  {k.createdAt.toLocaleDateString("en-IN", {
+                  {formatDate(k.createdAt, {
                     day: "numeric",
                     month: "short",
                     year: "numeric",

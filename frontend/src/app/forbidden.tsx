@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
 
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
 
 /**
  * Rendered when forbidden() is called — a signed-in user without the required

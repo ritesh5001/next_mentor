@@ -1,0 +1,10 @@
+{
+  "pages": {},
+  "app": {
+    "[project]/frontend/src/app/(admin)/admin/kyc/page": [
+      "static/media/fba5a26ea33df6a3-s.p.18rizl4rsrl42.woff2"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pagesUsingSizeAdjust": false
+}

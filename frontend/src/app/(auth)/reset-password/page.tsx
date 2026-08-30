@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { buttonClasses } from "@/components/ui/button";
 import { ResetPasswordForm } from "./reset-form";
 
 export const metadata: Metadata = {

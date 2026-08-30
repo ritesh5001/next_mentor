@@ -1,35 +1,30 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { CalendarClock, ExternalLink, Users, Video } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getMentorshipSlots } from "@/backend/services/engagement";
-import { bookSlotAction, cancelBookingAction } from "@/backend/actions/engagement";
-import { ActionButton } from "@/frontend/components/admin/row-actions";
-import { Badge } from "@/frontend/components/ui/badge";
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { ActionButton } from "@/components/admin/row-actions";
+import { Badge } from "@/components/ui/badge";
+import { buttonClasses } from "@/components/ui/button";
+import { getMentorshipSlots, requireUser } from "@/lib/queries";
+import { bookSlotAction, cancelBookingAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "Premium mentorship",
   robots: { index: false, follow: false },
 };
 
-function formatSlot(startsAt: Date, endsAt: Date) {
-  const date = startsAt.toLocaleDateString("en-IN", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
-  const time = `${startsAt.toLocaleTimeString("en-IN", {
-    hour: "numeric",
-    minute: "2-digit",
-  })} – ${endsAt.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}`;
-  return { date, time };
+/** Slot times arrive as ISO strings over JSON, not Date objects. */
+function formatSlot(startsAt: string, endsAt: string) {
+  const date = formatDate(startsAt, { weekday: "short", day: "numeric", month: "short" });
+  const clock = (iso: string) =>
+    new Date(iso).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" });
+  return { date, time: `${clock(startsAt)} – ${clock(endsAt)}` };
 }
 
 export default async function MentorshipPage() {
   const user = await requireUser();
-  const slots = await getMentorshipSlots(user.id);
+  const slots = await getMentorshipSlots();
 
   return (
     <div className="flex flex-col gap-6">

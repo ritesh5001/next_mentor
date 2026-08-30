@@ -4,11 +4,11 @@ import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Upload } from "lucide-react";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatTimestamp } from "@/frontend/lib/format";
-import type { ActionState, FormAction } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { formatTimestamp } from "@/lib/format";
+import type { ActionState, FormAction } from "@nextmentor/shared";
 
 export type EditorLesson = {
   id: string;

@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { GraduationCap, Lock, PlayCircle } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getTrainingModules } from "@/backend/services/engagement";
-import { Badge } from "@/frontend/components/ui/badge";
-import { buttonClasses } from "@/frontend/components/ui/button";
-import { formatDuration } from "@/frontend/lib/format";
+import { Badge } from "@/components/ui/badge";
+import { buttonClasses } from "@/components/ui/button";
+import { formatDuration } from "@/lib/format";
+import { getTrainingModules, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Affiliate training",
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function TrainingPage() {
   const user = await requireUser();
-  const modules = await getTrainingModules(user.id);
+  const modules = await getTrainingModules();
 
   return (
     <div className="flex flex-col gap-6">

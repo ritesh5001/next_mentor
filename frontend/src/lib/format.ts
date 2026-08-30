@@ -46,3 +46,41 @@ export function assetUrl(key: string | null | undefined): string | null {
   if (!base) return null;
   return `${base.replace(/\/$/, "")}/${key.replace(/^\//, "")}`;
 }
+
+/**
+ * Formats a date that may be a Date or an ISO string.
+ *
+ * Everything now arrives over JSON, where a Date is serialised to a string.
+ * Calling .toLocaleDateString() on that string is a runtime crash, so every
+ * render path goes through here instead.
+ */
+export function formatDate(
+  value: Date | string | null | undefined,
+  options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" },
+): string {
+  if (!value) return "—";
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleDateString("en-IN", options);
+}
+
+export function formatDateTime(value: Date | string | null | undefined): string {
+  return formatDate(value, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+/** True when an ISO string or Date is in the past. */
+export function isPast(value: Date | string | null | undefined): boolean {
+  if (!value) return false;
+  const d = value instanceof Date ? value : new Date(value);
+  return !Number.isNaN(d.getTime()) && d.getTime() <= Date.now();
+}
+
+/** The public site's own origin, for building shareable links. */
+export function appUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+}

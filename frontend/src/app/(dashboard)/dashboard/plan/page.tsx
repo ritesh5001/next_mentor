@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import { CheckCircle2 } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getActivePlans, getActiveSubscription } from "@/backend/services/plans";
-import {
-  createCheckoutAction,
-  previewCouponAction,
-  pollOwnershipAction,
-} from "@/backend/actions/checkout";
-import { PlanCard } from "@/frontend/components/marketing/plan-card";
-import { BuyButton } from "@/frontend/components/marketing/buy-button";
-import { Badge } from "@/frontend/components/ui/badge";
+import { PlanCard } from "@/components/marketing/plan-card";
+import { BuyButton } from "@/components/marketing/buy-button";
+import { Badge } from "@/components/ui/badge";
+import { getActivePlans, getActiveSubscription, requireUser } from "@/lib/queries";
+import { createCheckoutAction, pollOwnershipAction, previewCouponAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "Upgrade your plan",
@@ -21,7 +17,7 @@ export default async function PlanPage() {
   const user = await requireUser();
   const [plans, current] = await Promise.all([
     getActivePlans(),
-    getActiveSubscription(user.id),
+    getActiveSubscription(),
   ]);
 
   return (
@@ -45,7 +41,7 @@ export default async function PlanPage() {
           </span>
           <span className="text-xs text-[var(--color-muted-foreground)]">
             {current.expiresAt
-              ? `Renews or expires ${current.expiresAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}`
+              ? `Renews or expires ${formatDate(current.expiresAt, { day: "numeric", month: "short", year: "numeric" })}`
               : "Lifetime access"}
           </span>
         </div>

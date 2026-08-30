@@ -3,8 +3,8 @@ import Link from "next/link";
 // icons from the `icon` name on each NavItem.
 import { BadgeCheck, GraduationCap } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { DashboardNav, type NavItem } from "@/frontend/components/dashboard/dashboard-nav";
+import { DashboardNav, type NavItem } from "@/components/dashboard/dashboard-nav";
+import { requireUser } from "@/lib/queries";
 
 /**
  * Sidebar mirrors the feature list from the reference dashboard. Items not yet

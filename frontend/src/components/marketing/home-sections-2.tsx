@@ -4,8 +4,8 @@ import { ArrowRight, Check, PlayCircle, Quote, Star } from "lucide-react";
 import { SectionHeading } from "./home-sections";
 import { Faq } from "./faq";
 import { Newsletter } from "./newsletter";
-import { formatPrice } from "@/frontend/lib/format";
-import { cn } from "@/frontend/lib/cn";
+import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/cn";
 
 export { Faq, Newsletter };
 

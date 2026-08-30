@@ -1,0 +1,22 @@
+1:"$Sreact.fragment"
+2:I[39604,["/_next/static/chunks/1y_plgatmp3ld.js","/_next/static/chunks/1_py5jp1ema4z.js","/_next/static/chunks/1e_cpvay-tvkr.js","/_next/static/chunks/35lsxlljp-5t7.js"],"ForgotPasswordForm"]
+3:I[79735,["/_next/static/chunks/1y_plgatmp3ld.js","/_next/static/chunks/1_py5jp1ema4z.js","/_next/static/chunks/1e_cpvay-tvkr.js","/_next/static/chunks/35lsxlljp-5t7.js"],""]
+4:I[4054,["/_next/static/chunks/1y_plgatmp3ld.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+9:I[4054,["/_next/static/chunks/1y_plgatmp3ld.js"],"ViewportBoundary"]
+a:I[4054,["/_next/static/chunks/1y_plgatmp3ld.js"],"MetadataBoundary"]
+b:I[78246,["/_next/static/chunks/1y_plgatmp3ld.js"],"IconMark"]
+d:I[91915,["/_next/static/chunks/1y_plgatmp3ld.js"],"default"]
+e:I[44916,["/_next/static/chunks/1y_plgatmp3ld.js"],"default"]
+8:X
+10:X
+10:C
+0:{"buildId":"qcpuZq--7AQzFBLQOxqdI","data":[{"rsc":["$","$1","c",{"children":[["$","div",null,{"className":"flex flex-col gap-6","children":[["$","header",null,{"className":"flex flex-col gap-1.5","children":[["$","h1",null,{"className":"text-2xl font-extrabold tracking-tight","children":"Reset your password"}],["$","p",null,{"className":"text-sm leading-relaxed text-[var(--color-muted-foreground)]","children":"Enter your email and we'll send you a link to choose a new password."}]]}],["$","$L2",null,{}],["$","p",null,{"className":"text-center text-sm text-[var(--color-muted-foreground)]","children":["Remembered it?"," ",["$","$L3",null,{"href":"/login","className":"font-semibold text-[var(--color-primary)] hover:underline","children":"Sign in"}]]}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/1e_cpvay-tvkr.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/35lsxlljp-5t7.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":"$@7","staleTime":"$8","varyParams":null},{"rsc":["$","$1","h",{"children":[null,["$","$L9",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#f8fafc","media":"(prefers-color-scheme: light)"}],["$","meta","3",{"name":"theme-color","content":"#0f172a","media":"(prefers-color-scheme: dark)"}]]}],["$","div",null,{"hidden":true,"children":["$","$La",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Reset your password — NextMentor"}],["$","meta","1",{"name":"description","content":"Practical, project-led courses in digital marketing, AI and design. Learn from working practitioners and earn by sharing what works."}],["$","meta","2",{"name":"robots","content":"noindex, nofollow"}],["$","meta","3",{"property":"og:title","content":"Reset your password — NextMentor"}],["$","meta","4",{"property":"og:description","content":"Practical, project-led courses in digital marketing, AI and design. Learn from working practitioners and earn by sharing what works."}],["$","meta","5",{"property":"og:site_name","content":"NextMentor"}],["$","meta","6",{"property":"og:locale","content":"en_IN"}],["$","meta","7",{"property":"og:type","content":"website"}],["$","meta","8",{"name":"twitter:card","content":"summary"}],["$","meta","9",{"name":"twitter:title","content":"Reset your password — NextMentor"}],["$","meta","10",{"name":"twitter:description","content":"Practical, project-led courses in digital marketing, AI and design. Learn from working practitioners and earn by sharing what works."}],["$","link","11",{"rel":"icon","href":"/favicon.ico?favicon.2vob68tjqpejf.ico","sizes":"256x256","type":"image/x-icon"}],["$","$Lb","12",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"isPartial":"$@c","staleTime":"$8","varyParams":null},{"rsc":["$","$1","c",{"children":[null,["$","$Ld",null,{"parallelRouterKey":"children","template":["$","$Le",null,{}]}]]}],"isPartial":"$@f","staleTime":"$8","varyParams":"$10"}],"isUpgradeableISRFallback":false,"a":"$@11","rootVaryParams":null,"needsRuntimeRequest":"$@12"}
+6:null
+12:true
+8:300
+8:C
+11:0
+c:"$undefined"
+f:"$undefined"
+7:"$undefined"

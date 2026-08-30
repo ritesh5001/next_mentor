@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { listCouponsForAdmin } from "@/backend/services/coupons";
-import {
-  createCouponAction,
-  setCouponActiveAction,
-  deleteCouponAction,
-} from "@/backend/actions/admin";
-import { CouponForm } from "@/frontend/components/admin/coupon-form";
-import { ActionButton } from "@/frontend/components/admin/row-actions";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice } from "@/frontend/lib/format";
+import { CouponForm } from "@/components/admin/coupon-form";
+import { ActionButton } from "@/components/admin/row-actions";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice, formatDate, formatDateTime } from "@/lib/format";
+import { createCouponAction, deleteCouponAction, setCouponActiveAction } from "@/actions/admin";
+import { listCouponsForAdmin, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Coupons",
@@ -76,13 +71,7 @@ export default async function AdminCouponsPage() {
                       {c.maxRedemptions !== null && ` / ${c.maxRedemptions}`}
                     </td>
                     <td className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">
-                      {c.validUntil
-                        ? c.validUntil.toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })
-                        : "No expiry"}
+                      {c.validUntil ? formatDate(c.validUntil) : "No expiry"}
                     </td>
                     <td className="px-4 py-3">
                       <Badge tone={c.isActive ? "success" : "neutral"}>

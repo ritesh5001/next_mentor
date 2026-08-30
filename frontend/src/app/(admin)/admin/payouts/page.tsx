@@ -2,16 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { listPayoutsForAdmin } from "@/backend/services/affiliate";
-import {
-  approvePayoutAction,
-  rejectPayoutAction,
-  markPayoutPaidAction,
-} from "@/backend/actions/affiliate";
-import { ReviewControls, MarkPaidControl } from "@/frontend/components/admin/review-actions";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice } from "@/frontend/lib/format";
+import { ReviewControls, MarkPaidControl } from "@/components/admin/review-actions";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice, formatDate, formatDateTime } from "@/lib/format";
+import { approvePayoutAction, markPayoutPaidAction, rejectPayoutAction } from "@/actions/admin";
+import { listPayoutsForAdmin, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Payouts",
@@ -120,7 +115,7 @@ export default async function AdminPayoutsPage({
 
                 <span className="text-xs text-[var(--color-muted-foreground)]">
                   Requested{" "}
-                  {p.createdAt.toLocaleDateString("en-IN", {
+                  {formatDate(p.createdAt, {
                     day: "numeric",
                     month: "short",
                     year: "numeric",

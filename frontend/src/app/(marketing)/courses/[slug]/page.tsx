@@ -4,23 +4,19 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { BookOpen, CheckCircle2, Clock, Lock, PlayCircle } from "lucide-react";
 
-import { getCourseBySlug } from "@/backend/services/courses";
-import { getSessionUser, isEnrolled } from "@/backend/lib/permissions";
-import {
-  createCheckoutAction,
-  previewCouponAction,
-  pollOwnershipAction,
-} from "@/backend/actions/checkout";
-import { Badge } from "@/frontend/components/ui/badge";
-import { buttonClasses } from "@/frontend/components/ui/button";
-import { BuyButton } from "@/frontend/components/marketing/buy-button";
+import { Badge } from "@/components/ui/badge";
+import { buttonClasses } from "@/components/ui/button";
+import { BuyButton } from "@/components/marketing/buy-button";
+import { getCourseBySlug, getSessionUser } from "@/lib/queries";
+import { createCheckoutAction, pollOwnershipAction, previewCouponAction } from "@/actions";
+
 import {
   assetUrl,
   discountPercent,
   formatDuration,
   formatPrice,
   formatTimestamp,
-} from "@/frontend/lib/format";
+} from "@/lib/format";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -51,7 +47,7 @@ export default async function CourseDetailPage({ params }: Params) {
   const isStaff = user?.role === "admin" || user?.role === "instructor";
   if (!course || (course.status !== "published" && !isStaff)) notFound();
 
-  const enrolled = user ? await isEnrolled(user.id, course.id) : false;
+  const enrolled = course.enrolled;
   const thumb = assetUrl(course.thumbnailKey);
   const off = discountPercent(course.priceInPaise, course.mrpInPaise);
 

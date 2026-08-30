@@ -5,11 +5,11 @@ import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Camera, User } from "lucide-react";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Field } from "@/frontend/components/ui/field";
-import { PasswordField } from "@/frontend/components/ui/password-field";
-import type { ActionState, FormAction } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { PasswordField } from "@/components/ui/password-field";
+import type { ActionState, FormAction } from "@nextmentor/shared";
 
 function SubmitButton({ label, busyLabel }: { label: string; busyLabel: string }) {
   const { pending } = useFormStatus();

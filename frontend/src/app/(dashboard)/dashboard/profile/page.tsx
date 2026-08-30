@@ -1,23 +1,15 @@
 import type { Metadata } from "next";
-import { eq } from "drizzle-orm";
+import { formatDate, formatDateTime } from "@/lib/format";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { db } from "@/backend/db";
-import { users } from "@/backend/db/schema";
-import { getActiveSubscription } from "@/backend/services/plans";
-import { publicUrl } from "@/backend/lib/r2";
-import {
-  updateProfileAction,
-  changePasswordAction,
-  requestAvatarUploadAction,
-  setAvatarAction,
-} from "@/backend/actions/profile";
+import { publicUrl } from "@/lib/queries";
 import {
   ProfileDetailsForm,
   PasswordChangeForm,
   AvatarUploader,
-} from "@/frontend/components/dashboard/profile-forms";
-import { Badge } from "@/frontend/components/ui/badge";
+} from "@/components/dashboard/profile-forms";
+import { Badge } from "@/components/ui/badge";
+import { requireUser, getProfile } from "@/lib/queries";
+import { changePasswordAction, requestAvatarUploadAction, setAvatarAction, updateProfileAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -27,29 +19,12 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const session = await requireUser();
 
-  const [me] = await db
-    .select({
-      name: users.name,
-      email: users.email,
-      phone: users.phone,
-      image: users.image,
-      role: users.role,
-      referralCode: users.referralCode,
-      createdAt: users.createdAt,
-      hasPassword: users.passwordHash,
-    })
-    .from(users)
-    .where(eq(users.id, session.id))
-    .limit(1);
+  const me = await getProfile();
 
-  const subscription = await getActiveSubscription(session.id);
+  const subscription = me.subscription;
 
   // An OAuth avatar is already an absolute URL; ours is an R2 key.
-  const avatarUrl = me.image
-    ? me.image.startsWith("http")
-      ? me.image
-      : publicUrl(me.image)
-    : null;
+  const avatarUrl = me.avatarUrl;
 
   return (
     <div className="flex max-w-2xl flex-col gap-8">
@@ -57,7 +32,7 @@ export default async function ProfilePage() {
         <h1 className="text-2xl font-extrabold tracking-tight">Profile</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Member since{" "}
-          {me.createdAt.toLocaleDateString("en-IN", {
+          {formatDate(me.createdAt, {
             month: "long",
             year: "numeric",
           })}

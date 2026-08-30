@@ -3,17 +3,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CheckCircle2, ChevronLeft, PlayCircle } from "lucide-react";
 
-import { requireUser, isEnrolled } from "@/backend/lib/permissions";
-import { getLearnView, getPlayback } from "@/backend/services/playback";
-import { saveProgressAction } from "@/backend/actions/progress";
-import { db } from "@/backend/db";
-import { courses } from "@/backend/db/schema";
-import { eq } from "drizzle-orm";
-import { VideoPlayer } from "@/frontend/components/player/video-player";
-import { Badge } from "@/frontend/components/ui/badge";
-import { buttonClasses } from "@/frontend/components/ui/button";
-import { formatTimestamp } from "@/frontend/lib/format";
-import { cn } from "@/frontend/lib/cn";
+import { VideoPlayer } from "@/components/player/video-player";
+import { Badge } from "@/components/ui/badge";
+import { buttonClasses } from "@/components/ui/button";
+import { formatTimestamp } from "@/lib/format";
+import { cn } from "@/lib/cn";
+import { getLearnView, requireUser } from "@/lib/queries";
+import { saveProgressAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "Learn",
@@ -31,24 +27,21 @@ export default async function LearnPage({ params, searchParams }: Params) {
 
   const user = await requireUser();
 
-  const [course] = await db
-    .select({ id: courses.id, title: courses.title })
-    .from(courses)
-    .where(eq(courses.slug, slug))
-    .limit(1);
+  // Entitlement, curriculum and a signed playback URL all come from one API
+  // call. The backend checks access before it mints the token — a check here
+  // would be advisory only.
+  const view = await getLearnView(slug, lessonParam);
 
-  if (!course) notFound();
-
-  // The entitlement check happens here, before anything is rendered and long
-  // before a playback token is minted. Someone who pastes this URL without an
-  // enrollment gets the sales page, not a player.
-  const entitled = user.role === "admin" || (await isEnrolled(user.id, course.id));
-  if (!entitled) {
+  // Null covers both "not enrolled" and "no playable lessons yet". The API
+  // returns 403 and 404 respectively, but to the visitor both mean the same
+  // thing: there is nothing here to watch, go look at the course page.
+  if (!view) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-20 text-center">
-        <h1 className="text-2xl font-extrabold tracking-tight">You are not enrolled</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight">Nothing to watch yet</h1>
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-          Enrol in <strong>{course.title}</strong> to watch the lessons.
+          Either you are not enrolled in this course, or its lessons are still
+          being prepared.
         </p>
         <Link href={`/courses/${slug}`} className={buttonClasses({ size: "lg" })}>
           View the course
@@ -57,17 +50,8 @@ export default async function LearnPage({ params, searchParams }: Params) {
     );
   }
 
-  const view = await getLearnView({
-    courseSlug: slug,
-    lessonId: lessonParam,
-    userId: user.id,
-    isAdmin: user.role === "admin",
-  });
-
-  if (!view) notFound();
-
   // Token is minted only after everything above passed.
-  const playback = await getPlayback(view.active.id);
+  const playback = view.playback;
   const pct =
     view.totalLessons > 0
       ? Math.round((view.completedLessons / view.totalLessons) * 100)
@@ -88,7 +72,7 @@ export default async function LearnPage({ params, searchParams }: Params) {
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         {/* --------------------------------------------------------- player */}
         <div className="flex min-w-0 flex-col gap-4">
-          {playback.ok ? (
+          {playback ? (
             <VideoPlayer
               key={view.active.id}
               manifestUrl={playback.manifestUrl}
@@ -99,7 +83,7 @@ export default async function LearnPage({ params, searchParams }: Params) {
           ) : (
             <div className="flex aspect-video items-center justify-center rounded-[var(--radius-card)] bg-[var(--color-muted)] text-center">
               <p className="max-w-sm px-6 text-sm text-[var(--color-muted-foreground)]">
-                {playback.reason === "forbidden"
+                {view.playbackError === "forbidden"
                   ? "You do not have access to this lesson."
                   : "This lesson's video is still processing. Check back shortly."}
               </p>

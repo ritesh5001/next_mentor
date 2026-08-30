@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import { Search } from "lucide-react";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { listUsersForAdmin } from "@/backend/services/admin";
-import { setUserRoleAction, setUserBlockedAction } from "@/backend/actions/admin";
-import { ActionButton, ActionSelect } from "@/frontend/components/admin/row-actions";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice } from "@/frontend/lib/format";
+import { ActionButton, ActionSelect } from "@/components/admin/row-actions";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/format";
+import { setUserBlockedAction, setUserRoleAction } from "@/actions/admin";
+import { listUsersForAdmin, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Users",
@@ -26,7 +25,7 @@ export default async function AdminUsersPage({
 }) {
   await requireAdmin();
   const { q } = await searchParams;
-  const users = await listUsersForAdmin({ query: q });
+  const users = await listUsersForAdmin(q);
 
   return (
     <div className="flex flex-col gap-6">

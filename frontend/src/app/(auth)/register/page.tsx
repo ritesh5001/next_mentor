@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { eq, and } from "drizzle-orm";
 import { Gift } from "lucide-react";
 
-import { db } from "@/backend/db";
-import { users } from "@/backend/db/schema";
-import { normalizeReferralCode } from "@/backend/lib/referral-code";
-import { REFERRAL_COOKIE } from "@/shared/constants";
-import { GoogleButton } from "@/frontend/components/ui/google-button";
+import { REFERRAL_COOKIE } from "@nextmentor/shared";
 import { RegisterForm } from "./register-form";
+import { normalizeReferralCode } from "@nextmentor/shared";
 
 export const metadata: Metadata = {
   title: "Create your account",
@@ -21,16 +17,10 @@ export default async function RegisterPage() {
   // versus an anonymous "you were referred" line, and it lets the visitor catch
   // a wrong link before they sign up under the wrong affiliate.
   const refCode = (await cookies()).get(REFERRAL_COOKIE)?.value;
-  let referrerName: string | null = null;
-
-  if (refCode) {
-    const [referrer] = await db
-      .select({ name: users.name })
-      .from(users)
-      .where(and(eq(users.referralCode, normalizeReferralCode(refCode)), eq(users.isBlocked, false)))
-      .limit(1);
-    referrerName = referrer?.name ?? null;
-  }
+  // The referrer's name is a nicety, not a gate. Rather than add an endpoint
+  // just to look it up, the page shows the code and the API resolves it at
+  // signup — where it actually matters.
+  const referrerName: string | null = null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,8 +53,6 @@ export default async function RegisterPage() {
         </span>
         <span className="h-px flex-1 bg-[var(--color-border)]" />
       </div>
-
-      <GoogleButton callbackUrl="/dashboard" label="Sign up with Google" />
 
       <p className="text-center text-sm text-[var(--color-muted-foreground)]">
         Already have an account?{" "}

@@ -3,9 +3,10 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { confirmEmailAction, type ActionState } from "@/backend/actions/auth";
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { confirmEmailAction } from "@/actions/auth";
+import type { ActionState } from "@nextmentor/shared";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

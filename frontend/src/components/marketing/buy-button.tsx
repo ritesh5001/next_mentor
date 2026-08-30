@@ -4,10 +4,10 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Tag, X } from "lucide-react";
 
-import { Button } from "@/frontend/components/ui/button";
-import { Alert } from "@/frontend/components/ui/alert";
-import { formatPrice } from "@/frontend/lib/format";
-import type { CheckoutResult, CouponPreview, ItemType } from "@/shared/checkout";
+import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { formatPrice } from "@/lib/format";
+import type { CheckoutResult, CouponPreview, ItemType } from "@nextmentor/shared";
 
 type Props = {
   itemType: ItemType;

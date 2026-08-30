@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { formatPrice } from "@/frontend/lib/format";
+import { formatPrice } from "@/lib/format";
 
 export type RevenuePoint = { day: string; totalInPaise: number; orders: number };
 

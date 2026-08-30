@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { listOrdersForAdmin } from "@/backend/services/admin";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice } from "@/frontend/lib/format";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice, formatDate } from "@/lib/format";
+import { listOrdersForAdmin, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Orders",
@@ -80,11 +79,7 @@ export default async function AdminOrdersPage() {
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">
-                    {(o.paidAt ?? o.createdAt).toLocaleDateString("en-IN", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {formatDate(o.paidAt ?? o.createdAt)}
                   </td>
                 </tr>
               ))}

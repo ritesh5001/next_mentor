@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 
-import { Logo } from "@/frontend/components/brand/logo";
-import { cn } from "@/frontend/lib/cn";
+import { Logo } from "@/components/brand/logo";
+import { cn } from "@/lib/cn";
 
 const PACKAGES = ["Mini", "Basic", "Standard", "Prime", "Infinity", "Legacy"];
 

@@ -3,11 +3,11 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Field } from "@/frontend/components/ui/field";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
 
-import type { ActionState, FormAction } from "@/shared/action-state";
+import type { ActionState, FormAction } from "@nextmentor/shared";
 
 export type CourseFormState = ActionState;
 

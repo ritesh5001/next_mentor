@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { MessageSquare, Pin, Lock, Users } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getCommunityFeed } from "@/backend/services/engagement";
-import { createPostAction } from "@/backend/actions/engagement";
-import { NewPostForm } from "@/frontend/components/dashboard/community-forms";
-import { Badge } from "@/frontend/components/ui/badge";
+import { NewPostForm } from "@/components/dashboard/community-forms";
+import { Badge } from "@/components/ui/badge";
+import { getCommunityFeed, requireUser } from "@/lib/queries";
+import { createPostAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -28,7 +28,7 @@ export default async function CommunityPage({
 }) {
   await requireUser();
   const { category } = await searchParams;
-  const posts = await getCommunityFeed({ category: category || undefined });
+  const posts = await getCommunityFeed(category);
 
   return (
     <div className="flex flex-col gap-6">
@@ -111,7 +111,7 @@ export default async function CommunityPage({
               <div className="flex items-center gap-3 text-xs text-[var(--color-muted-foreground)]">
                 <span className="font-medium">{p.authorName ?? "Someone"}</span>
                 <span>
-                  {p.createdAt.toLocaleDateString("en-IN", {
+                  {formatDate(p.createdAt, {
                     day: "numeric",
                     month: "short",
                     year: "numeric",

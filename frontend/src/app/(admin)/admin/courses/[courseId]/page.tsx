@@ -3,26 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, ExternalLink } from "lucide-react";
 
-import { getCourseForEditor } from "@/backend/services/courses";
-import {
-  requestThumbnailUploadAction,
-  setCourseThumbnailAction,
-} from "@/backend/actions/admin";
-import { publicUrl } from "@/backend/lib/r2";
-import {
-  updateCourseAction,
-  createModuleAction,
-  deleteModuleAction,
-  createLessonAction,
-  deleteLessonAction,
-  requestLessonUploadAction,
-  setCourseStatusAction,
-} from "@/backend/actions/courses";
-import { CourseForm } from "@/frontend/components/admin/course-form";
-import { ThumbnailUpload } from "@/frontend/components/admin/thumbnail-upload";
-import { CurriculumEditor } from "@/frontend/components/admin/curriculum-editor";
-import { PublishControls } from "@/frontend/components/admin/publish-controls";
-import { Badge } from "@/frontend/components/ui/badge";
+import { publicUrl } from "@/lib/queries";
+import { CourseForm } from "@/components/admin/course-form";
+import { ThumbnailUpload } from "@/components/admin/thumbnail-upload";
+import { CurriculumEditor } from "@/components/admin/curriculum-editor";
+import { PublishControls } from "@/components/admin/publish-controls";
+import { Badge } from "@/components/ui/badge";
+import { createLessonAction, createModuleAction, deleteLessonAction, deleteModuleAction, requestLessonUploadAction, requestThumbnailUploadAction, setCourseStatusAction, setCourseThumbnailAction, updateCourseAction } from "@/actions/admin";
+import { getCourseForEditor } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Edit course",

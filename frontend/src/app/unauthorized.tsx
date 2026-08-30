@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LogIn } from "lucide-react";
 
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
 
 /**
  * Rendered when unauthorized() is called — a signed-out user reaching a page

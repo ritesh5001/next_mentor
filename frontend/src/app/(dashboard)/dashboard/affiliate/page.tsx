@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MousePointerClick, ShoppingBag, UserPlus, Users } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getReferralStats, getAssociates } from "@/backend/services/affiliate";
-import { getActiveSubscription } from "@/backend/services/plans";
-import { AffiliateLink } from "@/frontend/components/dashboard/affiliate-link";
-import { Alert } from "@/frontend/components/ui/alert";
-import { formatPrice } from "@/frontend/lib/format";
-import { appUrl } from "@/shared/env";
+import { AffiliateLink } from "@/components/dashboard/affiliate-link";
+import { Alert } from "@/components/ui/alert";
+import { formatPrice, formatDate, appUrl } from "@/lib/format";
+
+import { getActiveSubscription, getAffiliateSummary, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Affiliate link",
@@ -17,11 +15,11 @@ export const metadata: Metadata = {
 
 export default async function AffiliatePage() {
   const user = await requireUser();
-  const [stats, associates, plan] = await Promise.all([
-    getReferralStats(user.id, user.referralCode),
-    getAssociates(user.id, 25),
-    getActiveSubscription(user.id),
+  const [summary, plan] = await Promise.all([
+    getAffiliateSummary(),
+    getActiveSubscription(),
   ]);
+  const { stats, associates } = summary;
 
   const url = `${appUrl()}/?ref=${user.referralCode}`;
 
@@ -129,7 +127,7 @@ export default async function AffiliatePage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">
-                      {a.joinedAt.toLocaleDateString("en-IN", {
+                      {formatDate(a.joinedAt, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

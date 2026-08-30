@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import { CheckCircle2, Clock } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getMyKyc } from "@/backend/services/affiliate";
-import { submitKycAction } from "@/backend/actions/affiliate";
-import { KycForm } from "@/frontend/components/dashboard/kyc-form";
-import { Alert } from "@/frontend/components/ui/alert";
-import { Badge } from "@/frontend/components/ui/badge";
+import { KycForm } from "@/components/dashboard/kyc-form";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { getMyKyc, requireUser } from "@/lib/queries";
+import { submitKycAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "KYC verification",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function KycPage() {
   const user = await requireUser();
-  const kyc = await getMyKyc(user.id);
+  const kyc = await getMyKyc();
 
   return (
     <div className="flex max-w-2xl flex-col gap-6">
@@ -76,7 +76,7 @@ export default async function KycPage() {
                 </span>
                 <span className="text-xs text-[var(--color-muted-foreground)]">
                   Submitted{" "}
-                  {kyc.createdAt.toLocaleDateString("en-IN", {
+                  {formatDate(kyc.createdAt, {
                     day: "numeric",
                     month: "short",
                     year: "numeric",

@@ -4,9 +4,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Rocket } from "lucide-react";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import type { ActionState } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import type { ActionState } from "@nextmentor/shared";
 
 type Status = "draft" | "published" | "archived";
 

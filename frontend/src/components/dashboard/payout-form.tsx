@@ -4,11 +4,11 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Field } from "@/frontend/components/ui/field";
-import { formatPrice } from "@/frontend/lib/format";
-import type { ActionState, FormAction } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { formatPrice } from "@/lib/format";
+import type { ActionState, FormAction } from "@nextmentor/shared";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

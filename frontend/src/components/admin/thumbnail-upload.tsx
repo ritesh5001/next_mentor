@@ -4,8 +4,8 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageIcon, Upload } from "lucide-react";
 
-import { Button } from "@/frontend/components/ui/button";
-import type { ActionState } from "@/shared/action-state";
+import { Button } from "@/components/ui/button";
+import type { ActionState } from "@nextmentor/shared";
 
 /**
  * Course thumbnail upload.

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Ticket } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { listVisibleCoupons } from "@/backend/services/coupons";
-import { CouponCode } from "@/frontend/components/dashboard/coupon-code";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice } from "@/frontend/lib/format";
+import { CouponCode } from "@/components/dashboard/coupon-code";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice, formatDate, formatDateTime } from "@/lib/format";
+import { requireUser, getMyCoupons } from "@/lib/queries";
+
 
 export const metadata: Metadata = {
   title: "Exclusive coupons",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function CouponsPage() {
   const user = await requireUser();
-  const coupons = await listVisibleCoupons(user.id);
+  const coupons = await getMyCoupons();
 
   return (
     <div className="flex flex-col gap-6">
@@ -80,7 +80,7 @@ export default async function CouponsPage() {
                   <div className="flex gap-1">
                     <dt>Expires:</dt>
                     <dd className="font-medium">
-                      {c.validUntil.toLocaleDateString("en-IN", {
+                      {formatDate(c.validUntil, {
                         day: "numeric",
                         month: "short",
                         year: "numeric",

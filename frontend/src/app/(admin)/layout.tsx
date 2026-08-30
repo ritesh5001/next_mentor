@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
+import { requireAdmin } from "@/lib/queries";
 
-import { requireAdmin } from "@/backend/lib/permissions";
 
 /**
  * Admin shell.

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import { Counter } from "./counter";
-import { cn } from "@/frontend/lib/cn";
+import { cn } from "@/lib/cn";
 
 /**
  * Public homepage sections.

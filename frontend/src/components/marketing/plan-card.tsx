@@ -1,8 +1,8 @@
 import { Check, Sparkles } from "lucide-react";
 
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice, discountPercent } from "@/frontend/lib/format";
-import { cn } from "@/frontend/lib/cn";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice, discountPercent } from "@/lib/format";
+import { cn } from "@/lib/cn";
 
 export type PlanCardData = {
   id: string;

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
 
 export default function NotFound() {
   return (

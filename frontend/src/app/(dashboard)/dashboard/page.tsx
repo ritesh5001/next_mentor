@@ -3,10 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { BookOpen, PlayCircle } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getEnrolledCourses } from "@/backend/services/courses";
-import { buttonClasses } from "@/frontend/components/ui/button";
-import { assetUrl } from "@/frontend/lib/format";
+import { buttonClasses } from "@/components/ui/button";
+import { assetUrl } from "@/lib/format";
+import { getEnrolledCourses, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "My courses",
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const courses = await getEnrolledCourses(user.id);
+  const courses = await getEnrolledCourses();
 
   return (
     <div className="flex flex-col gap-6">

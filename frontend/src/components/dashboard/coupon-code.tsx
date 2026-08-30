@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 
-import { cn } from "@/frontend/lib/cn";
+import { cn } from "@/lib/cn";
 
 /** Click-to-copy code chip. */
 export function CouponCode({ code, disabled }: { code: string; disabled?: boolean }) {

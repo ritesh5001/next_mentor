@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { BadgeCheck, FileWarning, ShieldX } from "lucide-react";
 
-import { getCertificateBySerial } from "@/backend/services/certificates";
-import { buttonClasses } from "@/frontend/components/ui/button";
+import { buttonClasses } from "@/components/ui/button";
+import { getCertificateBySerial } from "@/lib/queries";
 
 type Params = { params: Promise<{ serial: string }> };
 
@@ -100,7 +101,7 @@ export default async function VerifyCertificatePage({ params }: Params) {
             Issued
           </dt>
           <dd>
-            {cert.issuedAt.toLocaleDateString("en-IN", {
+            {formatDate(cert.issuedAt, {
               day: "numeric",
               month: "long",
               year: "numeric",

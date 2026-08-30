@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
+import { formatDate, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, Lock, Pin } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getPostWithComments } from "@/backend/services/engagement";
-import {
-  createCommentAction,
-  hidePostAction,
-  setPostPinnedAction,
-  setPostLockedAction,
-} from "@/backend/actions/engagement";
-import { ReplyForm } from "@/frontend/components/dashboard/community-forms";
-import { ActionButton } from "@/frontend/components/admin/row-actions";
-import { Badge } from "@/frontend/components/ui/badge";
+import { ReplyForm } from "@/components/dashboard/community-forms";
+import { ActionButton } from "@/components/admin/row-actions";
+import { Badge } from "@/components/ui/badge";
+import { getPostWithComments, requireUser } from "@/lib/queries";
+import { createCommentAction, hidePostAction, setPostLockedAction, setPostPinnedAction } from "@/actions";
 
 export const metadata: Metadata = {
   title: "Post",
@@ -69,7 +64,7 @@ export default async function PostPage({
         <div className="flex items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
           <span className="font-medium">{post.authorName ?? "Someone"}</span>
           <span>
-            {post.createdAt.toLocaleDateString("en-IN", {
+            {formatDate(post.createdAt, {
               day: "numeric",
               month: "short",
               year: "numeric",
@@ -131,7 +126,7 @@ export default async function PostPage({
                     {c.authorName ?? "Someone"}
                   </span>
                   <span>
-                    {c.createdAt.toLocaleDateString("en-IN", {
+                    {formatDate(c.createdAt, {
                       day: "numeric",
                       month: "short",
                       year: "numeric",

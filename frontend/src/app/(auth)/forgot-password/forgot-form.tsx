@@ -3,10 +3,11 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
-import { requestPasswordResetAction, type ActionState } from "@/backend/actions/auth";
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Field } from "@/frontend/components/ui/field";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { requestPasswordResetAction } from "@/actions/auth";
+import type { ActionState } from "@nextmentor/shared";
 
 function SubmitButton() {
   const { pending } = useFormStatus();

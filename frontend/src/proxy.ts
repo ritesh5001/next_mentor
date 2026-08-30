@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { REFERRAL_COOKIE, REFERRAL_TTL_DAYS } from "@/shared/constants";
+import { REFERRAL_COOKIE, REFERRAL_TTL_DAYS } from "@nextmentor/shared";
+import { SESSION_COOKIE } from "@/lib/session";
 
 /**
  * Two jobs, both cheap enough to run at the edge on every request:
@@ -21,8 +22,12 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/admin") ||
     pathname.startsWith("/learn");
   const hasSessionCookie =
-    request.cookies.has("authjs.session-token") ||
-    request.cookies.has("__Secure-authjs.session-token");
+    // The session cookie is set by /api/session after the API returns a JWT.
+    // Auth.js and its "authjs.session-token" cookie were removed when the
+    // backend took ownership of authentication — checking for the old name
+    // here silently redirected every signed-in user back to /login.
+    request.cookies.has(SESSION_COOKIE) ||
+    request.cookies.has(`__Secure-${SESSION_COOKIE}`);
 
   let response: NextResponse;
 

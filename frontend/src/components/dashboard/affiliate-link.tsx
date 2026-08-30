@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
 
-import { Button } from "@/frontend/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 /** Copyable affiliate link, with a native share sheet on mobile. */
 export function AffiliateLink({ url, code }: { url: string; code: string }) {

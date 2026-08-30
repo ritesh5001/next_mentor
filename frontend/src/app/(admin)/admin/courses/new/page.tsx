@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
-import { createCourseAction } from "@/backend/actions/courses";
-import { CourseForm } from "@/frontend/components/admin/course-form";
+import { CourseForm } from "@/components/admin/course-form";
+import { createCourseAction } from "@/actions/admin";
 
 export const metadata: Metadata = {
   title: "New course",

@@ -1,0 +1,16 @@
+{
+  "node": {
+    "60d6f129183a19f2870adfb3be7920959a1440fddc": {
+      "workers": {
+        "app/(auth)/verify/page": {
+          "moduleId": 77520,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "exportedName": "confirmEmailAction",
+      "filename": "frontend/src/actions/auth.ts"
+    }
+  },
+  "edge": {}
+}

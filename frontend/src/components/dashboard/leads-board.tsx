@@ -6,11 +6,11 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { Mail, Phone, Plus, Trash2 } from "lucide-react";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Field } from "@/frontend/components/ui/field";
-import { cn } from "@/frontend/lib/cn";
-import type { ActionState, FormAction } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { cn } from "@/lib/cn";
+import type { ActionState, FormAction } from "@nextmentor/shared";
 
 export type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
 
@@ -22,7 +22,8 @@ export type LeadRow = {
   source: string | null;
   status: LeadStatus;
   notes: string | null;
-  createdAt: Date;
+  /** ISO string — everything crosses the API as JSON. */
+  createdAt: string;
 };
 
 const COLUMNS: { status: LeadStatus; label: string; accent: string }[] = [

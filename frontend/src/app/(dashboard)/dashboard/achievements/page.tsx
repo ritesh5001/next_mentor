@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import * as Icons from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getAchievementBoard } from "@/backend/services/achievements";
-import { formatPrice } from "@/frontend/lib/format";
-import { cn } from "@/frontend/lib/cn";
+import { formatPrice, formatDate } from "@/lib/format";
+import { cn } from "@/lib/cn";
+import { getAchievementBoard, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "My achievements",
@@ -19,7 +18,7 @@ const TIER_STYLE: Record<string, string> = {
 
 export default async function AchievementsPage() {
   const user = await requireUser();
-  const board = await getAchievementBoard(user.id);
+  const board = await getAchievementBoard();
 
   const unlocked = board.filter((b) => b.unlockedAt);
   const locked = board.filter((b) => !b.unlockedAt);
@@ -74,11 +73,7 @@ export default async function AchievementsPage() {
                         </p>
                         <p className="mt-1 text-xs font-medium text-[var(--color-success)]">
                           Unlocked{" "}
-                          {b.unlockedAt!.toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                          {formatDate(b.unlockedAt)}
                         </p>
                       </div>
                     </li>

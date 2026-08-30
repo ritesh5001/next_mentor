@@ -1,5 +1,5 @@
 import { AlertCircle, CheckCircle2, Info } from "lucide-react";
-import { cn } from "@/frontend/lib/cn";
+import { cn } from "@/lib/cn";
 
 type Tone = "error" | "success" | "info";
 

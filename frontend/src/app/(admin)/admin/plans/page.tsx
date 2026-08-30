@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { listPlansForAdmin } from "@/backend/services/plans";
-import { createPlanAction, setPlanActiveAction } from "@/backend/actions/admin";
-import { PlanForm } from "@/frontend/components/admin/plan-form";
-import { ActionButton } from "@/frontend/components/admin/row-actions";
-import { Badge } from "@/frontend/components/ui/badge";
-import { formatPrice } from "@/frontend/lib/format";
+import { PlanForm } from "@/components/admin/plan-form";
+import { ActionButton } from "@/components/admin/row-actions";
+import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/format";
+import { createPlanAction, setPlanActiveAction } from "@/actions/admin";
+import { listPlansForAdmin, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Plans",

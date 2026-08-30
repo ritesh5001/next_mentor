@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getLeads, getLeadStats } from "@/backend/services/engagement";
-import {
-  createLeadAction,
-  updateLeadStatusAction,
-  deleteLeadAction,
-} from "@/backend/actions/engagement";
-import { LeadsBoard } from "@/frontend/components/dashboard/leads-board";
+import { LeadsBoard } from "@/components/dashboard/leads-board";
+import { requireUser, getLeadsPage } from "@/lib/queries";
+import { createLeadAction, deleteLeadAction, updateLeadStatusAction } from "@/actions";
+
 
 export const metadata: Metadata = {
   title: "Leads",
@@ -16,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function LeadsPage() {
   const user = await requireUser();
-  const [leads, stats] = await Promise.all([getLeads(user.id), getLeadStats(user.id)]);
+  const { leads, stats } = await getLeadsPage();
 
   const conversionRate =
     stats.total > 0 ? Math.round((stats.converted / stats.total) * 100) : 0;

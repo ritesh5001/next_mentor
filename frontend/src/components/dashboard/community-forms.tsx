@@ -4,10 +4,10 @@ import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Plus } from "lucide-react";
 
-import { Alert } from "@/frontend/components/ui/alert";
-import { Button } from "@/frontend/components/ui/button";
-import { Field } from "@/frontend/components/ui/field";
-import type { ActionState, FormAction } from "@/shared/action-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import type { ActionState, FormAction } from "@nextmentor/shared";
 
 function Submit({ label, busy }: { label: string; busy: string }) {
   const { pending } = useFormStatus();

@@ -3,10 +3,9 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BookOpen, CreditCard, TrendingUp, Users } from "lucide-react";
 
-import { requireAdmin } from "@/backend/lib/permissions";
-import { getAdminStats, getRevenueByDay } from "@/backend/services/admin";
-import { RevenueChart } from "@/frontend/components/admin/revenue-chart";
-import { formatPrice } from "@/frontend/lib/format";
+import { RevenueChart } from "@/components/admin/revenue-chart";
+import { formatPrice } from "@/lib/format";
+import { getAdminStats, getRevenueByDay, requireAdmin } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Overview",
@@ -57,7 +56,7 @@ function ChartSkeleton() {
 }
 
 async function RevenueSection() {
-  const data = await getRevenueByDay(30);
+  const data = await getRevenueByDay();
   return <RevenueChart data={data} />;
 }
 

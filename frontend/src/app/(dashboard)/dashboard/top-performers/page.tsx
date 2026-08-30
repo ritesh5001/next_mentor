@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Trophy } from "lucide-react";
 
-import { requireUser } from "@/backend/lib/permissions";
-import { getTopPerformers } from "@/backend/services/affiliate";
-import { formatPrice } from "@/frontend/lib/format";
-import { cn } from "@/frontend/lib/cn";
+import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/cn";
+import { getTopPerformers, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Top performers",
@@ -16,7 +15,7 @@ const MEDAL = ["text-[#D4AF37]", "text-[#A8A9AD]", "text-[#A97142]"];
 
 export default async function TopPerformersPage() {
   const me = await requireUser();
-  const performers = await getTopPerformers(20);
+  const performers = await getTopPerformers();
 
   return (
     <div className="flex flex-col gap-6">
