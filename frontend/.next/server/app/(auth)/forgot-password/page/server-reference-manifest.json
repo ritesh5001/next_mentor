@@ -1,9 +1,9 @@
 {
   "node": {
-    "6055558ac2a4db2276de90fa431a7eb8a14d0a10b1": {
+    "60b9b4f69ca67ad9dedf70cbbebcdb142abad8fe90": {
       "workers": {
         "app/(auth)/forgot-password/page": {
-          "moduleId": 60512,
+          "moduleId": 460512,
           "async": false,
           "codeHash": null
         }

@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { envOr, envUrl } from "@nextmentor/shared";
+
 
 /**
  * Server secrets, validated per service rather than all at once.
@@ -68,11 +70,20 @@ export function env<K extends GroupName>(group: K): z.infer<Groups[K]> {
  * frontend, never at this service. WEB_ORIGIN is that address.
  */
 export function appUrl(): string {
-  return process.env.WEB_ORIGIN ?? "http://localhost:3000";
+  // envUrl, not ??: a WEB_ORIGIN set to "" would put localhost links in every
+  // outgoing email in production.
+  return envUrl(process.env.WEB_ORIGIN, "http://localhost:3000");
 }
 
 /** Origins allowed to call this API. Comma-separated in one env var. */
 export function allowedOrigins(): string[] {
-  const raw = process.env.CORS_ORIGINS ?? process.env.WEB_ORIGIN ?? "http://localhost:3000";
+  // An empty CORS_ORIGINS would fall through to localhost and reject every
+  // request from the real frontend — with a CORS error in the browser and
+  // nothing useful in the server log.
+  const raw = envOr(
+    process.env.CORS_ORIGINS,
+    process.env.WEB_ORIGIN,
+    "http://localhost:3000",
+  );
   return raw.split(",").map((o) => o.trim()).filter(Boolean);
 }

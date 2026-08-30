@@ -1,9 +1,9 @@
 {
   "node": {
-    "6063bdd887bf80b3bffb8bf18ba940aa0f18e9a7f0": {
+    "60276aa3d2f070c5fc2f58899f079a8a56f8d28b6c": {
       "workers": {
         "app/(auth)/verify/page": {
-          "moduleId": 77520,
+          "moduleId": 477520,
           "async": false,
           "codeHash": null
         }
@@ -11,10 +11,10 @@
       "exportedName": "verifyEmailAction",
       "filename": "frontend/src/actions/auth.ts"
     },
-    "604cf504aa60182c7cb0879b2def6a66aa9333564b": {
+    "60a21a48002e350a40838d5eca62166cdd2367a882": {
       "workers": {
         "app/(auth)/verify/page": {
-          "moduleId": 77520,
+          "moduleId": 477520,
           "async": false,
           "codeHash": null
         }

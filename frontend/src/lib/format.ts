@@ -1,3 +1,5 @@
+import { envUrl } from "@nextmentor/shared";
+
 /**
  * Display formatting. Pure — safe on both server and client.
  */
@@ -82,5 +84,5 @@ export function isPast(value: Date | string | null | undefined): boolean {
 
 /** The public site's own origin, for building shareable links. */
 export function appUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  return envUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000");
 }

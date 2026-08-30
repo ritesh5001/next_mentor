@@ -148,6 +148,41 @@ expect the first visit after a quiet spell to hang.
 
 ---
 
+## Where each credential comes from
+
+All Cloudflare values live at **dash.cloudflare.com**. Your account ID is in the
+dashboard URL: `dash.cloudflare.com/<account-id>/...`
+
+| Variable | Where |
+| --- | --- |
+| `CLOUDFLARE_ACCOUNT_ID` / `R2_ACCOUNT_ID` | The dashboard URL. Both are the same value. |
+| `CLOUDFLARE_STREAM_TOKEN` | Manage account → **Account API tokens** → Create → **Start from scratch** → Account / Stream / **Edit** |
+| `CLOUDFLARE_STREAM_SIGNING_KEY_ID` + `_PEM` | **API only, no dashboard page.** Run `backend/scripts/get-stream-key.sh` |
+| `CLOUDFLARE_STREAM_WEBHOOK_SECRET` | **Stream** → Settings → Webhooks → add the URL, copy the secret it returns |
+| `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` | **R2** → API → **Manage API Tokens** → Object Read & Write |
+| `R2_BUCKET` | The bucket name you created |
+| `R2_PUBLIC_URL` | R2 → your bucket → Settings → **Custom Domains** (or the r2.dev subdomain for testing) |
+| `RESEND_API_KEY` | resend.com → API Keys. The sending domain must be **verified** or mail silently fails. |
+| `DATABASE_URL` | Render → your Postgres → Internal URL for the API, External for migrations |
+
+### Traps
+
+- **Do not use the "Write all resources" template** for the Stream token. It is
+  166 permissions including DNS — a leak hands over the whole account. Stream /
+  Edit is everything the app uses.
+- **R2 tokens are not made on the Account API tokens page.** R2 has its own
+  token UI, and it issues S3-style credentials (access key + secret). An
+  Account API token will not authenticate against R2.
+- **The Stream signing key exists only through the API.** There is no UI for it.
+  The `pem` Cloudflare returns is already base64-encoded, which is exactly what
+  `lib/cloudflare-stream.ts` expects — paste it verbatim, do not re-encode it,
+  and do not paste a raw `-----BEGIN PRIVATE KEY-----` block.
+- **OAuth clients is unrelated.** That page is for letting people sign in to
+  Cloudflare itself. It has nothing to do with this app.
+- Every one of these secrets is shown **once**. Store them before closing the tab.
+
+---
+
 ## Not done yet
 
 - **LCP / CLS have never been measured.** The plan set LCP < 2.0s and CLS < 0.1 on

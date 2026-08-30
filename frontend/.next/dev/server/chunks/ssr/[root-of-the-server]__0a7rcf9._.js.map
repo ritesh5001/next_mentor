@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 17, "column": 0}, "map": {"version":3,"sources":["file:///Users/ritesh5001/PlayGround/Projects/next_mentor/frontend/src/app/favicon.ico.mjs%20(structured%20image%20object)"],"sourcesContent":["import src from \"IMAGE\";\nexport default { src, width: 256, height: 256 }\n"],"names":["src","width","height"],"mappings":";;;;AAAA;;uCACe;IAAEA,KAAAA,sJAAG;IAAEC,OAAO;IAAKC,QAAQ;AAAI"}}]
-}

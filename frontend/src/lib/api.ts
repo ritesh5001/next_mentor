@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import type { ApiResponse } from "@nextmentor/shared";
+import { envOr, envUrl } from "@nextmentor/shared";
 
 import { SESSION_COOKIE } from "./session";
 
@@ -15,7 +16,12 @@ import { SESSION_COOKIE } from "./session";
  *                     cookie is attached by the server rather than by JS
  */
 
-const BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+// envOr, not ??: an empty API_URL on Vercel would silently resolve to
+// localhost:4000 in production and every call would fail with no clue why.
+const BASE = envUrl(
+  envOr(process.env.API_URL, process.env.NEXT_PUBLIC_API_URL),
+  "http://localhost:4000",
+);
 
 export class ApiError extends Error {
   constructor(

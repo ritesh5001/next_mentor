@@ -1,5 +1,0 @@
-{"timestamp":"00:00:00.898","source":"Server","level":"LOG","message":"- Experiments (use with caution):"}
-{"timestamp":"00:00:00.898","source":"Server","level":"LOG","message":"  ✓ authInterrupts"}
-{"timestamp":"00:00:00.899","source":"Server","level":"LOG","message":""}
-{"timestamp":"00:00:00.899","source":"Server","level":"LOG","message":"✓ Generated AGENTS.md and CLAUDE.md for AI agents. Set `agentRules: false` in next.config to disable."}
-{"timestamp":"00:02:36.167","source":"Server","level":"LOG","message":"✓ Compiled in 47ms"}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { envUrl } from "@nextmentor/shared";
 import { getActivePlans } from "@/lib/queries";
 
 import {
@@ -46,7 +47,7 @@ export default async function HomePage() {
             name: "NextMentor",
             description:
               "Practical, project-led courses in digital marketing, AI and design.",
-            url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+            url: envUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000"),
           }),
         }}
       />

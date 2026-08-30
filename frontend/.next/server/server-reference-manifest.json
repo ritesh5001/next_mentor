@@ -1,20 +1,9 @@
 {
   "node": {
-    "4043f6c0873bc0129799de5e881c6055a200c193a6": {
+    "40106b927fee3c98ffae98208933973f1831760ace": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/app/(admin)/admin/content/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_1"
-    },
-    "404988b4e800b163a4f5428577cb58a95811714754": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         }
@@ -22,21 +11,10 @@
       "filename": "frontend/src/app/(admin)/admin/content/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_3"
     },
-    "4069b47e0c781fefe5f17a9d7bbbbed87743910947": {
+    "404d936eede8276aefd85f0b8af31389636f19ce44": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/app/(admin)/admin/content/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_0"
-    },
-    "40f86b6440911c666402426d5b531b9842d1c4e0ce": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         }
@@ -44,122 +22,52 @@
       "filename": "frontend/src/app/(admin)/admin/content/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_2"
     },
-    "4010d639b0c8cd171938212de4cdc8092968649164": {
+    "40c9036a45ed9b828af568e1dec5effc1bdc3ef204": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         }
       },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "approvePayoutAction"
+      "filename": "frontend/src/app/(admin)/admin/content/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "40176d5e9f4354f296e26043b123495ecb766c465c": {
+    "40e53346b2cd1b818d657f56c41118620f421d2df3": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         }
       },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "requestLessonUploadAction"
+      "filename": "frontend/src/app/(admin)/admin/content/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_1"
     },
-    "402901219178f20f040a94d6a617febda0b7031c78": {
+    "401f8743bc666a5cdaffac4f529f64cd6884a43602": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -169,426 +77,12 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "requestTrainingUploadAction"
-    },
-    "402a314162af795e726f2f6b4338631bdfa0344fd8": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "deletePromoAssetAction"
-    },
-    "403f6f3a578c97b9be4c39b9b996f25625c5d6a2c2": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "deleteTrainingModuleAction"
-    },
-    "406ca440ccd77b2a0a2ea23aa9350c2fcdaec2cca4": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "requestPromoUploadAction"
-    },
-    "4082dad750863c5de06c3b48fd4ddf8af381f2f02c": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "requestThumbnailUploadAction"
-    },
-    "40953e85bbfd388d60cad2a77da146a72e8c169088": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "deleteLessonAction"
-    },
-    "4098157f977aa2ea332df3b2bc438253e7adbca224": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "deleteCouponAction"
-    },
-    "40bc20f8f18ff6a51f948ecd9bf82d1f8504234eb8": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "deleteModuleAction"
-    },
-    "40e28c64f4f90f61e8181e005d1bd80bba5e8e182c": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "cancelMentorshipSlotAction"
-    },
-    "40ea7ba3e1d09cb9a46368e0075d346474a1bb6f8e": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
@@ -596,30 +90,30 @@
       "filename": "frontend/src/actions/admin.ts",
       "exportedName": "deleteCourseAction"
     },
-    "6011acd0a5f2ecbf7d944207e32a28b5b092ef6dc4": {
+    "40230be348df45e5a99c2d132900a71393a122ac90": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -629,43 +123,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "rejectPayoutAction"
+      "exportedName": "requestTrainingUploadAction"
     },
-    "60124d15f95758033a8b4ad77760402d1fb7b7745d": {
+    "40569f7be65c43f53c73ee59497a5f865e4890fa70": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -675,43 +169,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "setUserBlockedAction"
+      "exportedName": "deleteLessonAction"
     },
-    "603030dc1d59be7b5d68328f76b405836e2c7741cf": {
+    "405fd2d354171bd58948d8b15b58399a0af08e5e50": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -721,43 +215,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "updateLessonAction"
+      "exportedName": "requestPromoUploadAction"
     },
-    "6030ec7ccccc12137930c940afc32ae64182f03b2b": {
+    "407da7a85479b5b7b2dfc5ed9a0c4306612b359fb2": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -767,43 +261,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "setUserRoleAction"
+      "exportedName": "requestThumbnailUploadAction"
     },
-    "60370f9673b6dfb851f190fafd347b0af0e3edfd46": {
+    "408214f78a556b66d0121c91766e1886916243a474": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -813,43 +307,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "updateCourseAction"
+      "exportedName": "approvePayoutAction"
     },
-    "603bc6c3d9a573de9cd79f477463fa91fb0efd2263": {
+    "408288ba6c9f361acad1ce1ad3bcc57d6949c8ea36": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -859,43 +353,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "setPlanActiveAction"
+      "exportedName": "requestLessonUploadAction"
     },
-    "603f6d5531d62ceef89468cbc379f1f7c7b2479e1a": {
+    "408f9379d3fb298b6ee6a3fa431a6eeb35bb55da5e": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -905,43 +399,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createCourseAction"
+      "exportedName": "deletePromoAssetAction"
     },
-    "60466a0e0ed15e4191c4a2123ca46770ab696ace19": {
+    "409eeb57951eb8cedd98e0c76796097ba14d6cc02a": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -951,43 +445,43 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createLessonAction"
+      "exportedName": "cancelMentorshipSlotAction"
     },
-    "604da579212af28b318f4f0768f0d2a6ec010bab76": {
+    "40ab4dd04c080ed7b5c4baeebcfe9668528d7c1e0e": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -997,12 +491,150 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "deleteModuleAction"
+    },
+    "40acf32b0d86743908ed6ea4bad0fa8980f7a7eabe": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "deleteTrainingModuleAction"
+    },
+    "40b1a714983207118a599aabd57efed4bab2285fcf": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "deleteCouponAction"
+    },
+    "600551e8745c4c0452922ab7eb598340ca1d45d91a": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
@@ -1010,30 +642,30 @@
       "filename": "frontend/src/actions/admin.ts",
       "exportedName": "createMentorshipSlotAction"
     },
-    "60523b228a308fbda46e4cf449f6fc27f493a510fa": {
+    "600eee61a8b35b4776d4860fda053365067a8b922f": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -1043,472 +675,12 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createPlanAction"
-    },
-    "60532003fe23ec8a40efd9e4c79f6d82808da7a7a6": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "setCourseThumbnailAction"
-    },
-    "605c08c6cd4c48c47abc899b9f23a25d1e9533aa5b": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "updatePlanAction"
-    },
-    "607637bae8ff183b4bcf2b3e42d454b4f6bb3aea11": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createCouponAction"
-    },
-    "6084bcc6dee5281d5fae5226fb35c37b14f9bdea96": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createModuleAction"
-    },
-    "609e68b45dfa90059954255332cc749a92a1cc8006": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createTrainingModuleAction"
-    },
-    "60aaee7cfcc38217bf3b8d50a91c1a3f551906513a": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "setPromoAssetActiveAction"
-    },
-    "60abbe588c294c9574dac693d9ac8e28ee6171fe65": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "markPayoutPaidAction"
-    },
-    "60ac0dae36f22148197f52c2c5fa775e3d47fba9e1": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "createPromoAssetAction"
-    },
-    "60e6893c606cd3b4600c983f1ba430f8b7d255b1ce": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/admin.ts",
-      "exportedName": "setCourseStatusAction"
-    },
-    "60ea01382c1f4e2c5566448fc6d7c47d775b5380c2": {
-      "workers": {
-        "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/payouts/page": {
-          "moduleId": 53795,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
@@ -1516,30 +688,30 @@
       "filename": "frontend/src/actions/admin.ts",
       "exportedName": "setCouponActiveAction"
     },
-    "707ca557bbf302235ba1b73c3abef0ff845d052399": {
+    "60175a69136343cdc91489764ff969d6f85fc445ba": {
       "workers": {
         "app/(admin)/admin/content/page": {
-          "moduleId": 20515,
+          "moduleId": 220515,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/[courseId]/page": {
-          "moduleId": 11360,
+          "moduleId": 211360,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/courses/new/page": {
-          "moduleId": 92183,
+          "moduleId": 392183,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         },
@@ -1549,12 +721,840 @@
           "codeHash": null
         },
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         },
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createLessonAction"
+    },
+    "60219ba678a44b70a623519dc9267fa486d84092bd": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "markPayoutPaidAction"
+    },
+    "6036d15b26ea1f68b5d4cbc00bae3b8265234f9f1d": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createPlanAction"
+    },
+    "60475372e6113ce2ddc50a1b0e5a05842592c0afc6": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createModuleAction"
+    },
+    "604a157ce97cf9109884941974e7c223610ae85908": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "setUserRoleAction"
+    },
+    "607430d8f8bde777f394b49d3ff82d2ce29d96a3e1": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "setCourseStatusAction"
+    },
+    "608579617ecd276f9ec0078c1cbec7328af189ca0d": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "setCourseThumbnailAction"
+    },
+    "609feb0b25cf629dc7d264e984ba85dee7faa137a4": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createTrainingModuleAction"
+    },
+    "60acd913f415226861efeb6f1034995ece8b5b6c6d": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "setUserBlockedAction"
+    },
+    "60bffc0a500ee251499d149b3196f94352ce1ab23f": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "setPromoAssetActiveAction"
+    },
+    "60c2fcda420e395e6d38794305baf3f1f9d1e94fb0": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createCouponAction"
+    },
+    "60cdd29c39779d349b150bccbdcd39899e51b3a21e": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "updatePlanAction"
+    },
+    "60dd28d470d0cd17f52dddedab1a41c4c1abd519d2": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "rejectPayoutAction"
+    },
+    "60debaa8e6f7d9b3be8a127fb5cb0a8ff90e3e5ec3": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createCourseAction"
+    },
+    "60ed00a13fe0b7205099517a99283a907816896012": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "updateLessonAction"
+    },
+    "60ef340e3877eed785edffb1668ccbfa16a9a5e41b": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "createPromoAssetAction"
+    },
+    "60f3ec1cdedadf34ac9d53837a154526b3dec7f3de": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "updateCourseAction"
+    },
+    "60f40de10df7cbc01f174c765cd755434cf0b351e8": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/admin.ts",
+      "exportedName": "setPlanActiveAction"
+    },
+    "70502f639d5c4c61fff080b2317b3a8b1480b89284": {
+      "workers": {
+        "app/(admin)/admin/content/page": {
+          "moduleId": 220515,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/coupons/page": {
+          "moduleId": 362939,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/[courseId]/page": {
+          "moduleId": 211360,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/courses/new/page": {
+          "moduleId": 392183,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/kyc/page": {
+          "moduleId": 112351,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/payouts/page": {
+          "moduleId": 53795,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/plans/page": {
+          "moduleId": 864100,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(admin)/admin/users/page": {
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
@@ -1562,10 +1562,10 @@
       "filename": "frontend/src/actions/admin.ts",
       "exportedName": "reviewKycAction"
     },
-    "400af7d395468e99fde55ba539b2d7e581d8090db5": {
+    "401dce75be7f5327b508c6890c14ce2628d9ad6382": {
       "workers": {
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         }
@@ -1573,10 +1573,10 @@
       "filename": "frontend/src/app/(admin)/admin/coupons/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "40a29cb5414fa71a5e521c8fe15f6cf71c8d63756b": {
+    "40be237a1df308638aa4e839192cce739180cdb234": {
       "workers": {
         "app/(admin)/admin/coupons/page": {
-          "moduleId": 62939,
+          "moduleId": 362939,
           "async": false,
           "codeHash": null
         }
@@ -1584,10 +1584,10 @@
       "filename": "frontend/src/app/(admin)/admin/coupons/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_1"
     },
-    "4096888c0fcdbe59ea0b6bd21874c2f5b7ec02c041": {
+    "404d0ae6f155f92fd8086384dcbcc4cc0d05ffd4f2": {
       "workers": {
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         }
@@ -1595,10 +1595,10 @@
       "filename": "frontend/src/app/(admin)/admin/kyc/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "600a4cd17f221cc58142e882398e5491fb4cdb88bc": {
+    "604c815d9fbb5d1fefdf2c9e589d6444c17e607769": {
       "workers": {
         "app/(admin)/admin/kyc/page": {
-          "moduleId": 12351,
+          "moduleId": 112351,
           "async": false,
           "codeHash": null
         }
@@ -1606,7 +1606,7 @@
       "filename": "frontend/src/app/(admin)/admin/kyc/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_1"
     },
-    "402e50258d9f401e5a0feb9e5c99eee2bc162376e4": {
+    "40843dbb3c84e3f4afe23111922e86439e9b6f2429": {
       "workers": {
         "app/(admin)/admin/payouts/page": {
           "moduleId": 53795,
@@ -1617,7 +1617,7 @@
       "filename": "frontend/src/app/(admin)/admin/payouts/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "60037f22c9e83c9711ff5b9082dc93617a1c7d682c": {
+    "601db52538a0fc4f854452aba0a81460efe1af0c8e": {
       "workers": {
         "app/(admin)/admin/payouts/page": {
           "moduleId": 53795,
@@ -1628,7 +1628,7 @@
       "filename": "frontend/src/app/(admin)/admin/payouts/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_2"
     },
-    "604d7d2a1237a0b54430f80d6c0c102deda7038e57": {
+    "609ec380b5acdc833568d185fa79d1a0f84e1f4132": {
       "workers": {
         "app/(admin)/admin/payouts/page": {
           "moduleId": 53795,
@@ -1639,10 +1639,10 @@
       "filename": "frontend/src/app/(admin)/admin/payouts/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_1"
     },
-    "40a58d53dd1e862b42304c6dfa0a640047244e7d0a": {
+    "406df51389b9124ccafb300b35bb20c2b30d40d23a": {
       "workers": {
         "app/(admin)/admin/plans/page": {
-          "moduleId": 64100,
+          "moduleId": 864100,
           "async": false,
           "codeHash": null
         }
@@ -1650,10 +1650,10 @@
       "filename": "frontend/src/app/(admin)/admin/plans/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "4021a0482ebba22c06e951e7d08a2a40e079871de6": {
+    "40b351e81c918ea056a843093e4523010a0876c7da": {
       "workers": {
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
@@ -1661,10 +1661,10 @@
       "filename": "frontend/src/app/(admin)/admin/users/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_1"
     },
-    "6047dcd411ec5cf011ad3856bf439dadf1c0144eda": {
+    "602ad479c7bc7a59ab8627c2246923494223624eea": {
       "workers": {
         "app/(admin)/admin/users/page": {
-          "moduleId": 58094,
+          "moduleId": 158094,
           "async": false,
           "codeHash": null
         }
@@ -1672,10 +1672,10 @@
       "filename": "frontend/src/app/(admin)/admin/users/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "6055558ac2a4db2276de90fa431a7eb8a14d0a10b1": {
+    "60b9b4f69ca67ad9dedf70cbbebcdb142abad8fe90": {
       "workers": {
         "app/(auth)/forgot-password/page": {
-          "moduleId": 60512,
+          "moduleId": 460512,
           "async": false,
           "codeHash": null
         }
@@ -1683,7 +1683,7 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "requestPasswordResetAction"
     },
-    "600e2844e60d6d8904515cdf9feade316f123baae3": {
+    "60a1f343eeb87e54735b1fda8f8cb77955c0b4e41a": {
       "workers": {
         "app/(auth)/login/page": {
           "moduleId": 34435,
@@ -1694,10 +1694,10 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "loginAction"
     },
-    "60075c022899f29bf4af631759bc171718e97b6a98": {
+    "60083e6410e3f608b849b0b5031a976a5edf708dcc": {
       "workers": {
         "app/(auth)/register/page": {
-          "moduleId": 77468,
+          "moduleId": 677468,
           "async": false,
           "codeHash": null
         }
@@ -1705,7 +1705,7 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "registerAction"
     },
-    "60f810a98fbbff20d10b4d63f8fb19fd256e3ec902": {
+    "609859bb82d82eb1ef7a6929bbce7c329b02741193": {
       "workers": {
         "app/(auth)/reset-password/page": {
           "moduleId": 98012,
@@ -1716,7 +1716,7 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "resetPasswordAction"
     },
-    "604cf504aa60182c7cb0879b2def6a66aa9333564b": {
+    "60a21a48002e350a40838d5eca62166cdd2367a882": {
       "workers": {
         "app/(auth)/reset-password/page": {
           "moduleId": 98012,
@@ -1724,7 +1724,7 @@
           "codeHash": null
         },
         "app/(auth)/verify/page": {
-          "moduleId": 77520,
+          "moduleId": 477520,
           "async": false,
           "codeHash": null
         }
@@ -1732,10 +1732,10 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "resendOtpAction"
     },
-    "6063bdd887bf80b3bffb8bf18ba940aa0f18e9a7f0": {
+    "60276aa3d2f070c5fc2f58899f079a8a56f8d28b6c": {
       "workers": {
         "app/(auth)/verify/page": {
-          "moduleId": 77520,
+          "moduleId": 477520,
           "async": false,
           "codeHash": null
         }
@@ -1743,10 +1743,10 @@
       "filename": "frontend/src/actions/auth.ts",
       "exportedName": "verifyEmailAction"
     },
-    "4053bb34c860b7a7fb193a3f5aa0959af624f4da02": {
+    "40e1b1a240dba1f6294fa597ed2ce5897b7cc4777c": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         }
@@ -1754,15 +1754,15 @@
       "filename": "frontend/src/app/(dashboard)/dashboard/certificates/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "4002bcd453a5a9e2847043cd3e7d75f38b8427fa42": {
+    "4032cedbd722def4c0178dd82a122aa342b879d8d8": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -1772,408 +1772,42 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "requestAvatarUploadAction"
-    },
-    "4032c57db865d99b4d0661cb7ea0021427c8a6aba1": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "cancelBookingAction"
-    },
-    "40403b075fa68731a6c0cd60baa4d8e96c953505c7": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "saveProgressAction"
-    },
-    "404484985cc5b1e441978b19b2888297e6543f52eb": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "setAvatarAction"
-    },
-    "404efa6ec3b7504600dc58a4958917c3aac7d63946": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "issueCertificateAction"
-    },
-    "40527c2dc4e5abc102c19af6da5681107d7e1b0587": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "createCheckoutAction"
-    },
-    "408c3c16fc1bc770bd52f8f0ae378a8ceff4874d7a": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
@@ -2181,15 +1815,15 @@
       "filename": "frontend/src/actions/index.ts",
       "exportedName": "pollOwnershipAction"
     },
-    "408c81a11361ba674f7a7d0c1649521784822bfcc1": {
+    "40367c3f437c612bcb52e644cb374b3c339b1a7a54": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2199,42 +1833,103 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "issueCertificateAction"
+    },
+    "406f99ac822743e00e604d51e991a1e3ab1ca79ef7": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
@@ -2242,15 +1937,15 @@
       "filename": "frontend/src/actions/index.ts",
       "exportedName": "hidePostAction"
     },
-    "40a5f185420abc7c75bdd4489e7718e1e757adb641": {
+    "407cc6e13211faad616f70afd4f7465c4d87e5dbff": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2260,164 +1955,42 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "bookSlotAction"
-    },
-    "40e0d9d2441086f6878b4f8d304ac0fbc30c52614f": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "deleteLeadAction"
-    },
-    "40f6bb4ab6fed434584458767baa3326043e871eb3": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
@@ -2425,15 +1998,15 @@
       "filename": "frontend/src/actions/index.ts",
       "exportedName": "previewCouponAction"
     },
-    "6011f343d4a1ed4289b1433c4e125a28b8c908a7b8": {
+    "40b3d07e19b194f20e7cb3e3064dc7fb0c0312ef98": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2443,58 +2016,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "createPostAction"
+      "exportedName": "deleteLeadAction"
     },
-    "60311d8332604f9f7eea9e0ea04f31ff93a14c6be6": {
+    "40c1b6a21ac972801bf43aafaa832167fa197953e6": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2504,58 +2077,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "updateProfileAction"
+      "exportedName": "bookSlotAction"
     },
-    "603e6c65a89ad7c5dbc4119cf39fa78fe524cf2bf9": {
+    "40e95e200de4cc2ccb8a8182b1c838ae1ff614c384": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2565,58 +2138,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "createLeadAction"
+      "exportedName": "cancelBookingAction"
     },
-    "60538b4559c5ee9d0a2408b8b5d85b1337ac113d2d": {
+    "40f36f2814f22d56b8d8beb3f4c6637bc9b8924e0d": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2626,58 +2199,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "setPostLockedAction"
+      "exportedName": "setAvatarAction"
     },
-    "6063f31b06096e54455bf109326d260cf61efe8b02": {
+    "40f5df01f18e380f17522eec25ddda4c6d45ca9cbd": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2687,58 +2260,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "changePasswordAction"
+      "exportedName": "createCheckoutAction"
     },
-    "6095cfc8d230cd7b71b2f18949c8f1ef74aa3c451b": {
+    "40f686b6d1c7467c1e615b22ee535ac16caf8ddba1": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2748,58 +2321,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "setPostPinnedAction"
+      "exportedName": "saveProgressAction"
     },
-    "60b0ea7dab2fca8e37918f174c4020c06dd671a275": {
+    "40fdb131a5265eccb0e8498317a26b302a3f5012ba": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2809,58 +2382,58 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
       "filename": "frontend/src/actions/index.ts",
-      "exportedName": "requestPayoutAction"
+      "exportedName": "requestAvatarUploadAction"
     },
-    "60b404e3f0352bb4d74b907e0d0097e7a47b80cd8b": {
+    "603b0be3b055fa5303fc30e6a2eaa9c2cf9aca33f8": {
       "workers": {
         "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
+          "moduleId": 294420,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         },
@@ -2870,164 +2443,42 @@
           "codeHash": null
         },
         "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
+          "moduleId": 709665,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
+          "moduleId": 861119,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
+          "moduleId": 631762,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
+          "moduleId": 480827,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
+          "moduleId": 582988,
           "async": false,
           "codeHash": null
         },
         "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
+          "moduleId": 830567,
           "async": false,
           "codeHash": null
         },
         "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "createCommentAction"
-    },
-    "60c551b6070142af91ff9e09b6d9687e9be5a5b212": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
-          "async": false,
-          "codeHash": null
-        }
-      },
-      "filename": "frontend/src/actions/index.ts",
-      "exportedName": "updateLeadStatusAction"
-    },
-    "60f8c5338d64562ed992c3e1c76b4286f8815e06ea": {
-      "workers": {
-        "app/(dashboard)/dashboard/certificates/page": {
-          "moduleId": 94420,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/community/page": {
-          "moduleId": 78245,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/earnings/page": {
-          "moduleId": 9665,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/kyc/page": {
-          "moduleId": 61119,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/leads/page": {
-          "moduleId": 31762,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/plan/page": {
-          "moduleId": 80827,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/dashboard/profile/page": {
-          "moduleId": 82988,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(dashboard)/learn/[slug]/page": {
-          "moduleId": 30567,
-          "async": false,
-          "codeHash": null
-        },
-        "app/(marketing)/courses/[slug]/page": {
-          "moduleId": 28051,
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
@@ -3035,21 +2486,559 @@
       "filename": "frontend/src/actions/index.ts",
       "exportedName": "submitKycAction"
     },
-    "40201756a7f8abdb5cda38e864e4c2688507ec96c7": {
+    "603b3a2f1e2d2f722d9ead69c764646d79df218129": {
       "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
           "async": false,
           "codeHash": null
         }
       },
-      "filename": "frontend/src/app/(dashboard)/dashboard/community/[postId]/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_1"
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "createCommentAction"
     },
-    "403181413ebb4cb17c65d8c6e13a4bb7dc07917a64": {
+    "6059611a1b25344018932b8e61a5d2c9cc4be1a972": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "setPostPinnedAction"
+    },
+    "608139a97b8eba0b0798261cf6003931c566d89399": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "setPostLockedAction"
+    },
+    "608331720dcd1acbd3d9ae1216776fa46d01526c4e": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "requestPayoutAction"
+    },
+    "608384a0f5274fe411ce4110e72e1f42a012b002a0": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "updateProfileAction"
+    },
+    "6088f7ae603a8dc15a0fc46d954d83b62c979446ec": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "updateLeadStatusAction"
+    },
+    "60bb23e649e57a5e2f581d34d9aa8026098ce76c3f": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "createLeadAction"
+    },
+    "60bc643a4322767199ad7d7d5b661d600a7cfde224": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "createPostAction"
+    },
+    "60beb34b15037eb21bc5c4a429e9897420af6e211f": {
+      "workers": {
+        "app/(dashboard)/dashboard/certificates/page": {
+          "moduleId": 294420,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/community/page": {
+          "moduleId": 78245,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/earnings/page": {
+          "moduleId": 709665,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/kyc/page": {
+          "moduleId": 861119,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/leads/page": {
+          "moduleId": 631762,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/mentorship/page": {
+          "moduleId": 167529,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/plan/page": {
+          "moduleId": 480827,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/dashboard/profile/page": {
+          "moduleId": 582988,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(dashboard)/learn/[slug]/page": {
+          "moduleId": 830567,
+          "async": false,
+          "codeHash": null
+        },
+        "app/(marketing)/courses/[slug]/page": {
+          "moduleId": 328051,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/actions/index.ts",
+      "exportedName": "changePasswordAction"
+    },
+    "403e80ced844abc9bcdc66e97d4fa90bd138d7d571": {
       "workers": {
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         }
@@ -3057,10 +3046,10 @@
       "filename": "frontend/src/app/(dashboard)/dashboard/community/[postId]/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "408b5c783e973f76f94a798dcb90c1985a79ede179": {
+    "40d34f74867622a071caaf5f308da48d1b739e444d": {
       "workers": {
         "app/(dashboard)/dashboard/community/[postId]/page": {
-          "moduleId": 67827,
+          "moduleId": 467827,
           "async": false,
           "codeHash": null
         }
@@ -3068,10 +3057,21 @@
       "filename": "frontend/src/app/(dashboard)/dashboard/community/[postId]/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_2"
     },
-    "40a4dfaa7d66297928c49d128eef589d59c7606603": {
+    "40f6380790a932dfdef4b03595ab042e71b39100e3": {
+      "workers": {
+        "app/(dashboard)/dashboard/community/[postId]/page": {
+          "moduleId": 467827,
+          "async": false,
+          "codeHash": null
+        }
+      },
+      "filename": "frontend/src/app/(dashboard)/dashboard/community/[postId]/page.tsx",
+      "exportedName": "$$RSC_SERVER_ACTION_1"
+    },
+    "400755a217b59705f886e53be125e9b3ab3ea3a79e": {
       "workers": {
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         }
@@ -3079,10 +3079,10 @@
       "filename": "frontend/src/app/(dashboard)/dashboard/mentorship/page.tsx",
       "exportedName": "$$RSC_SERVER_ACTION_0"
     },
-    "40d459429e7f86ac6ffa1bba333513055fc2af624b": {
+    "40d5070ff56a71575639ce006a6fba26c001288dbc": {
       "workers": {
         "app/(dashboard)/dashboard/mentorship/page": {
-          "moduleId": 67529,
+          "moduleId": 167529,
           "async": false,
           "codeHash": null
         }
@@ -3092,5 +3092,5 @@
     }
   },
   "edge": {},
-  "encryptionKey": "Oka97+w1ktd44I8S0pYts4W6IOYVprvLsSOyBaKadoo="
+  "encryptionKey": "wd267/3o+sKTNb9O4ArG92r9g1GfDfjqGHNCeDjHHe0="
 }

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { envUrl } from "@nextmentor/shared";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "@/styles/globals.css";
 
@@ -13,7 +14,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
+  // envUrl, not ??: an env var set to "" is not undefined, so ?? never fired
+  // and new URL("") threw during the Vercel build.
+  metadataBase: new URL(envUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000")),
   title: {
     default: "NextMentor — Learn digital skills that pay",
     template: "%s — NextMentor",

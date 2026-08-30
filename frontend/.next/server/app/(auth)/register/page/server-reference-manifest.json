@@ -1,9 +1,9 @@
 {
   "node": {
-    "60075c022899f29bf4af631759bc171718e97b6a98": {
+    "60083e6410e3f608b849b0b5031a976a5edf708dcc": {
       "workers": {
         "app/(auth)/register/page": {
-          "moduleId": 77468,
+          "moduleId": 677468,
           "async": false,
           "codeHash": null
         }
