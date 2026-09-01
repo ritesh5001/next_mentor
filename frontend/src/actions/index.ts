@@ -279,3 +279,22 @@ export async function bookSlotAction(slotId: string): Promise<ActionState> {
 export async function cancelBookingAction(slotId: string): Promise<ActionState> {
   return run(() => api(`/api/mentorship/${slotId}/book`, { method: "DELETE" }), ["/dashboard/mentorship"]);
 }
+
+/**
+ * Exchanges a resource id for a short-lived signed download URL.
+ *
+ * The API re-checks enrollment before it signs anything, so this action stays
+ * a thin pass-through — the authorisation is not here.
+ */
+export async function getResourceUrlAction(
+  resourceId: string,
+): Promise<{ url?: string; error?: string }> {
+  try {
+    const res = await api<{ url: string; title: string }>(`/api/resources/${resourceId}`);
+    return { url: res.url };
+  } catch (err) {
+    return {
+      error: err instanceof ApiError ? err.message : "Could not prepare that download.",
+    };
+  }
+}

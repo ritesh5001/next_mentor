@@ -14,7 +14,6 @@ export const metadata: Metadata = {
 
 const ROLES = [
   { value: "student" as const, label: "Student" },
-  { value: "instructor" as const, label: "Instructor" },
   { value: "admin" as const, label: "Admin" },
 ];
 

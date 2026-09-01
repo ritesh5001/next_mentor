@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CheckCircle2, ChevronLeft, PlayCircle } from "lucide-react";
 
 import { VideoPlayer } from "@/components/player/video-player";
+import { LessonResources } from "@/components/player/lesson-resources";
+import { getResourceUrlAction } from "@/actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { formatTimestamp } from "@/lib/format";
@@ -98,6 +100,11 @@ export default async function LearnPage({ params, searchParams }: Params) {
               {view.course.title}
             </p>
           </header>
+
+          <LessonResources
+            resources={view.active.resources ?? []}
+            getDownloadUrl={getResourceUrlAction}
+          />
         </div>
 
         {/* ----------------------------------------------------- curriculum */}

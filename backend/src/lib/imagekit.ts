@@ -282,3 +282,63 @@ export function signedDocumentUrl(
     return null;
   }
 }
+
+/* --------------------------------------------------- course resource files */
+
+/**
+ * Uploads a downloadable lesson file (a PDF worksheet, slide deck, checklist).
+ *
+ * Private, for the same reason KYC documents are: this is paid content. A
+ * public URL would let anyone with the link download it without buying, and
+ * course links get shared. Students only ever receive a short-lived signed URL,
+ * and only after their enrollment has been checked on the server.
+ *
+ * Server-side upload rather than browser-direct, because ImageKit's upload
+ * signature does not cover `isPrivateFile` — a modified client could publish
+ * the file. Admin uploads are infrequent, so the extra hop costs nothing.
+ */
+export async function uploadCourseResource(params: {
+  file: Buffer;
+  contentType: string;
+  courseId: string;
+  lessonId: string;
+}): Promise<{ filePath: string; sizeBytes: number } | { error: string }> {
+  const isPdf = ALLOWED_DOC_TYPES.has(params.contentType);
+  const isImage = ALLOWED_IMAGE_TYPES.has(params.contentType);
+
+  if (!isPdf && !isImage) {
+    return { error: "Attach a PDF or an image." };
+  }
+  if (params.file.length === 0) return { error: "That file appears to be empty." };
+  if (params.file.length > MAX_DOC_BYTES) {
+    return { error: `Files must be under ${Math.round(MAX_DOC_BYTES / 1024 / 1024)}MB.` };
+  }
+
+  const ext = params.contentType.split("/")[1].replace("jpeg", "jpg");
+
+  try {
+    const res = await ik().upload({
+      file: params.file,
+      fileName: `${crypto.randomUUID()}.${ext}`,
+      folder: `/resources/${params.courseId}/${params.lessonId}`,
+      useUniqueFileName: false,
+      isPrivateFile: true,
+    });
+
+    return { filePath: res.filePath, sizeBytes: params.file.length };
+  } catch (err) {
+    console.error("[imagekit] Lesson resource upload failed", params.lessonId, err);
+    return { error: "Could not store that file. Please try again." };
+  }
+}
+
+/**
+ * Signed URL for a lesson resource.
+ *
+ * Longer-lived than a KYC link (an hour rather than five minutes): a student
+ * may open the lesson, read for a while, and download the worksheet at the end,
+ * and an expired link there is just an annoying bug report.
+ */
+export function signedResourceUrl(filePath: string, expireSeconds = 3600): string | null {
+  return signedDocumentUrl(filePath, expireSeconds);
+}

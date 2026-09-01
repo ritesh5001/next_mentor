@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Upload } from "lucide-react";
+import { Paperclip, Plus, Trash2, Upload } from "lucide-react";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,8 @@ export type EditorLesson = {
   isFreePreview: boolean;
   videoStatus: string;
   streamVideoId: string | null;
+  /** How many PDFs/handouts are attached. */
+  resourceCount?: number;
 };
 
 export type EditorModule = {
@@ -30,6 +32,7 @@ type Actions = {
   deleteModule: (moduleId: string) => Promise<ActionState>;
   addLesson: FormAction;
   deleteLesson: (lessonId: string) => Promise<ActionState>;
+  uploadResource: (lessonId: string, formData: FormData) => Promise<ActionState>;
   requestUpload: (
     lessonId: string,
   ) => Promise<{ uploadUrl: string; videoId: string } | { error: string }>;
@@ -230,6 +233,12 @@ export function CurriculumEditor({
 
                     <UploadButton lessonId={lesson.id} requestUpload={actions.requestUpload} />
 
+                    <ResourceButton
+                      lessonId={lesson.id}
+                      count={lesson.resourceCount ?? 0}
+                      uploadResource={actions.uploadResource}
+                    />
+
                     <button
                       type="button"
                       disabled={pending}
@@ -302,6 +311,75 @@ export function CurriculumEditor({
           Add section
         </Button>
       </form>
+    </div>
+  );
+}
+
+/**
+ * Attaches a PDF or handout to a lesson.
+ *
+ * Posts to our own API rather than straight to ImageKit: course material is
+ * paid content and must be stored as a private file, and ImageKit's upload
+ * signature does not cover that flag.
+ */
+function ResourceButton({
+  lessonId,
+  count,
+  uploadResource,
+}: {
+  lessonId: string;
+  count: number;
+  uploadResource: (lessonId: string, formData: FormData) => Promise<ActionState>;
+}) {
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handle(file: File) {
+    setError(null);
+    setBusy(true);
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("title", file.name.replace(/\.[^.]+$/, ""));
+
+    const result = await uploadResource(lessonId, form);
+    if (result?.error) setError(result.error);
+    else router.refresh();
+
+    setBusy(false);
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/pdf,image/*"
+        className="sr-only"
+        aria-label="Attach a PDF or handout"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) void handle(f);
+          e.target.value = "";
+        }}
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        loading={busy}
+        onClick={() => inputRef.current?.click()}
+      >
+        <Paperclip className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+        {count > 0 ? `${count} file${count === 1 ? "" : "s"}` : "Attach PDF"}
+      </Button>
+      {error && (
+        <p role="alert" className="text-xs font-medium text-[var(--color-destructive)]">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

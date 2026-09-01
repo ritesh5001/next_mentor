@@ -1,10 +1,12 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionState, UploadAuth } from "@nextmentor/shared";
 
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError, API_BASE } from "@/lib/api";
+import { SESSION_COOKIE } from "@/lib/session";
 
 export type { ActionState };
 
@@ -324,4 +326,43 @@ export async function cancelMentorshipSlotAction(id: string): Promise<ActionStat
     ["/admin/content", "/dashboard/mentorship"],
     "Session cancelled. Booked attendees keep their record.",
   );
+}
+
+/**
+ * Attaches a downloadable file to a lesson.
+ *
+ * Multipart forwarded straight to the API — the bytes go through the server so
+ * it can force ImageKit's private flag. See lib/imagekit.ts on the backend.
+ */
+export async function uploadLessonResourceAction(
+  lessonId: string,
+  formData: FormData,
+): Promise<ActionState> {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  if (!token) return { error: "Your session expired. Sign in again." };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/admin/lessons/${lessonId}/resources`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    const payload = (await res.json()) as { ok: boolean; error?: string };
+    if (!payload.ok) return { error: payload.error ?? "Could not attach that file." };
+  } catch {
+    return { error: "Could not attach that file. Check your connection." };
+  }
+
+  revalidatePath("/admin/courses");
+  return { success: "Attached" };
+}
+
+export async function deleteLessonResourceAction(resourceId: string): Promise<ActionState> {
+  try {
+    await api(`/api/admin/resources/${resourceId}`, { method: "DELETE" });
+  } catch (err) {
+    return { error: err instanceof ApiError ? err.message : "Could not remove that file." };
+  }
+  revalidatePath("/admin/courses");
+  return { success: "Removed" };
 }

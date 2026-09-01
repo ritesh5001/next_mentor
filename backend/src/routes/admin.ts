@@ -1,19 +1,24 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, max } from "drizzle-orm";
 import { courseFormSchema, requestUploadSchema } from "@nextmentor/shared";
 
 import { db } from "@/db";
-import { plans } from "@/db/schema";
+import { lessonResources, lessons, modules, plans } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import { listPlansForAdmin } from "@/services/plans";
 import { listCouponsForAdmin } from "@/services/coupons";
 import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay } from "@/services/admin";
 import { listKycForAdmin, listPayoutsForAdmin } from "@/services/affiliate";
 import { approvePayout, markPayoutPaid, rejectPayout } from "@/services/payouts";
-import { createUploadAuth, signedDocumentUrl } from "@/lib/imagekit";
+import {
+  createUploadAuth,
+  signedDocumentUrl,
+  uploadCourseResource,
+  deleteObject,
+} from "@/lib/imagekit";
 import { createDirectUpload } from "@/lib/cloudflare-stream";
-import { requireAdmin, requireInstructor, currentUser } from "@/middleware/auth";
+import { requireAdmin, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 import * as write from "@/services/admin-write";
 
@@ -23,7 +28,7 @@ export const adminRoutes = new Hono();
 
 adminRoutes.get("/stats", requireAdmin, async (c) => ok(c, await getAdminStats()));
 adminRoutes.get("/revenue", requireAdmin, async (c) => ok(c, await getRevenueByDay(30)));
-adminRoutes.get("/courses", requireInstructor, async (c) => ok(c, await listCoursesForAdmin()));
+adminRoutes.get("/courses", requireAdmin, async (c) => ok(c, await listCoursesForAdmin()));
 adminRoutes.get("/plans", requireAdmin, async (c) => ok(c, await listPlansForAdmin()));
 adminRoutes.get("/coupons", requireAdmin, async (c) => ok(c, await listCouponsForAdmin()));
 adminRoutes.get("/orders", requireAdmin, async (c) => ok(c, await listOrdersForAdmin()));
@@ -61,7 +66,7 @@ adminRoutes.get("/payouts", requireAdmin, async (c) => {
   return ok(c, await listPayoutsForAdmin(status ?? "requested"));
 });
 
-adminRoutes.get("/courses/:courseId", requireInstructor, async (c) => {
+adminRoutes.get("/courses/:courseId", requireAdmin, async (c) => {
   const course = await getCourseForEditor(c.req.param("courseId"));
   if (!course) return fail(c, "That course no longer exists.", "not_found");
   return ok(c, course);
@@ -85,13 +90,13 @@ adminRoutes.get("/content", requireAdmin, async (c) => {
 
 /* ----------------------------------------------------------------- courses */
 
-adminRoutes.post("/courses", requireInstructor, async (c) => {
+adminRoutes.post("/courses", requireAdmin, async (c) => {
   const body = await parseBody(c, courseFormSchema);
   if (!body.ok) return body.response;
   return ok(c, await write.createCourse(body.data), 201);
 });
 
-adminRoutes.patch("/courses/:courseId", requireInstructor, async (c) => {
+adminRoutes.patch("/courses/:courseId", requireAdmin, async (c) => {
   const body = await parseBody(c, courseFormSchema);
   if (!body.ok) return body.response;
 
@@ -99,7 +104,7 @@ adminRoutes.patch("/courses/:courseId", requireInstructor, async (c) => {
   return result.ok ? ok(c, result) : fail(c, result.error, "not_found");
 });
 
-adminRoutes.patch("/courses/:courseId/status", requireInstructor, async (c) => {
+adminRoutes.patch("/courses/:courseId/status", requireAdmin, async (c) => {
   const body = await parseBody(
     c,
     z.object({ status: z.enum(["draft", "published", "archived"]) }),
@@ -117,7 +122,7 @@ adminRoutes.delete("/courses/:courseId", requireAdmin, async (c) => {
 
 /* ------------------------------------------------------- modules + lessons */
 
-adminRoutes.post("/modules", requireInstructor, async (c) => {
+adminRoutes.post("/modules", requireAdmin, async (c) => {
   const body = await parseBody(
     c,
     z.object({ courseId: z.string().min(1), title: z.string().trim().min(2).max(120) }),
@@ -127,12 +132,12 @@ adminRoutes.post("/modules", requireInstructor, async (c) => {
   return ok(c, { created: true }, 201);
 });
 
-adminRoutes.delete("/modules/:moduleId", requireInstructor, async (c) => {
+adminRoutes.delete("/modules/:moduleId", requireAdmin, async (c) => {
   await write.deleteModule(c.req.param("moduleId"));
   return ok(c, { deleted: true });
 });
 
-adminRoutes.post("/lessons", requireInstructor, async (c) => {
+adminRoutes.post("/lessons", requireAdmin, async (c) => {
   const body = await parseBody(
     c,
     z.object({ moduleId: z.string().min(1), title: z.string().trim().min(2).max(160) }),
@@ -142,7 +147,7 @@ adminRoutes.post("/lessons", requireInstructor, async (c) => {
   return ok(c, { created: true }, 201);
 });
 
-adminRoutes.patch("/lessons/:lessonId", requireInstructor, async (c) => {
+adminRoutes.patch("/lessons/:lessonId", requireAdmin, async (c) => {
   const body = await parseBody(
     c,
     z.object({ title: z.string().trim().min(2).max(160), isFreePreview: z.boolean() }),
@@ -152,13 +157,13 @@ adminRoutes.patch("/lessons/:lessonId", requireInstructor, async (c) => {
   return ok(c, { updated: true });
 });
 
-adminRoutes.delete("/lessons/:lessonId", requireInstructor, async (c) => {
+adminRoutes.delete("/lessons/:lessonId", requireAdmin, async (c) => {
   await write.deleteLesson(c.req.param("lessonId"));
   return ok(c, { deleted: true });
 });
 
 /** One-time Cloudflare upload URL — the file never passes through this server. */
-adminRoutes.post("/lessons/:lessonId/upload", requireInstructor, async (c) => {
+adminRoutes.post("/lessons/:lessonId/upload", requireAdmin, async (c) => {
   const result = await write.requestLessonUpload(c.req.param("lessonId"));
   return "error" in result ? fail(c, result.error, "server_error") : ok(c, result);
 });
@@ -232,7 +237,7 @@ adminRoutes.patch("/users/:userId", requireAdmin, async (c) => {
   const body = await parseBody(
     c,
     z.object({
-      role: z.enum(["student", "instructor", "admin"]).optional(),
+      role: z.enum(["student", "admin"]).optional(),
       isBlocked: z.boolean().optional(),
     }),
   );
@@ -291,7 +296,7 @@ adminRoutes.patch("/payouts/:payoutId", requireAdmin, async (c) => {
 
 /* -------------------------------------------------------------- uploads */
 
-adminRoutes.post("/uploads/image", requireInstructor, async (c) => {
+adminRoutes.post("/uploads/image", requireAdmin, async (c) => {
   const body = await parseBody(
     c,
     requestUploadSchema.extend({
@@ -309,7 +314,7 @@ adminRoutes.post("/uploads/image", requireInstructor, async (c) => {
   return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
 });
 
-adminRoutes.patch("/courses/:courseId/thumbnail", requireInstructor, async (c) => {
+adminRoutes.patch("/courses/:courseId/thumbnail", requireAdmin, async (c) => {
   const body = await parseBody(c, z.object({ key: z.string().min(1) }));
   if (!body.ok) return body.response;
   await write.setCourseThumbnail(c.req.param("courseId"), body.data.key);
@@ -355,3 +360,76 @@ adminRoutes.delete("/content/mentorship/:id", requireAdmin, async (c) => {
 
 /** Cloudflare direct-creator-upload, reused by training videos. */
 export { createDirectUpload };
+
+/* ------------------------------------------------- lesson resource files */
+
+/**
+ * Attaches a downloadable file to a lesson.
+ *
+ * Multipart through this API rather than browser-direct, so the server owns
+ * `isPrivateFile`. This is paid content; see lib/imagekit.ts.
+ */
+adminRoutes.post("/lessons/:lessonId/resources", requireAdmin, async (c) => {
+  const lessonId = c.req.param("lessonId");
+
+  const [lesson] = await db
+    .select({ id: lessons.id, courseId: modules.courseId })
+    .from(lessons)
+    .innerJoin(modules, eq(modules.id, lessons.moduleId))
+    .where(eq(lessons.id, lessonId))
+    .limit(1);
+
+  if (!lesson) return fail(c, "That lesson no longer exists.", "not_found");
+
+  let form: FormData;
+  try {
+    form = await c.req.formData();
+  } catch {
+    return fail(c, "Send the file as multipart form data.", "validation");
+  }
+
+  const file = form.get("file");
+  if (!(file instanceof File)) return fail(c, "No file was attached.", "validation");
+
+  const title = String(form.get("title") ?? "").trim() || file.name || "Resource";
+
+  const uploaded = await uploadCourseResource({
+    file: Buffer.from(await file.arrayBuffer()),
+    contentType: file.type,
+    courseId: lesson.courseId,
+    lessonId,
+  });
+
+  if ("error" in uploaded) return fail(c, uploaded.error, "validation");
+
+  const [{ maxPos }] = await db
+    .select({ maxPos: max(lessonResources.position) })
+    .from(lessonResources)
+    .where(eq(lessonResources.lessonId, lessonId));
+
+  const [created] = await db
+    .insert(lessonResources)
+    .values({
+      lessonId,
+      title: title.slice(0, 160),
+      filePath: uploaded.filePath,
+      sizeBytes: uploaded.sizeBytes,
+      mimeType: file.type,
+      position: (maxPos ?? -1) + 1,
+    })
+    .returning({ id: lessonResources.id });
+
+  return ok(c, { id: created.id, title, sizeBytes: uploaded.sizeBytes }, 201);
+});
+
+adminRoutes.delete("/resources/:resourceId", requireAdmin, async (c) => {
+  const [row] = await db
+    .delete(lessonResources)
+    .where(eq(lessonResources.id, c.req.param("resourceId")))
+    .returning({ filePath: lessonResources.filePath });
+
+  // Drop the stored file too, or it bills forever with nothing pointing at it.
+  if (row?.filePath) await deleteObject(row.filePath);
+
+  return ok(c, { deleted: true });
+});

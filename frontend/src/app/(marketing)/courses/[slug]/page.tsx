@@ -44,7 +44,7 @@ export default async function CourseDetailPage({ params }: Params) {
   // A draft or archived course 404s for everyone except staff, who need to
   // preview before publishing.
   const user = await getSessionUser();
-  const isStaff = user?.role === "admin" || user?.role === "instructor";
+  const isStaff = user?.role === "admin";
   if (!course || (course.status !== "published" && !isStaff)) notFound();
 
   const enrolled = course.enrolled;

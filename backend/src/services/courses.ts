@@ -171,6 +171,11 @@ export async function getCourseForEditor(courseId: string) {
       isFreePreview: lessons.isFreePreview,
       videoStatus: lessons.videoStatus,
       streamVideoId: lessons.streamVideoId,
+      // Counted in SQL so the editor does not fan out one query per lesson.
+      resourceCount: sql<number>`cast((
+        select count(*) from lesson_resources
+        where lesson_resources.lesson_id = ${lessons.id}
+      ) as int)`,
     })
     .from(modules)
     .leftJoin(lessons, eq(lessons.moduleId, modules.id))
@@ -191,6 +196,7 @@ export async function getCourseForEditor(courseId: string) {
         isFreePreview: boolean;
         videoStatus: string;
         streamVideoId: string | null;
+        resourceCount: number;
       }>;
     }
   >();
@@ -215,6 +221,7 @@ export async function getCourseForEditor(courseId: string) {
         isFreePreview: row.isFreePreview ?? false,
         videoStatus: row.videoStatus ?? "pending",
         streamVideoId: row.streamVideoId ?? null,
+        resourceCount: row.resourceCount ?? 0,
       });
     }
   }

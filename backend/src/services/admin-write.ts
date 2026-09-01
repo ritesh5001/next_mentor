@@ -460,7 +460,7 @@ export async function deleteCoupon(couponId: string): Promise<Result> {
 export async function updateUser(
   userId: string,
   adminId: string,
-  patch: { role?: "student" | "instructor" | "admin"; isBlocked?: boolean },
+  patch: { role?: "student" | "admin"; isBlocked?: boolean },
 ): Promise<Result> {
   // Removing your own admin rights locks you out with no way back.
   if (userId === adminId && patch.role && patch.role !== "admin") {

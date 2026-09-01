@@ -21,6 +21,7 @@
     "verify:otp": "pnpm --filter backend verify:otp",
     "verify:stream": "pnpm --filter backend verify:stream",
     "verify:imagekit": "pnpm --filter backend verify:imagekit",
-    "verify:kyc-docs": "pnpm --filter backend verify:kyc-docs"
+    "verify:kyc-docs": "pnpm --filter backend verify:kyc-docs",
+    "verify:course-access": "pnpm --filter backend verify:course-access"
   }
 }

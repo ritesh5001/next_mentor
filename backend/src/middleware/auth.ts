@@ -96,8 +96,15 @@ export function requireRole(...roles: Role[]): MiddlewareHandler {
   };
 }
 
+/**
+ * Admin gate.
+ *
+ * There used to be a separate `requireInstructor` that also admitted an
+ * "instructor" role. That role was never used — the platform has exactly two
+ * kinds of account, admin and student — and a second permission tier with no
+ * members is just a way for a gap to open up unnoticed.
+ */
 export const requireAdmin = requireRole("admin");
-export const requireInstructor = requireRole("admin", "instructor");
 
 /** Reads the caller after a guard has run. Throws if used without one. */
 export function currentUser(c: Context): AuthUser {

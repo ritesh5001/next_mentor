@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { forbidden, unauthorized } from "next/navigation";
-import type { CatalogCourse, CourseDetail, KycDocumentUrls } from "@nextmentor/shared";
+import type { CatalogCourse, CourseDetail, KycDocumentUrls, LessonResource } from "@nextmentor/shared";
 
 import { api, apiOrNull } from "./api";
 import { getSession, type SessionUser } from "./session";
@@ -27,12 +27,6 @@ export async function requireAdmin(): Promise<SessionUser> {
   // Rendering guard only. The API re-checks the role on every call it serves,
   // and that check is the one that actually protects the data.
   if (user.role !== "admin") forbidden();
-  return user;
-}
-
-export async function requireInstructor(): Promise<SessionUser> {
-  const user = await requireUser();
-  if (user.role !== "admin" && user.role !== "instructor") forbidden();
   return user;
 }
 
@@ -175,6 +169,7 @@ export type LearnView = {
       isFreePreview: boolean;
       isCompleted: boolean;
       lastPositionSeconds: number;
+      resources: LessonResource[];
     }>;
   }>;
   active: {
@@ -182,6 +177,7 @@ export type LearnView = {
     title: string;
     durationSeconds: number;
     lastPositionSeconds: number;
+    resources: LessonResource[];
   };
   totalLessons: number;
   completedLessons: number;

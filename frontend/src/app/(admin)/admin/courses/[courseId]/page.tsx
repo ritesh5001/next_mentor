@@ -9,7 +9,8 @@ import { ThumbnailUpload } from "@/components/admin/thumbnail-upload";
 import { CurriculumEditor } from "@/components/admin/curriculum-editor";
 import { PublishControls } from "@/components/admin/publish-controls";
 import { Badge } from "@/components/ui/badge";
-import { createLessonAction, createModuleAction, deleteLessonAction, deleteModuleAction, requestLessonUploadAction, requestThumbnailUploadAction, setCourseStatusAction, setCourseThumbnailAction, updateCourseAction } from "@/actions/admin";
+import { createLessonAction, createModuleAction, deleteLessonAction, deleteModuleAction, requestLessonUploadAction,
+  uploadLessonResourceAction, requestThumbnailUploadAction, setCourseStatusAction, setCourseThumbnailAction, updateCourseAction } from "@/actions/admin";
 import { getCourseForEditor } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -94,6 +95,7 @@ export default async function EditCoursePage({
             addLesson: createLessonAction,
             deleteLesson: deleteLessonAction,
             requestUpload: requestLessonUploadAction,
+            uploadResource: uploadLessonResourceAction,
           }}
         />
       </section>

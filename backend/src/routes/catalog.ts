@@ -16,7 +16,7 @@ catalogRoutes.get("/plans", async (c) => ok(c, await getActivePlans()));
 catalogRoutes.get("/courses/:slug", optionalAuth, async (c) => {
   const course = await getCourseBySlug(c.req.param("slug"));
   const viewer = c.get("user");
-  const isStaff = viewer?.role === "admin" || viewer?.role === "instructor";
+  const isStaff = viewer?.role === "admin";
 
   // Draft and archived courses 404 for everyone except staff, who preview them.
   if (!course || (course.status !== "published" && !isStaff)) {

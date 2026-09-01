@@ -12,6 +12,12 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+/**
+ * "instructor" is retained in the database enum but is no longer a role the
+ * application issues or accepts — the platform has exactly two account types.
+ * Removing a value from a Postgres enum requires rebuilding the type, and an
+ * unused member costs nothing, so it stays as a tombstone.
+ */
 export const userRoleEnum = pgEnum("user_role", ["student", "instructor", "admin"]);
 
 export const users = pgTable(

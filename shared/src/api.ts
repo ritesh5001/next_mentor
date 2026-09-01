@@ -30,7 +30,8 @@ export type ApiErrorCode = (typeof API_ERROR_CODES)[number];
 
 /* --------------------------------------------------------------------- auth */
 
-export type Role = "student" | "instructor" | "admin";
+/** Two account types. There is no instructor tier — admins own all content. */
+export type Role = "student" | "admin";
 
 export const loginSchema = z.object({
   email: z.string().trim().toLowerCase().email("Enter a valid email address"),
@@ -346,3 +347,27 @@ export type UploadedFile = {
 
 /** Cloudflare Stream direct-creator-upload — video only. */
 export type VideoUploadTarget = { uploadUrl: string; videoId: string };
+
+/* -------------------------------------------------- lesson resource files */
+
+/**
+ * A downloadable file attached to a lesson.
+ *
+ * Deliberately carries no storage path. The file is private; a student gets a
+ * short-lived signed URL from GET /api/resources/:id, and only after the API
+ * has checked their enrollment.
+ */
+export type LessonResource = {
+  id: string;
+  title: string;
+  sizeBytes: number;
+  mimeType: string;
+};
+
+/** Human-readable file size for a download button. */
+export function formatBytes(bytes: number): string {
+  if (bytes <= 0) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}

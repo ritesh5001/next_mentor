@@ -11,6 +11,20 @@ import { issueOtp } from "./otp";
 import { sendVerificationEmail } from "./email";
 
 /**
+ * Narrows a stored role to one the application still recognises.
+ *
+ * The database enum retains a legacy "instructor" value (removing an enum
+ * member needs a type rebuild). Anything that is not "admin" resolves to
+ * "student" — the least-privilege direction. Mapping an unrecognised staff
+ * role UP to admin would be the kind of default that quietly hands out
+ * permissions nobody granted.
+ */
+function toRole(stored: string): Role {
+  return stored === "admin" ? "admin" : "student";
+}
+
+
+/**
  * Authentication, owned entirely by this service.
  *
  * Auth.js was bound to the Drizzle adapter, so when the database moved here it
@@ -90,7 +104,7 @@ async function toSession(user: {
     token: await signSessionToken({
       sub: user.id,
       email: user.email,
-      role: user.role,
+      role: toRole(user.role),
       referralCode: user.referralCode,
     }),
     expiresIn: TOKEN_TTL_SECONDS,
@@ -132,7 +146,7 @@ export async function login(input: {
       id: user.id,
       email: user.email,
       name: user.name,
-      role: user.role,
+      role: toRole(user.role),
       referralCode: user.referralCode,
       image: user.image,
     }),
@@ -239,7 +253,7 @@ export async function refreshSession(userId: string): Promise<AuthSession | null
     id: user.id,
     email: user.email,
     name: user.name,
-    role: user.role,
+    role: toRole(user.role),
     referralCode: user.referralCode,
     image: user.image,
   });

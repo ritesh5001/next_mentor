@@ -124,3 +124,43 @@ export const lessonsRelations = relations(lessons, ({ one }) => ({
 export type Course = typeof courses.$inferSelect;
 export type Module = typeof modules.$inferSelect;
 export type Lesson = typeof lessons.$inferSelect;
+
+/**
+ * Downloadable files attached to a lesson — worksheets, slide decks, checklists.
+ *
+ * A separate table rather than columns on `lessons` because a lesson can carry
+ * several files and the admin needs to order and rename them independently.
+ *
+ * Every file is stored as an ImageKit PRIVATE object. This is paid course
+ * content: a public URL would let anyone with the link download the material
+ * without buying, and links get shared. Students receive short-lived signed
+ * URLs only after their enrollment is checked server-side.
+ */
+export const lessonResources = pgTable(
+  "lesson_resources",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    lessonId: text("lesson_id")
+      .notNull()
+      .references(() => lessons.id, { onDelete: "cascade" }),
+
+    title: text("title").notNull(),
+    /** ImageKit path. Never sent to a client — only ever exchanged for a signed URL. */
+    filePath: text("file_path").notNull(),
+    /** Shown so someone on mobile data knows what they are about to pull down. */
+    sizeBytes: integer("size_bytes").notNull().default(0),
+    mimeType: text("mime_type").notNull().default("application/pdf"),
+
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("lesson_resources_lesson_position_idx").on(t.lessonId, t.position)],
+);
+
+export const lessonResourcesRelations = relations(lessonResources, ({ one }) => ({
+  lesson: one(lessons, { fields: [lessonResources.lessonId], references: [lessons.id] }),
+}));
+
+export type LessonResource = typeof lessonResources.$inferSelect;

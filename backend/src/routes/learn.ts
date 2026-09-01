@@ -3,9 +3,10 @@ import { eq } from "drizzle-orm";
 import { saveProgressSchema } from "@nextmentor/shared";
 
 import { db } from "@/db";
-import { courses } from "@/db/schema";
+import { courses, lessonResources, lessons, modules } from "@/db/schema";
 import { getLearnView, getPlayback, saveProgress } from "@/services/playback";
 import { authorizeLessonPlayback, isEnrolled } from "@/lib/permissions";
+import { signedResourceUrl } from "@/lib/imagekit";
 import { evaluateAchievementsQuietly } from "@/services/achievements";
 import { requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
@@ -84,4 +85,40 @@ learnRoutes.post("/progress", requireUser, async (c) => {
   if (body.data.completed) await evaluateAchievementsQuietly(user.id);
 
   return ok(c, { saved: true });
+});
+
+/**
+ * Signed download link for a lesson's attached file.
+ *
+ * The enrollment check happens HERE, on the server, before any signature is
+ * minted. The stored path is never sent to a client — a path is useless without
+ * a signature, and not returning it keeps paid material out of browser history
+ * and out of anything a student might share.
+ */
+learnRoutes.get("/resources/:resourceId", requireUser, async (c) => {
+  const user = currentUser(c);
+  const resourceId = c.req.param("resourceId");
+
+  const [row] = await db
+    .select({
+      filePath: lessonResources.filePath,
+      title: lessonResources.title,
+      mimeType: lessonResources.mimeType,
+      courseId: modules.courseId,
+    })
+    .from(lessonResources)
+    .innerJoin(lessons, eq(lessons.id, lessonResources.lessonId))
+    .innerJoin(modules, eq(modules.id, lessons.moduleId))
+    .where(eq(lessonResources.id, resourceId))
+    .limit(1);
+
+  if (!row) return fail(c, "That file no longer exists.", "not_found");
+
+  const entitled = user.role === "admin" || (await isEnrolled(user.id, row.courseId));
+  if (!entitled) return fail(c, "You do not have access to this course.", "forbidden");
+
+  const url = signedResourceUrl(row.filePath);
+  if (!url) return fail(c, "Could not prepare that download.", "server_error");
+
+  return ok(c, { url, title: row.title, mimeType: row.mimeType });
 });

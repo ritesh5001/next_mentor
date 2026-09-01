@@ -1,7 +1,7 @@
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/db";
-import { courses, lessons, lessonProgress, modules } from "@/db/schema";
+import { courses, lessonProgress, lessonResources, lessons, modules } from "@/db/schema";
 import { authorizeLessonPlayback } from "@/lib/permissions";
 import { signPlaybackToken, hlsManifestUrl } from "@/lib/cloudflare-stream";
 
@@ -83,6 +83,12 @@ export async function getLearnView(params: {
       isFreePreview: boolean;
       isCompleted: boolean;
       lastPositionSeconds: number;
+      resources: Array<{
+        id: string;
+        title: string;
+        sizeBytes: number;
+        mimeType: string;
+      }>;
     }>;
   }> = [];
 
@@ -104,7 +110,46 @@ export async function getLearnView(params: {
         isFreePreview: row.isFreePreview ?? false,
         isCompleted: row.completedAt !== null,
         lastPositionSeconds: row.lastPositionSeconds ?? 0,
+        resources: [],
       });
+    }
+  }
+
+  // Resources are fetched in one query for the whole course rather than per
+  // lesson — a 40-lesson course would otherwise mean 40 round trips.
+  const lessonIds = curriculum.flatMap((m) => m.lessons.map((l) => l.id));
+
+  const resources = lessonIds.length
+    ? await db
+        .select({
+          id: lessonResources.id,
+          lessonId: lessonResources.lessonId,
+          title: lessonResources.title,
+          sizeBytes: lessonResources.sizeBytes,
+          mimeType: lessonResources.mimeType,
+        })
+        .from(lessonResources)
+        .where(inArray(lessonResources.lessonId, lessonIds))
+        .orderBy(asc(lessonResources.position))
+    : [];
+
+  const byLesson = new Map<string, typeof resources>();
+  for (const r of resources) {
+    const list = byLesson.get(r.lessonId) ?? [];
+    list.push(r);
+    byLesson.set(r.lessonId, list);
+  }
+
+  for (const mod of curriculum) {
+    for (const lesson of mod.lessons) {
+      // No file paths here. A download URL is minted per request by
+      // GET /api/resources/:id, after the enrollment check.
+      lesson.resources = (byLesson.get(lesson.id) ?? []).map((r) => ({
+        id: r.id,
+        title: r.title,
+        sizeBytes: r.sizeBytes,
+        mimeType: r.mimeType,
+      }));
     }
   }
 
