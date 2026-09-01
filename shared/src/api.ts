@@ -255,6 +255,28 @@ export const previewCouponSchema = z.object({
 
 /* -------------------------------------------------------------- affiliate */
 
+/** The five identity documents required before a KYC review can happen. */
+export const KYC_DOC_SLOTS = [
+  "aadhaarFront",
+  "aadhaarBack",
+  "panFront",
+  "panBack",
+  "bankProof",
+] as const;
+
+export type KycDocSlot = (typeof KYC_DOC_SLOTS)[number];
+
+export const KYC_DOC_LABELS: Record<KycDocSlot, string> = {
+  aadhaarFront: "Aadhaar card — front",
+  aadhaarBack: "Aadhaar card — back",
+  panFront: "PAN card — front",
+  panBack: "PAN card — back",
+  bankProof: "Bank passbook or cancelled cheque",
+};
+
+/** Signed, short-lived URLs. Only ever sent to staff, never to the owner. */
+export type KycDocumentUrls = Record<KycDocSlot, string | null>;
+
 export const submitKycSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full legal name").max(80),
   panNumber: z

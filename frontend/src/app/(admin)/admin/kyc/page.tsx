@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { formatDate, formatDateTime } from "@/lib/format";
 import Link from "next/link";
 
+import { ExternalLink, FileText } from "lucide-react";
+
 import { ReviewControls } from "@/components/admin/review-actions";
+import { KYC_DOC_SLOTS, KYC_DOC_LABELS } from "@nextmentor/shared";
 import { Badge } from "@/components/ui/badge";
 import { reviewKycAction } from "@/actions/admin";
 import { listKycForAdmin, requireAdmin } from "@/lib/queries";
@@ -85,6 +88,44 @@ export default async function AdminKycPage({
                     </div>
                   ))}
                 </dl>
+
+                {/* Documents. Reviewing a KYC submission without seeing the
+                    ID is just rubber-stamping, so these sit directly above
+                    the approve button. */}
+                <div className="flex flex-col gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted-foreground)]">
+                    Documents
+                  </span>
+                  <ul className="flex flex-wrap gap-2">
+                    {KYC_DOC_SLOTS.map((slot) => {
+                      const url = k.documents?.[slot] ?? null;
+                      return (
+                        <li key={slot}>
+                          {url ? (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex min-h-9 items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--color-border)] px-3 text-xs font-medium transition-colors hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
+                            >
+                              <FileText className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                              {KYC_DOC_LABELS[slot]}
+                              <ExternalLink className="size-3" strokeWidth={1.5} aria-hidden="true" />
+                            </a>
+                          ) : (
+                            <span className="inline-flex min-h-9 items-center gap-1.5 rounded-[var(--radius-control)] border border-dashed border-[var(--color-border)] px-3 text-xs text-[var(--color-muted-foreground)]">
+                              <FileText className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                              {KYC_DOC_LABELS[slot]} — missing
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <span className="text-xs text-[var(--color-muted-foreground)]">
+                    Links expire after a few minutes. Reload the page for fresh ones.
+                  </span>
+                </div>
 
                 <span className="text-xs text-[var(--color-muted-foreground)]">
                   Submitted{" "}

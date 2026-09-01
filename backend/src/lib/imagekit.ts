@@ -185,3 +185,100 @@ export function imageUrl(
   const sep = base.includes("?") ? "&" : "?";
   return `${base}${sep}tr=${tr}`;
 }
+
+/* ------------------------------------------------------ private documents */
+
+/** Identity documents accepted for KYC. */
+export const KYC_DOC_SLOTS = [
+  "aadhaarFront",
+  "aadhaarBack",
+  "panFront",
+  "panBack",
+  "bankProof",
+] as const;
+
+export type KycDocSlot = (typeof KYC_DOC_SLOTS)[number];
+
+export const KYC_DOC_LABELS: Record<KycDocSlot, string> = {
+  aadhaarFront: "Aadhaar — front",
+  aadhaarBack: "Aadhaar — back",
+  panFront: "PAN — front",
+  panBack: "PAN — back",
+  bankProof: "Bank passbook or cancelled cheque",
+};
+
+/**
+ * Uploads an identity document from the server.
+ *
+ * Deliberately NOT the browser-direct path used for thumbnails and avatars.
+ * ImageKit's upload signature covers only `token + expire`, so every other form
+ * field — including `isPrivateFile` — is client-controlled. For a course
+ * thumbnail that does not matter. For a government ID it means a modified
+ * client could publish somebody's Aadhaar card to a public URL.
+ *
+ * Routing these few megabytes through the API is the cost of making the
+ * privacy flag non-negotiable. The backend is a long-lived Node service, so
+ * there is no serverless body limit to fight.
+ */
+export async function uploadPrivateDocument(params: {
+  file: Buffer;
+  contentType: string;
+  slot: KycDocSlot;
+  userId: string;
+}): Promise<{ filePath: string } | { error: string }> {
+  const isImage = ALLOWED_IMAGE_TYPES.has(params.contentType);
+  const isPdf = ALLOWED_DOC_TYPES.has(params.contentType);
+
+  if (!isImage && !isPdf) {
+    return { error: "Upload a JPEG, PNG, WebP, AVIF or PDF." };
+  }
+  if (params.file.length === 0) return { error: "That file appears to be empty." };
+  if (params.file.length > MAX_DOC_BYTES) {
+    return { error: `Documents must be under ${Math.round(MAX_DOC_BYTES / 1024 / 1024)}MB.` };
+  }
+
+  const ext = params.contentType.split("/")[1].replace("jpeg", "jpg");
+
+  try {
+    const res = await ik().upload({
+      file: params.file,
+      // Foldered per user so one person's documents are never adjacent to
+      // another's, and a random name so paths cannot be guessed.
+      fileName: `${params.slot}-${crypto.randomUUID()}.${ext}`,
+      folder: `/kyc/${params.userId}`,
+      useUniqueFileName: false,
+      // The whole point: without this the original URL is publicly fetchable.
+      isPrivateFile: true,
+    });
+
+    return { filePath: res.filePath };
+  } catch (err) {
+    console.error("[imagekit] KYC document upload failed", params.slot, err);
+    return { error: "Could not store that document. Please try again." };
+  }
+}
+
+/**
+ * A short-lived signed URL for a private file.
+ *
+ * Staff need to actually look at these during review. Five minutes is long
+ * enough to open the image and short enough that a URL pasted into a chat or
+ * left in browser history stops working quickly.
+ */
+export function signedDocumentUrl(
+  filePath: string | null | undefined,
+  expireSeconds = 300,
+): string | null {
+  if (!filePath) return null;
+
+  try {
+    return ik().url({
+      path: filePath,
+      signed: true,
+      expireSeconds,
+    });
+  } catch (err) {
+    console.error("[imagekit] Could not sign document url", filePath, err);
+    return null;
+  }
+}

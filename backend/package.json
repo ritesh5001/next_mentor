@@ -17,10 +17,11 @@
     "verify:phase2": "tsx --env-file=.env scripts/verify-plans-coupons.ts",
     "verify:referral": "tsx --env-file=.env scripts/verify-referral.ts",
     "verify:engagement": "tsx --env-file=.env scripts/verify-engagement.ts",
-    "verify:all": "pnpm verify:auth && pnpm verify:commerce && pnpm verify:phase2 && pnpm verify:referral && pnpm verify:engagement && pnpm verify:otp && pnpm verify:stream && pnpm verify:imagekit",
+    "verify:all": "pnpm verify:auth && pnpm verify:commerce && pnpm verify:phase2 && pnpm verify:referral && pnpm verify:engagement && pnpm verify:otp && pnpm verify:stream && pnpm verify:imagekit && pnpm verify:kyc-docs",
     "verify:otp": "tsx --env-file=.env scripts/verify-otp.ts",
     "verify:stream": "tsx --env-file=.env scripts/verify-stream.ts",
-    "verify:imagekit": "tsx --env-file=.env scripts/verify-imagekit.ts"
+    "verify:imagekit": "tsx --env-file=.env scripts/verify-imagekit.ts",
+    "verify:kyc-docs": "tsx --env-file=.env scripts/verify-kyc-docs.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1121.0",

@@ -1,9 +1,11 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import type { ActionState, CheckoutResult, CouponPreview, ItemType, UploadAuth } from "@nextmentor/shared";
 
-import { api, ApiError } from "@/lib/api";
+import { api, ApiError, API_BASE } from "@/lib/api";
+import { SESSION_COOKIE } from "@/lib/session";
 
 export type { ActionState };
 
@@ -129,6 +131,39 @@ export async function setAvatarAction(key: string): Promise<ActionState> {
 }
 
 /* ------------------------------------------------------------- affiliate */
+
+/**
+ * Uploads one KYC identity document.
+ *
+ * Forwards the multipart body to the API untouched. The bytes go through our
+ * server on purpose — see components/dashboard/kyc-documents.tsx for why the
+ * direct-to-ImageKit path is not safe for a government ID.
+ */
+export async function uploadKycDocumentAction(
+  _slot: string,
+  formData: FormData,
+): Promise<ActionState> {
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  if (!token) return { error: "Your session expired. Sign in again." };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/affiliate/kyc/document`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      // No Content-Type header: fetch sets the multipart boundary itself, and
+      // overriding it produces a body the server cannot parse.
+      body: formData,
+    });
+
+    const payload = (await res.json()) as { ok: boolean; error?: string };
+    if (!payload.ok) return { error: payload.error ?? "Could not upload that document." };
+  } catch {
+    return { error: "Could not upload that document. Check your connection." };
+  }
+
+  revalidatePath("/dashboard/kyc");
+  return { success: "Uploaded" };
+}
 
 export async function submitKycAction(_p: ActionState, fd: FormData): Promise<ActionState> {
   try {

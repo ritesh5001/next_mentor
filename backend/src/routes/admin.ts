@@ -11,7 +11,7 @@ import { listCouponsForAdmin } from "@/services/coupons";
 import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay } from "@/services/admin";
 import { listKycForAdmin, listPayoutsForAdmin } from "@/services/affiliate";
 import { approvePayout, markPayoutPaid, rejectPayout } from "@/services/payouts";
-import { createUploadAuth } from "@/lib/imagekit";
+import { createUploadAuth, signedDocumentUrl } from "@/lib/imagekit";
 import { createDirectUpload } from "@/lib/cloudflare-stream";
 import { requireAdmin, requireInstructor, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
@@ -34,7 +34,25 @@ adminRoutes.get("/users", requireAdmin, async (c) =>
 
 adminRoutes.get("/kyc", requireAdmin, async (c) => {
   const status = c.req.query("status") as "pending" | "approved" | "rejected" | undefined;
-  return ok(c, await listKycForAdmin(status ?? "pending"));
+  const rows = await listKycForAdmin(status ?? "pending");
+
+  // Storage paths are swapped for short-lived signed URLs here, at the edge of
+  // the API. The raw paths never leave the server: they are only useful with a
+  // signature, and not sending them keeps them out of browser history, logs
+  // and anything the reviewer later pastes somewhere.
+  return ok(
+    c,
+    rows.map(({ aadhaarFrontPath, aadhaarBackPath, panFrontPath, panBackPath, bankProofPath, ...row }) => ({
+      ...row,
+      documents: {
+        aadhaarFront: signedDocumentUrl(aadhaarFrontPath),
+        aadhaarBack: signedDocumentUrl(aadhaarBackPath),
+        panFront: signedDocumentUrl(panFrontPath),
+        panBack: signedDocumentUrl(panBackPath),
+        bankProof: signedDocumentUrl(bankProofPath),
+      },
+    })),
+  );
 });
 
 adminRoutes.get("/payouts", requireAdmin, async (c) => {

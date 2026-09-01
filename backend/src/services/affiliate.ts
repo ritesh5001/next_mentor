@@ -189,6 +189,14 @@ export async function getMyKyc(userId: string) {
       rejectionReason: kycSubmissions.rejectionReason,
       createdAt: kycSubmissions.createdAt,
       reviewedAt: kycSubmissions.reviewedAt,
+      // Booleans, not paths. The owner needs to know a document is on file;
+      // handing back the storage path would serve no purpose and widen what a
+      // compromised session can learn.
+      hasAadhaarFront: sql<boolean>`${kycSubmissions.aadhaarFrontPath} is not null`,
+      hasAadhaarBack: sql<boolean>`${kycSubmissions.aadhaarBackPath} is not null`,
+      hasPanFront: sql<boolean>`${kycSubmissions.panFrontPath} is not null`,
+      hasPanBack: sql<boolean>`${kycSubmissions.panBackPath} is not null`,
+      hasBankProof: sql<boolean>`${kycSubmissions.bankProofPath} is not null`,
     })
     .from(kycSubmissions)
     .where(eq(kycSubmissions.userId, userId))
@@ -209,7 +217,11 @@ export async function listKycForAdmin(status?: "pending" | "approved" | "rejecte
       bankAccountName: kycSubmissions.bankAccountName,
       accountNumberLast4: kycSubmissions.accountNumberLast4,
       ifsc: kycSubmissions.ifsc,
-      documentKeys: kycSubmissions.documentKeys,
+      aadhaarFrontPath: kycSubmissions.aadhaarFrontPath,
+      aadhaarBackPath: kycSubmissions.aadhaarBackPath,
+      panFrontPath: kycSubmissions.panFrontPath,
+      panBackPath: kycSubmissions.panBackPath,
+      bankProofPath: kycSubmissions.bankProofPath,
       status: kycSubmissions.status,
       createdAt: kycSubmissions.createdAt,
       userEmail: users.email,

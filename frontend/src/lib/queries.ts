@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { forbidden, unauthorized } from "next/navigation";
-import type { CatalogCourse, CourseDetail } from "@nextmentor/shared";
+import type { CatalogCourse, CourseDetail, KycDocumentUrls } from "@nextmentor/shared";
 
 import { api, apiOrNull } from "./api";
 import { getSession, type SessionUser } from "./session";
@@ -270,6 +270,14 @@ export type KycRecord = {
   status: "pending" | "approved" | "rejected";
   rejectionReason: string | null;
   createdAt: string;
+  // Presence flags, not paths. The API deliberately never sends a document's
+  // storage path to its owner — it is only useful with a signed URL, and only
+  // staff get one.
+  hasAadhaarFront: boolean;
+  hasAadhaarBack: boolean;
+  hasPanFront: boolean;
+  hasPanBack: boolean;
+  hasBankProof: boolean;
 };
 
 export const getMyKyc = () => apiOrNull<KycRecord>("/api/affiliate/kyc");
@@ -575,8 +583,11 @@ export const listKycForAdmin = (status?: string) =>
       createdAt: string;
       userEmail: string;
       userName: string | null;
+      // Short-lived signed URLs generated per request by the API. They expire
+      // in about five minutes, so this data is not safe to cache.
+      documents: KycDocumentUrls;
     }>
-  >(`/api/admin/kyc${status ? `?status=${status}` : ""}`);
+  >(`/api/admin/kyc${status ? `?status=${status}` : ""}`, { cache: "no-store" });
 
 export const listPayoutsForAdmin = (status?: string) =>
   api<

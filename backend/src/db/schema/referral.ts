@@ -228,8 +228,20 @@ export const kycSubmissions = pgTable(
     accountNumberLast4: text("account_number_last4").notNull(),
     ifsc: text("ifsc").notNull(),
 
-    /** R2 keys for uploaded ID documents. */
-    documentKeys: jsonb("document_keys").$type<string[]>().notNull().default([]),
+    /**
+     * ImageKit paths for the identity documents.
+     *
+     * Named columns rather than a jsonb array: the admin review screen has to
+     * label each image ("Aadhaar — back"), and an array cannot say which slot
+     * a file belongs to. Every one is uploaded as an ImageKit PRIVATE file, so
+     * the raw path is not publicly fetchable — staff read them through
+     * short-lived signed URLs.
+     */
+    aadhaarFrontPath: text("aadhaar_front_path"),
+    aadhaarBackPath: text("aadhaar_back_path"),
+    panFrontPath: text("pan_front_path"),
+    panBackPath: text("pan_back_path"),
+    bankProofPath: text("bank_proof_path"),
 
     status: kycStatusEnum("status").notNull().default("pending"),
     rejectionReason: text("rejection_reason"),

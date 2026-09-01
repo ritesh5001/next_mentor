@@ -3,6 +3,11 @@ import { formatDate, formatDateTime } from "@/lib/format";
 import { CheckCircle2, Clock } from "lucide-react";
 
 import { KycForm } from "@/components/dashboard/kyc-form";
+import {
+  KycDocuments,
+  MissingDocumentsNotice,
+} from "@/components/dashboard/kyc-documents";
+import { uploadKycDocumentAction } from "@/actions";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { getMyKyc, requireUser } from "@/lib/queries";
@@ -16,6 +21,15 @@ export const metadata: Metadata = {
 export default async function KycPage() {
   const user = await requireUser();
   const kyc = await getMyKyc();
+
+  // Booleans only — the API never sends storage paths to the document owner.
+  const uploaded = {
+    aadhaarFront: Boolean(kyc?.hasAadhaarFront),
+    aadhaarBack: Boolean(kyc?.hasAadhaarBack),
+    panFront: Boolean(kyc?.hasPanFront),
+    panBack: Boolean(kyc?.hasPanBack),
+    bankProof: Boolean(kyc?.hasBankProof),
+  };
 
   return (
     <div className="flex max-w-2xl flex-col gap-6">
@@ -94,6 +108,20 @@ export default async function KycPage() {
                 <span>{kyc.rejectionReason ?? "Please check your details and resubmit."}</span>
               </span>
             </Alert>
+          )}
+
+          {/* Documents come first: the form cannot be submitted until all five
+              are on file, so asking for them after the bank details would be
+              a wasted trip through the form. */}
+          {kyc?.status !== "pending" && (
+            <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+              <MissingDocumentsNotice uploaded={uploaded} />
+              <KycDocuments
+                uploaded={uploaded}
+                locked={false}
+                uploadDocument={uploadKycDocumentAction}
+              />
+            </section>
           )}
 
           {kyc?.status !== "pending" && (
