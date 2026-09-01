@@ -61,6 +61,13 @@
      accent headline words and primary CTAs on the public site — never in the
      dashboard, where amber alone signals money. */
   --brand-ink: #101a47;
+
+  /* Deliberately NOT redefined in .dark. --brand-ink flips to near-white for
+     text, which is right for text and fatal for a surface: a band painted with
+     it turns white in dark mode and takes its white lettering with it. This
+     one stays the deep navy in both themes, so anything sitting on it can
+     safely assume light-on-dark. */
+  --brand-surface-dark: #101a47;
   --brand-blue: #1b3fa0;
   --brand-blue-bright: #2e6fd4;
   --brand-green: #22c55e;

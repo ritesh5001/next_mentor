@@ -1,39 +1,41 @@
 import type { Metadata } from "next";
 import { envUrl } from "@nextmentor/shared";
-import { getActivePlans } from "@/lib/queries";
 
+import { getActivePlans, getCatalog } from "@/lib/queries";
 import {
   Hero,
-  FeatureStrip,
-  Stats,
-  WhyChooseUs,
+  HowItWorks,
+  WhatYouGet,
+  EarnBand,
+  People,
+  ClosingCta,
 } from "@/components/marketing/home-sections";
 import {
+  FeaturedCourses,
   Packages,
   Founders,
-  Instructors,
-  FeaturedTraining,
   Testimonials,
-  SkillsCloud,
   Faq,
   Newsletter,
 } from "@/components/marketing/home-sections-2";
 
 export const metadata: Metadata = {
-  title: "NextMentor — Learn, Create, Monetize",
+  title: "Learn the skill, then get paid for it | NextMentor",
   description:
-    "Master AI, freelancing and design with practical, project-led learning. Zero fluff — only skills that get you paid.",
+    "Short, project-led courses in marketing, AI and design. Finish with something you built, a certificate anyone can check, and a referral link that pays.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "NextMentor — Learn, Create, Monetize",
+    title: "Learn the skill, then get paid for it | NextMentor",
     description:
-      "Practical, project-led courses in marketing, AI and design. Learn the skill, then earn from it.",
+      "Project-led courses in marketing, AI and design. Learn the skill, then earn from it.",
     type: "website",
   },
 };
 
 export default async function HomePage() {
-  const plans = await getActivePlans();
+  // Both are cached public reads that fall back to an empty list, so a cold
+  // API cannot take the homepage down with it.
+  const [plans, courses] = await Promise.all([getActivePlans(), getCatalog()]);
 
   return (
     <>
@@ -46,15 +48,20 @@ export default async function HomePage() {
             "@type": "EducationalOrganization",
             name: "NextMentor",
             description:
-              "Practical, project-led courses in digital marketing, AI and design.",
+              "Project-led courses in digital marketing, AI and design, with a referral program.",
             url: envUrl(process.env.NEXT_PUBLIC_APP_URL, "http://localhost:3000"),
           }),
         }}
       />
 
-      <Hero />
-      <FeatureStrip />
-      <Stats />
+      {/* Section order is a funnel, not a list: what this is, how it works,
+          what it costs, who runs it, whether to believe them, then the ask.
+          The dark EarnBand sits in the middle to break a long light scroll. */}
+      <Hero courseCount={courses.length} />
+      <HowItWorks />
+      <FeaturedCourses courses={courses} />
+      <WhatYouGet />
+      <EarnBand />
       <Packages
         plans={plans.map((p) => ({
           slug: p.slug,
@@ -66,14 +73,12 @@ export default async function HomePage() {
           isFeatured: p.isFeatured,
         }))}
       />
-      <WhyChooseUs />
+      <People />
       <Founders />
-      <Instructors />
-      <FeaturedTraining />
       <Testimonials />
-      <SkillsCloud />
       <Faq />
       <Newsletter />
+      <ClosingCta />
     </>
   );
 }
