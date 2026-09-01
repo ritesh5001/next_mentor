@@ -1,0 +1,65 @@
+# MagicPort Scheduled Arrivals Export
+
+## Trigger
+User gives one or more country names and wants MagicPort "Scheduled Arrivals" vessel data pulled into a spreadsheet (one sheet per country). Assume Chrome + MagicPort login are already configured/logged in unless the user says otherwise.
+
+## Defaults (use unless the user overrides)
+- Arrival window: 1–30 days
+- Ports: all ports for the country (the country-based search auto-selects every port)
+- Output: ONE .xlsx workbook, one sheet per country named after the country, plus a "Summary" sheet listing filter criteria per country and total vessel counts
+- Columns per row: Vessel Name, IMO, Flag, Type, DWT, Ship Owner, Commercial Manager, ISM Manager, Destination, ETA (UTC)
+
+## Steps (repeat the browser steps per country, then combine into one workbook)
+
+1. **Connect to Chrome.** Load claude-in-chrome tools (`tabs_context_mcp`, `navigate`, `computer`, `read_page`, `get_page_text`, `javascript_tool`, `tabs_create_mcp`, `tabs_close_mcp`) via ToolSearch if deferred. Call `tabs_context_mcp{createIfEmpty:true}` — if the extension errors as not connected, tell the user to enable it at claude.ai/chrome and stop.
+
+2. **Navigate** the tab to `https://intelligence.magicport.ai/scheduled-arrivals`. Screenshot to confirm it's logged in (top-right avatar visible, not a login page). If not logged in, tell the user to log in in that tab and pause.
+
+3. **For each country**, on the Scheduled Arrivals filter panel:
+   - Ensure "Country-based search" toggle is ON (click it if off).
+   - Click the country dropdown, type the country name, click the matching option. Ports auto-select (shows "N ports selected").
+   - Set "arriving in" fields to `1` and `30` (or the user's requested window).
+   - Click "Show Results" and wait for the table to load.
+   - **Increase page size to avoid heavy pagination**: the page-size `<select>` is a native HTML select that resists normal click/keyboard automation reliably. Use `javascript_tool` to set it directly:
+     ```js
+     const selects = document.querySelectorAll('select');
+     let target = null;
+     selects.forEach(s => { const opts = Array.from(s.options).map(o=>o.value); if (opts.includes('500') && opts.includes('10')) target = s; });
+     const setter = Object.getOwnPropertyDescriptor(window.HTMLSelectElement.prototype, 'value').set;
+     setter.call(target, '500');
+     target.dispatchEvent(new Event('change', {bubbles:true}));
+     ```
+   - Extract the current page's rows via `javascript_tool` (do NOT rely on `get_page_text` — it truncates and mis-orders large tables):
+     ```js
+     const tbody = document.querySelector('table.dataTable tbody');
+     const rows = Array.from(tbody.children).map(tr => {
+       const tds = Array.from(tr.children);
+       const flagSpan = tds[3].querySelector('span.d-none');
+       return [
+         tds[1].innerText.trim(), tds[2].innerText.trim(),
+         flagSpan ? flagSpan.textContent.trim() : '',
+         tds[4].innerText.trim(), tds[5].innerText.trim(),
+         tds[6].innerText.trim(), tds[7].innerText.trim(), tds[8].innerText.trim(),
+         tds[9].innerText.trim(), tds[10].innerText.trim(),
+       ];
+     });
+     ```
+     Trigger a CSV download of these rows via a Blob + anchor `.click()` (avoids huge tool-output truncation) — name the file `magicport_<country>_p<N>.csv`. If "Showing X to Y of Z vessels" shows more rows remain (Z > 500), click page "2" and repeat the extraction/download for the remainder.
+   - Note the total vessel count shown ("Showing 1 to N of Z vessels") for the Summary sheet.
+
+4. **Retrieve the CSVs**: request access to the user's Downloads folder (`device_request_folder_access` with `~/Downloads`) if not already granted, `device_list_dir`/`device_bash` to confirm the files landed, then `device_stage_files` them into the cloud workspace.
+
+5. **Build the workbook** (load the `xlsx` skill first): one sheet per country (sheet name = country name), each with the header row (Vessel Name, IMO, Flag, Type, DWT, Ship Owner, Commercial Manager, ISM Manager, Destination, ETA (UTC)) styled with a bold header fill, frozen header row, autofilter, sensible column widths, and Arial font throughout. Add a "Summary" sheet listing: country, ports filtered, arrival window, total vessels, source URL, extraction date. Run `recalc.py` (no formulas expected here, but keep the habit) and confirm no errors.
+
+6. **Deliver**: `SendUserFile` the workbook. If a folder is connected on the user's device, also `device_commit_files` it into that folder (e.g. Downloads) and tell the user where it landed.
+
+7. **Clean up**: close any MCP browser tabs you created.
+
+## Notes
+- The MagicPort "Export" button is locked behind a paid plan tier on this account — do not rely on it; always fall back to the DOM-scrape + CSV-download method above.
+- If a country has very few ports/results, the page-size trick still works fine (500 just becomes more than needed).
+- If the user asks for a different arrival window or fewer/specific ports, adjust step 3 accordingly and note the change in the Summary sheet.
+
+## Verification
+- Confirm the per-country row count in the workbook matches the "Showing 1 to N of Z vessels" total captured during scraping.
+- Spot check 2-3 rows per sheet against a fresh screenshot of the site.
