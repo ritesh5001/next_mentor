@@ -8,7 +8,7 @@ import * as schema from "./schema";
 
 const url = process.env.DATABASE_URL;
 if (!url) {
-  throw new Error("DATABASE_URL is not set. Copy .env.example to .env.local and fill it in.");
+  throw new Error("DATABASE_URL is not set. Copy backend/.env.example to backend/.env and fill it in.");
 }
 
 const isNeon = /\.neon\.tech|neon\.database/i.test(url);

@@ -39,7 +39,8 @@ Files under `src/app/` are deliberately exempt: a Server Component querying Post
 
 ```bash
 pnpm install
-cp .env.example .env.local     # then fill it in — every key is documented inline
+cp backend/.env.example backend/.env        # API keys, DB, secrets
+cp frontend/.env.example frontend/.env.local # just URLs and public keys
 pnpm db:push                   # create the schema
 pnpm dev
 ```

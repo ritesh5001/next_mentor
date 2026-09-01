@@ -78,16 +78,24 @@ Environment variables:
 API_URL                   https://your-api.onrender.com   (server-side calls)
 NEXT_PUBLIC_API_URL       https://your-api.onrender.com   (browser calls)
 NEXT_PUBLIC_APP_URL       https://yourdomain.com
-AUTH_SECRET               MUST be byte-identical to the backend's
 NEXT_PUBLIC_RAZORPAY_KEY_ID
 NEXT_PUBLIC_R2_PUBLIC_URL
 ```
 
-`AUTH_SECRET` must match the backend exactly. The backend signs the JWT with it;
-the frontend reads the same token to render the right nav. A mismatch logs
-everyone out on every navigation, with no useful error.
+**Set both API URLs to the same address.** They are read in different places —
+`API_URL` server-side, `NEXT_PUBLIC_API_URL` in the browser. Setting only the
+first is the classic failure: pages render correctly on the server while every
+client-side call 404s.
+
+**The frontend does NOT need `AUTH_SECRET`.** It decodes the JWT without
+verifying it, purely to decide which nav to render; the API verifies the
+signature on every request. Putting the signing secret on Vercel would spread
+it for no benefit.
 
 `NEXT_PUBLIC_*` values are baked in at build time — redeploy after changing them.
+An empty or malformed URL no longer crashes the build, but it does fall back to
+localhost with a warning in the log, so the site will look deployed and fail at
+runtime.
 
 ---
 
