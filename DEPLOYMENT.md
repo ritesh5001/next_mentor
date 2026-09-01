@@ -101,12 +101,14 @@ runtime.
 
 ## 4. Cron (Render Cron Job)
 
-`vercel.json` no longer drives this; the job lives with the backend.
+The job lives with the backend now. `frontend/vercel.json` was deleted — it
+still pointed a Vercel Cron at `/api/cron/daily` on the FRONTEND, a route that
+no longer exists there, so it would have 404'd nightly in silence.
 
 - **Schedule:** `0 2 * * *`
 - **Command:**
   ```bash
-  curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://your-api.onrender.com/api/cron/daily
+  curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://your-api.onrender.com/cron/daily
   ```
 
 Without it, commissions never mature out of `pending`, subscriptions never
@@ -118,10 +120,10 @@ expire, and badges are never awarded.
 
 This is the change most likely to be missed after the split.
 
-- **Razorpay** → `https://your-api.onrender.com/api/webhooks/razorpay`
+- **Razorpay** → `https://your-api.onrender.com/webhooks/razorpay`
   Events: `payment.captured`, `payment.failed`, `refund.created`, `refund.processed`
   **This is what grants course access.** Pointed at the old URL, people pay and get nothing.
-- **Cloudflare Stream** → `https://your-api.onrender.com/api/webhooks/cloudflare`
+- **Cloudflare Stream** → `https://your-api.onrender.com/webhooks/cloudflare`
 
 ---
 
@@ -133,8 +135,8 @@ WEB=https://yourdomain.com
 
 curl -s $API/health                                        # {"ok":true,...}
 curl -s -o /dev/null -w '%{http_code}\n' $API/api/my/courses            # 401
-curl -s -o /dev/null -w '%{http_code}\n' -X POST $API/api/webhooks/razorpay  # 400
-curl -s -o /dev/null -w '%{http_code}\n' $API/api/cron/daily            # 401
+curl -s -o /dev/null -w '%{http_code}\n' -X POST $API/webhooks/razorpay  # 400
+curl -s -o /dev/null -w '%{http_code}\n' $API/cron/daily            # 401
 
 curl -s -o /dev/null -w '%{http_code}\n' $WEB/                          # 200
 curl -s -o /dev/null -w '%{http_code}\n' $WEB/dashboard                 # 307
