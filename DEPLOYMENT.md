@@ -184,9 +184,10 @@ dashboard URL: `dash.cloudflare.com/<account-id>/...`
   token UI, and it issues S3-style credentials (access key + secret). An
   Account API token will not authenticate against R2.
 - **The Stream signing key exists only through the API.** There is no UI for it.
-  The `pem` Cloudflare returns is already base64-encoded, which is exactly what
-  `lib/cloudflare-stream.ts` expects — paste it verbatim, do not re-encode it,
-  and do not paste a raw `-----BEGIN PRIVATE KEY-----` block.
+  Cloudflare returns base64 of a **PKCS#1** key (`BEGIN RSA PRIVATE KEY`), not
+  PKCS#8 — WebCrypto cannot import PKCS#1 at all, which is why the signer uses
+  `node:crypto.createPrivateKey`. Paste the `pem` field verbatim; a raw PEM
+  block also works. Run `pnpm verify:stream` to confirm it can actually sign.
 - **OAuth clients is unrelated.** That page is for letting people sign in to
   Cloudflare itself. It has nothing to do with this app.
 - Every one of these secrets is shown **once**. Store them before closing the tab.

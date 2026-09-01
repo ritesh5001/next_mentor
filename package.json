@@ -18,6 +18,7 @@
     "verify:referral": "pnpm --filter backend verify:referral",
     "verify:engagement": "pnpm --filter backend verify:engagement",
     "verify:all": "pnpm --filter backend verify:all",
-    "verify:otp": "pnpm --filter backend verify:otp"
+    "verify:otp": "pnpm --filter backend verify:otp",
+    "verify:stream": "pnpm --filter backend verify:stream"
   }
 }
