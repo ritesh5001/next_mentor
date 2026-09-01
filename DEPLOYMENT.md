@@ -45,6 +45,11 @@ the repo root:
 - **Start command:** `pnpm --filter @nextmentor/backend start`
 - **Health check path:** `/health`
 
+The `start` script deliberately does **not** pass `--env-file`. There is no
+`.env` file on Render — variables are injected into the process — and Node
+exits with status 9 if `--env-file` names a file that does not exist. Only the
+local `dev` script reads `.env`.
+
 Environment variables:
 
 ```
@@ -52,7 +57,8 @@ DATABASE_URL              internal Render Postgres URL
 AUTH_SECRET               openssl rand -base64 32
 CRON_SECRET               openssl rand -base64 32
 KYC_ENCRYPTION_KEY        openssl rand -base64 32
-ALLOWED_ORIGINS           https://yourdomain.com
+CORS_ORIGINS              https://yourdomain.com
+WEB_ORIGIN                https://yourdomain.com
 RAZORPAY_KEY_ID / _SECRET / _WEBHOOK_SECRET
 CLOUDFLARE_ACCOUNT_ID / _STREAM_TOKEN / _STREAM_SIGNING_KEY_ID / _STREAM_SIGNING_KEY_PEM
 CLOUDFLARE_STREAM_WEBHOOK_SECRET
@@ -61,8 +67,11 @@ RESEND_API_KEY / EMAIL_FROM
 APP_URL                   https://yourdomain.com   (for links inside emails)
 ```
 
-**`ALLOWED_ORIGINS` is the CORS allowlist.** Get it wrong and every browser call
-from the frontend fails. It must be the frontend's exact origin, scheme included.
+**`CORS_ORIGINS` is the allowlist** (the variable is `CORS_ORIGINS`, not
+`ALLOWED_ORIGINS`). It must be the frontend's exact origin, scheme included.
+Trailing slashes are stripped automatically — a browser sends
+`Origin: https://site.com` with no path, so `https://site.com/` would otherwise
+match nothing and every call would fail CORS with nothing in the server log.
 
 ---
 

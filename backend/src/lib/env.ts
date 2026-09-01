@@ -85,5 +85,14 @@ export function allowedOrigins(): string[] {
     process.env.WEB_ORIGIN,
     "http://localhost:3000",
   );
-  return raw.split(",").map((o) => o.trim()).filter(Boolean);
+
+  // Trailing slashes are stripped. A browser sends `Origin: https://site.com`
+  // with no path, so an allowlist entry of "https://site.com/" never matches
+  // and every request fails CORS — with nothing in the server log to say why.
+  // Pasting a URL out of the address bar gives you that slash, so this is the
+  // easiest possible mistake to make.
+  return raw
+    .split(",")
+    .map((o) => o.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
 }
