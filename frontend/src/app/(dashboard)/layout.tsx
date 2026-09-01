@@ -4,6 +4,7 @@ import Link from "next/link";
 import { BadgeCheck, GraduationCap } from "lucide-react";
 
 import { DashboardNav, type NavItem } from "@/components/dashboard/dashboard-nav";
+import { SignOutButton } from "@/components/dashboard/sign-out-button";
 import { requireUser } from "@/lib/queries";
 
 /**
@@ -59,6 +60,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <BadgeCheck className="size-4" strokeWidth={1.5} aria-hidden="true" />
               <span className="max-w-[10rem] truncate">{user.name ?? user.email}</span>
             </div>
+
+            <SignOutButton />
           </div>
         </div>
       </header>

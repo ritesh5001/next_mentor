@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/cn";
+import { SignOutButton } from "@/components/dashboard/sign-out-button";
 
 const ICONS: Record<string, LucideIcon> = {
   LayoutDashboard, UserCircle, ShieldCheck, Coins, Trophy, Gift, Sparkles,
@@ -129,6 +130,10 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
 
             <div className="flex-1 overflow-y-auto p-2">
               <NavList items={items} onNavigate={() => setOpen(false)} />
+            </div>
+
+            <div className="border-t border-[var(--color-border)] p-2">
+              <SignOutButton variant="panel" onSignOut={() => setOpen(false)} />
             </div>
           </nav>
         </div>

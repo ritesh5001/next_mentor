@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/cn";
+import { SignOutButton } from "@/components/dashboard/sign-out-button";
 
 /**
  * Admin navigation, grouped by the job being done.
@@ -150,6 +151,10 @@ export function AdminNav() {
             </div>
             <div className="flex-1 overflow-y-auto p-3">
               <NavList onNavigate={() => setOpen(false)} />
+            </div>
+
+            <div className="border-t border-[var(--color-border)] p-2">
+              <SignOutButton variant="panel" onSignOut={() => setOpen(false)} />
             </div>
           </div>
         </div>
