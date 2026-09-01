@@ -170,11 +170,41 @@ commerceRoutes.post("/checkout", requireUser, async (c) => {
       })
       .returning({ id: orders.id });
 
-    const rzp = await createRazorpayOrder({
-      amountInPaise,
-      receipt: orderRow.id,
-      notes: { orderId: orderRow.id, userId: user.id, itemType },
-    });
+    let rzp: Awaited<ReturnType<typeof createRazorpayOrder>>;
+    try {
+      rzp = await createRazorpayOrder({
+        amountInPaise,
+        receipt: orderRow.id,
+        notes: { orderId: orderRow.id, userId: user.id, itemType },
+      });
+    } catch (err) {
+      // The row above was written before Razorpay was reached, so a failure
+      // here strands it as `created` with a `pending_` id forever —
+      // indistinguishable from a checkout the buyer genuinely abandoned, and
+      // one more row for every retry. Nothing references it yet, so drop it.
+      await db.delete(orders).where(eq(orders.id, orderRow.id));
+
+      // A 401 is bad credentials, not a blip. Telling the buyer to try again
+      // sends them into a loop that cannot succeed, so separate the two: the
+      // operator needs to see this in the log, and the buyer needs to stop.
+      const status = (err as { statusCode?: number }).statusCode;
+      const misconfigured = status === 401 || status === 400;
+
+      console.error(
+        misconfigured
+          ? "[checkout] Razorpay rejected our credentials — check RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET"
+          : "[checkout] Could not create Razorpay order",
+        err,
+      );
+
+      return fail(
+        c,
+        misconfigured
+          ? "Payments are unavailable right now. Please contact support."
+          : "Could not start checkout. Please try again.",
+        "server_error",
+      );
+    }
 
     await db
       .update(orders)
