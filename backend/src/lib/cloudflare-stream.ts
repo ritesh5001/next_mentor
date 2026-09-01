@@ -1,3 +1,4 @@
+import nodeCrypto from "node:crypto";
 import { env } from "./env";
 
 const API_BASE = "https://api.cloudflare.com/client/v4";
@@ -107,17 +108,6 @@ export async function signPlaybackToken(
   const cfg = env("cloudflare");
   const expiresIn = options.expiresInSeconds ?? 2 * 60 * 60;
 
-  const pem = Buffer.from(cfg.CLOUDFLARE_STREAM_SIGNING_KEY_PEM, "base64").toString("utf8");
-  const der = pemToArrayBuffer(pem);
-
-  const key = await crypto.subtle.importKey(
-    "pkcs8",
-    der,
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false,
-    ["sign"],
-  );
-
   const header = base64url(
     JSON.stringify({ alg: "RS256", kid: cfg.CLOUDFLARE_STREAM_SIGNING_KEY_ID }),
   );
@@ -131,25 +121,58 @@ export async function signPlaybackToken(
     }),
   );
 
-  const signature = await crypto.subtle.sign(
-    "RSASSA-PKCS1-v1_5",
-    key,
-    new TextEncoder().encode(`${header}.${payload}`),
-  );
+  const signature = nodeCrypto
+    .sign("RSA-SHA256", Buffer.from(`${header}.${payload}`), readSigningKey())
+    .toString("base64url");
 
-  return `${header}.${payload}.${base64url(signature)}`;
+  return `${header}.${payload}.${signature}`;
 }
 
-function pemToArrayBuffer(pem: string): ArrayBuffer {
-  const body = pem
-    .replace(/-----BEGIN [^-]+-----/, "")
-    .replace(/-----END [^-]+-----/, "")
-    .replace(/\s+/g, "");
-  const binary = atob(body);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytes.buffer;
+/**
+ * Loads the signing key, whatever shape it arrives in.
+ *
+ * Cloudflare's /stream/keys endpoint returns a **PKCS#1** key —
+ * "-----BEGIN RSA PRIVATE KEY-----" — base64-encoded in the `pem` field.
+ *
+ * An earlier version of this decoded that and handed it to
+ * `crypto.subtle.importKey("pkcs8", ...)`, which only accepts PKCS#8 and
+ * failed with the famously unhelpful "Invalid keyData". WebCrypto has no
+ * PKCS#1 import at all, so the fix is node:crypto's createPrivateKey, which
+ * reads both formats. This is a plain Node service now, so there is no edge
+ * runtime constraint pushing us toward WebCrypto.
+ *
+ * Also tolerates the env var holding a raw PEM rather than base64, since that
+ * is the natural thing to paste if you copy it out of a terminal.
+ */
+function readSigningKey(): nodeCrypto.KeyObject {
+  if (cachedKey) return cachedKey;
+
+  const raw = env("cloudflare").CLOUDFLARE_STREAM_SIGNING_KEY_PEM.trim();
+
+  const pem = raw.includes("-----BEGIN")
+    ? raw
+    : Buffer.from(raw, "base64").toString("utf8");
+
+  if (!pem.includes("-----BEGIN")) {
+    throw new Error(
+      "CLOUDFLARE_STREAM_SIGNING_KEY_PEM is neither a PEM block nor base64 of one. " +
+        "Re-create it with backend/scripts/get-stream-key.sh.",
+    );
+  }
+
+  try {
+    cachedKey = nodeCrypto.createPrivateKey(pem);
+    return cachedKey;
+  } catch (err) {
+    throw new Error(
+      `CLOUDFLARE_STREAM_SIGNING_KEY_PEM could not be parsed as a private key: ${
+        err instanceof Error ? err.message : String(err)
+      }`,
+    );
+  }
 }
+
+let cachedKey: nodeCrypto.KeyObject | null = null;
 
 export function hlsManifestUrl(token: string): string {
   return `https://videodelivery.net/${token}/manifest/video.m3u8`;
