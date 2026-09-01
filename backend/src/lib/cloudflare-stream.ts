@@ -164,10 +164,13 @@ function readSigningKey(): nodeCrypto.KeyObject {
     cachedKey = nodeCrypto.createPrivateKey(pem);
     return cachedKey;
   } catch (err) {
+    // Keep the original as `cause`: node's message names the exact parse
+    // failure, which is the only thing that distinguishes a truncated paste
+    // from a wrong key format.
     throw new Error(
-      `CLOUDFLARE_STREAM_SIGNING_KEY_PEM could not be parsed as a private key: ${
-        err instanceof Error ? err.message : String(err)
-      }`,
+      "CLOUDFLARE_STREAM_SIGNING_KEY_PEM could not be parsed as a private key. " +
+        "Re-create it with backend/scripts/get-stream-key.sh.",
+      { cause: err },
     );
   }
 }
