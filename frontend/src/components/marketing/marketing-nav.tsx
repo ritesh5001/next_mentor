@@ -15,7 +15,6 @@ const LINKS = [
   { href: "/pricing", label: "Course Package", packages: true },
   { href: "/contact", label: "Contact" },
   { href: "/courses", label: "Courses" },
-  { href: "/jobs", label: "Job" },
 ];
 
 export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {

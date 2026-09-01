@@ -43,6 +43,16 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  async rewrites() {
+    // The footer links to /terms, /privacy and /refund. One page renders all
+    // three, so these map onto it rather than duplicating a file each.
+    return [
+      { source: "/terms", destination: "/legal/terms" },
+      { source: "/privacy", destination: "/legal/privacy" },
+      { source: "/refund", destination: "/legal/refund" },
+    ];
+  },
+
   async headers() {
     return [
       {

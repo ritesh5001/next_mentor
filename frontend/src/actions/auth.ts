@@ -43,7 +43,19 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
     sessionCookieOptions(session.expiresIn),
   );
 
-  redirect(callbackUrl.startsWith("/") && !callbackUrl.startsWith("//") ? callbackUrl : "/dashboard");
+  // Admins land in the admin panel, students in their dashboard. They are two
+  // different products — sending an administrator to a course list makes them
+  // click twice to reach the work they actually signed in to do.
+  //
+  // An explicit callbackUrl still wins, so "sign in to continue" from a deep
+  // link returns you to that page.
+  const isExplicit =
+    callbackUrl !== "/dashboard" &&
+    callbackUrl.startsWith("/") &&
+    !callbackUrl.startsWith("//");
+
+  const home = session.user.role === "admin" ? "/admin" : "/dashboard";
+  redirect(isExplicit ? callbackUrl : home);
 }
 
 export async function registerAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

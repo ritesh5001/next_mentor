@@ -55,15 +55,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
               Browse courses
             </Link>
 
-            {user.role === "admin" && (
-              <Link
-                href="/admin/courses"
-                className="hidden rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] sm:block"
-              >
-                Admin
-              </Link>
-            )}
-
             <div className="flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1.5 text-sm font-semibold text-[var(--color-on-primary)]">
               <BadgeCheck className="size-4" strokeWidth={1.5} aria-hidden="true" />
               <span className="max-w-[10rem] truncate">{user.name ?? user.email}</span>

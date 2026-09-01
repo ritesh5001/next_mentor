@@ -132,27 +132,6 @@ export default async function AdminOverviewPage() {
           <RevenueSection />
         </Suspense>
       </section>
-
-      <nav aria-label="Admin sections" className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-        {[
-          { href: "/admin/courses", label: "Courses" },
-          { href: "/admin/plans", label: "Plans" },
-          { href: "/admin/coupons", label: "Coupons" },
-          { href: "/admin/content", label: "Content" },
-          { href: "/admin/kyc", label: "KYC" },
-          { href: "/admin/payouts", label: "Payouts" },
-          { href: "/admin/users", label: "Users" },
-          { href: "/admin/orders", label: "Orders" },
-        ].map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="flex min-h-11 items-center justify-center rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-3 text-sm font-semibold transition-colors hover:bg-[var(--color-muted)]"
-          >
-            {l.label}
-          </Link>
-        ))}
-      </nav>
     </div>
   );
 }
