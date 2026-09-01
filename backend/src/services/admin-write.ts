@@ -20,7 +20,7 @@ import { CATALOG_TAG, courseTag, slugify, uniqueSlug } from "./courses";
 import { PLANS_TAG } from "./plans";
 import { normalizeCouponCode } from "./coupons";
 import { createDirectUpload, deleteVideo } from "@/lib/cloudflare-stream";
-import { deleteObject, createImageUpload } from "@/lib/r2";
+import { deleteObject, createUploadAuth } from "@/lib/imagekit";
 import { formatPaise } from "@/lib/razorpay";
 import {
   sendKycApprovedEmail,
@@ -704,4 +704,4 @@ export async function cancelMentorshipSlot(id: string) {
   await db.update(mentorshipSlots).set({ isCancelled: true }).where(eq(mentorshipSlots.id, id));
 }
 
-export { createImageUpload };
+export { createUploadAuth };

@@ -7,7 +7,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { BCRYPT_ROUNDS } from "@/lib/auth";
-import { createImageUpload, deleteObject, publicUrl } from "@/lib/r2";
+import { createUploadAuth, deleteObject, publicUrl } from "@/lib/imagekit";
 import { getActiveSubscription } from "@/services/plans";
 import { requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
@@ -100,19 +100,17 @@ profileRoutes.post("/profile/avatar-upload", requireUser, async (c) => {
   const body = await parseBody(c, requestUploadSchema);
   if (!body.ok) return body.response;
 
-  const result = await createImageUpload({ prefix: "avatars", ...body.data });
-  return "error" in result
-    ? fail(c, result.error, "validation")
-    : ok(c, { uploadUrl: result.uploadUrl, key: result.key });
+  const result = createUploadAuth({ folder: "avatars", ...body.data });
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
 });
 
 profileRoutes.patch("/profile/avatar", requireUser, async (c) => {
   const body = await parseBody(c, z.object({ key: z.string().min(1) }));
   if (!body.ok) return body.response;
 
-  // The key comes from the browser. Without this check someone could point
-  // their avatar at another user's private object and have it served from us.
-  if (!/^avatars\/[0-9a-f-]{36}\.(jpg|png|webp|avif)$/.test(body.data.key)) {
+  // The path comes from the browser. Without this check someone could point
+  // their avatar at another user's file and have it served from our endpoint.
+  if (!/^\/?avatars\/[0-9a-f-]{36}\.(jpg|png|webp|avif)$/.test(body.data.key)) {
     return fail(c, "That image could not be saved.", "validation");
   }
 
@@ -130,7 +128,9 @@ profileRoutes.patch("/profile/avatar", requireUser, async (c) => {
     .where(eq(users.id, me.id));
 
   // Drop the replaced file. Only ours — an OAuth avatar is a remote URL.
-  if (previous?.image?.startsWith("avatars/")) await deleteObject(previous.image);
+  if (previous?.image && /^\/?avatars\//.test(previous.image)) {
+    await deleteObject(previous.image);
+  }
 
   return ok(c, { updated: true });
 });

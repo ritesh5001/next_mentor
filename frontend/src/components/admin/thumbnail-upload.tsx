@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { ImageIcon, Upload } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import type { ActionState } from "@nextmentor/shared";
+import type { ActionState , UploadAuth } from "@nextmentor/shared";
+import { uploadToImageKit } from "@/lib/upload";
 
 /**
  * Course thumbnail upload.
@@ -24,7 +25,7 @@ export function ThumbnailUpload({
   requestUpload: (input: {
     contentType: string;
     contentLength: number;
-  }) => Promise<{ uploadUrl: string; key: string } | { error: string }>;
+  }) => Promise<UploadAuth | { error: string }>;
   setThumbnail: (courseId: string, key: string) => Promise<ActionState>;
 }) {
   const router = useRouter();
@@ -49,23 +50,17 @@ export function ThumbnailUpload({
     }
 
     try {
-      // Content-Type must match what was signed or R2 rejects the PUT.
-      const res = await fetch(target.uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type },
-      });
-      if (!res.ok) throw new Error(String(res.status));
+      const uploaded = await uploadToImageKit(target, file);
 
-      const result = await setThumbnail(courseId, target.key);
+      const result = await setThumbnail(courseId, uploaded.filePath);
       if (result?.error) {
         setError(result.error);
       } else {
         setPreview(URL.createObjectURL(file));
         router.refresh();
       }
-    } catch {
-      setError("Upload failed. Check your connection and try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed. Try again.");
     }
 
     setBusy(false);

@@ -297,5 +297,30 @@ export const requestUploadSchema = z.object({
   contentLength: z.number().int().positive(),
 });
 
-export type UploadTarget = { uploadUrl: string; key: string };
+/**
+ * Everything the browser needs to upload straight to ImageKit.
+ *
+ * Not a single presigned URL like the S3/R2 flow this replaced: ImageKit takes
+ * a multipart POST carrying a short-lived signature the API generates. The
+ * private key never reaches the browser either way.
+ */
+export type UploadAuth = {
+  uploadUrl: string;
+  publicKey: string;
+  signature: string;
+  expire: number;
+  token: string;
+  folder: string;
+  fileName: string;
+  maxBytes: number;
+};
+
+/** What ImageKit returns once the browser has uploaded. */
+export type UploadedFile = {
+  filePath: string;
+  url: string;
+  fileId: string;
+};
+
+/** Cloudflare Stream direct-creator-upload — video only. */
 export type VideoUploadTarget = { uploadUrl: string; videoId: string };

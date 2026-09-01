@@ -19,6 +19,7 @@
     "verify:engagement": "pnpm --filter backend verify:engagement",
     "verify:all": "pnpm --filter backend verify:all",
     "verify:otp": "pnpm --filter backend verify:otp",
-    "verify:stream": "pnpm --filter backend verify:stream"
+    "verify:stream": "pnpm --filter backend verify:stream",
+    "verify:imagekit": "pnpm --filter backend verify:imagekit"
   }
 }

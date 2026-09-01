@@ -37,16 +37,33 @@ export function discountPercent(priceInPaise: number, mrpInPaise: number | null)
 }
 
 /**
- * Builds a public asset URL from an R2 object key.
+ * Builds a public asset URL from an ImageKit file path.
  *
- * Keys are stored rather than URLs so the CDN domain can change without a data
- * migration.
+ * Paths are stored rather than absolute URLs so the delivery endpoint can
+ * change without a data migration.
+ *
+ * `width` uses ImageKit's on-the-fly transforms: `f-auto` serves WebP or AVIF
+ * based on the browser's Accept header, and `q-auto` picks quality from the
+ * image. That means an oversized upload is still delivered at a sane size,
+ * which is the main reason to prefer this over serving raw objects.
  */
-export function assetUrl(key: string | null | undefined): string | null {
+export function assetUrl(
+  key: string | null | undefined,
+  opts: { width?: number; quality?: number } = {},
+): string | null {
   if (!key) return null;
-  const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
+  // OAuth avatars and legacy records are already absolute.
+  if (key.startsWith("http://") || key.startsWith("https://")) return key;
+
+  const base = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
   if (!base) return null;
-  return `${base.replace(/\/$/, "")}/${key.replace(/^\//, "")}`;
+
+  const url = `${base.replace(/\/+$/, "")}/${key.replace(/^\/+/, "")}`;
+  const tr = [opts.width ? `w-${opts.width}` : null, `q-${opts.quality ?? "auto"}`, "f-auto"]
+    .filter(Boolean)
+    .join(",");
+
+  return `${url}?tr=${tr}`;
 }
 
 /**

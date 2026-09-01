@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { ActionState } from "@nextmentor/shared";
+import type { ActionState, UploadAuth } from "@nextmentor/shared";
 
 import { api, ApiError } from "@/lib/api";
 
@@ -114,7 +114,7 @@ export async function requestLessonUploadAction(
 export async function requestThumbnailUploadAction(input: {
   contentType: string;
   contentLength: number;
-}): Promise<{ uploadUrl: string; key: string } | { error: string }> {
+}): Promise<UploadAuth | { error: string }> {
   try {
     return await api("/api/admin/uploads/image", {
       method: "POST",
@@ -272,7 +272,7 @@ export async function deletePromoAssetAction(id: string): Promise<ActionState> {
 export async function requestPromoUploadAction(input: {
   contentType: string;
   contentLength: number;
-}): Promise<{ uploadUrl: string; key: string } | { error: string }> {
+}): Promise<UploadAuth | { error: string }> {
   try {
     return await api("/api/admin/uploads/image", { method: "POST", body: { ...input, prefix: "promo" } });
   } catch (err) {

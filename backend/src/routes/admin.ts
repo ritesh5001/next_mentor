@@ -11,7 +11,7 @@ import { listCouponsForAdmin } from "@/services/coupons";
 import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay } from "@/services/admin";
 import { listKycForAdmin, listPayoutsForAdmin } from "@/services/affiliate";
 import { approvePayout, markPayoutPaid, rejectPayout } from "@/services/payouts";
-import { createImageUpload } from "@/lib/r2";
+import { createUploadAuth } from "@/lib/imagekit";
 import { createDirectUpload } from "@/lib/cloudflare-stream";
 import { requireAdmin, requireInstructor, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
@@ -276,19 +276,19 @@ adminRoutes.patch("/payouts/:payoutId", requireAdmin, async (c) => {
 adminRoutes.post("/uploads/image", requireInstructor, async (c) => {
   const body = await parseBody(
     c,
-    requestUploadSchema.extend({ prefix: z.enum(["thumbnails", "promo"]).default("thumbnails") }),
+    requestUploadSchema.extend({
+      prefix: z.enum(["thumbnails", "promo", "certificates"]).default("thumbnails"),
+    }),
   );
   if (!body.ok) return body.response;
 
-  const result = await createImageUpload({
-    prefix: body.data.prefix,
+  const result = createUploadAuth({
+    folder: body.data.prefix,
     contentType: body.data.contentType,
     contentLength: body.data.contentLength,
   });
 
-  return "error" in result
-    ? fail(c, result.error, "validation")
-    : ok(c, { uploadUrl: result.uploadUrl, key: result.key });
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
 });
 
 adminRoutes.patch("/courses/:courseId/thumbnail", requireInstructor, async (c) => {

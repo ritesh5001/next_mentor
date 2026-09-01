@@ -631,14 +631,14 @@ export const getAdminContent = () =>
 /**
  * Builds a public asset URL from an R2 key.
  *
- * Lives here rather than in the backend's r2 lib because the frontend needs it
- * to render images and must not import server code.
+ * Lives here rather than in the backend's imagekit lib because the frontend
+ * needs it to render images and must not import server code.
  */
 export function publicUrl(key: string | null | undefined): string | null {
   if (!key) return null;
   if (key.startsWith("http")) return key;
-  const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL;
-  return base ? `${base.replace(/\/$/, "")}/${key.replace(/^\//, "")}` : null;
+  const base = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
+  return base ? `${base.replace(/\/+$/, "")}/${key.replace(/^\/+/, "")}` : null;
 }
 
 export { redirect };

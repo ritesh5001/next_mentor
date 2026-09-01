@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { ActionState, CheckoutResult, CouponPreview, ItemType } from "@nextmentor/shared";
+import type { ActionState, CheckoutResult, CouponPreview, ItemType, UploadAuth } from "@nextmentor/shared";
 
 import { api, ApiError } from "@/lib/api";
 
@@ -116,7 +116,7 @@ export async function changePasswordAction(_p: ActionState, fd: FormData): Promi
 export async function requestAvatarUploadAction(input: {
   contentType: string;
   contentLength: number;
-}): Promise<{ uploadUrl: string; key: string } | { error: string }> {
+}): Promise<UploadAuth | { error: string }> {
   try {
     return await api("/api/profile/avatar-upload", { method: "POST", body: input });
   } catch (err) {

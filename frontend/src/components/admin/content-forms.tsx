@@ -8,7 +8,8 @@ import { Upload } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import type { ActionState, FormAction } from "@nextmentor/shared";
+import type { ActionState, FormAction, UploadAuth } from "@nextmentor/shared";
+import { uploadToImageKit } from "@/lib/upload";
 
 export type PlanOption = { id: string; name: string };
 
@@ -57,7 +58,7 @@ function FileUpload({
   requestUpload: (input: {
     contentType: string;
     contentLength: number;
-  }) => Promise<{ uploadUrl: string; key: string } | { error: string }>;
+  }) => Promise<UploadAuth | { error: string }>;
   onUploaded: (key: string, name: string) => void;
   accept: string;
   label: string;
@@ -82,16 +83,10 @@ function FileUpload({
     }
 
     try {
-      // Content-Type must match what was signed, or R2 rejects the PUT.
-      const res = await fetch(target.uploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type },
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      onUploaded(target.key, file.name);
-    } catch {
-      setError("Upload failed. Check your connection and try again.");
+      const uploaded = await uploadToImageKit(target, file);
+      onUploaded(uploaded.filePath, file.name);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed. Try again.");
     }
 
     setBusy(false);
@@ -140,7 +135,7 @@ export function PromoAssetForm({
   requestUpload: (input: {
     contentType: string;
     contentLength: number;
-  }) => Promise<{ uploadUrl: string; key: string } | { error: string }>;
+  }) => Promise<UploadAuth | { error: string }>;
 }) {
   const [state, formAction] = useActionState<ActionState, FormData>(action, null);
   const [type, setType] = useState<"banner" | "video" | "script" | "pdf">("banner");

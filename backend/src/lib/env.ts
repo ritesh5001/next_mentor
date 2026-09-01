@@ -29,12 +29,11 @@ const groups = {
     CLOUDFLARE_STREAM_SIGNING_KEY_PEM: z.string().min(1),
   }),
 
-  r2: z.object({
-    R2_ACCOUNT_ID: z.string().min(1),
-    R2_ACCESS_KEY_ID: z.string().min(1),
-    R2_SECRET_ACCESS_KEY: z.string().min(1),
-    R2_BUCKET: z.string().min(1),
-    R2_PUBLIC_URL: z.string().url(),
+  imagekit: z.object({
+    IMAGEKIT_PUBLIC_KEY: z.string().min(1),
+    IMAGEKIT_PRIVATE_KEY: z.string().min(1),
+    // e.g. https://ik.imagekit.io/your_id
+    IMAGEKIT_URL_ENDPOINT: z.string().url(),
   }),
 
   email: z.object({
