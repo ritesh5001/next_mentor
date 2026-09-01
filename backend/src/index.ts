@@ -74,10 +74,15 @@ app.onError((err, c) => {
   return c.json({ ok: false, error: "Something went wrong.", code: "server_error" }, 500);
 });
 
+// Render, Fly and friends inject PORT and expect the process to use it. They
+// also require binding to 0.0.0.0 — a server on 127.0.0.1 is unreachable from
+// outside the container, which shows up as "no open ports detected" rather
+// than as a crash.
 const port = Number(process.env.PORT ?? 4000);
+const hostname = process.env.HOST ?? "0.0.0.0";
 
-serve({ fetch: app.fetch, port }, (info) => {
-  console.info(`[api] listening on :${info.port}`);
+serve({ fetch: app.fetch, port, hostname }, (info) => {
+  console.info(`[api] listening on ${hostname}:${info.port}`);
   console.info(`[api] CORS origins: ${allowedOrigins().join(", ")}`);
 });
 
