@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PlanForm } from "@/components/admin/plan-form";
 import { ActionButton } from "@/components/admin/row-actions";
@@ -71,7 +72,13 @@ export default async function AdminPlansPage() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex justify-end">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/admin/plans/${p.id}`}
+                          className="inline-flex min-h-9 items-center rounded-[var(--radius-control)] border border-[var(--color-border)] px-3 text-sm font-medium transition-colors hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                        >
+                          Edit
+                        </Link>
                         <ActionButton
                           label={p.isActive ? "Hide" : "Publish"}
                           run={async () => {

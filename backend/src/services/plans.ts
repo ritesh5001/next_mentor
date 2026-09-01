@@ -97,9 +97,15 @@ export async function listPlansForAdmin() {
       id: plans.id,
       slug: plans.slug,
       name: plans.name,
+      // tagline, mrp and features are here for the edit form to prefill.
+      // Without them an admin opening a plan would be shown blank inputs and
+      // would silently wipe the values on save.
+      tagline: plans.tagline,
       priceInPaise: plans.priceInPaise,
+      mrpInPaise: plans.mrpInPaise,
       durationDays: plans.durationDays,
       commissionRateBps: plans.commissionRateBps,
+      features: plans.features,
       grantsAllCourses: plans.grantsAllCourses,
       isActive: plans.isActive,
       isFeatured: plans.isFeatured,

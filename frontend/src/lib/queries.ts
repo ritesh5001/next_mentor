@@ -506,12 +506,16 @@ export const listPlansForAdmin = () =>
       id: string;
       slug: string;
       name: string;
+      tagline: string | null;
       priceInPaise: number;
+      mrpInPaise: number | null;
       durationDays: number | null;
       commissionRateBps: number;
+      features: string[];
       grantsAllCourses: boolean;
       isActive: boolean;
       isFeatured: boolean;
+      position: number;
       memberCount: number;
     }>
   >("/api/admin/plans");

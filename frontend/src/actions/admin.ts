@@ -164,7 +164,9 @@ export async function updatePlanAction(_p: ActionState, fd: FormData): Promise<A
           isFeatured: fd.get("isFeatured") === "on",
         },
       }),
-    ["/admin/plans"],
+    // The detail page too, or the form keeps showing the values it just replaced.
+    ["/admin/plans", `/admin/plans/${planId}`],
+    "Plan updated",
   );
 }
 

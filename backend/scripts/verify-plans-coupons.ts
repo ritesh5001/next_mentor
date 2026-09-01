@@ -16,6 +16,8 @@ import {
 import { validateCoupon } from "@/services/coupons";
 import { fulfilPaidOrder, reverseRefundedOrder } from "@/services/orders";
 import { getActiveSubscription, getCommissionRateBps } from "@/services/plans";
+import { updatePlan } from "@/services/admin-write";
+import { planPatchSchema } from "@/routes/admin";
 import { generateUniqueReferralCode } from "@/lib/referral-code";
 import { uniqueSlug } from "@/services/courses";
 
@@ -224,6 +226,42 @@ async function main() {
     });
   } catch { checkHeld = true; }
   check("order cannot target both a course and a plan", checkHeld);
+
+  // ------------------------------------------- partial plan update safety
+  //
+  // Regression guard. The admin PATCH schema is written by hand rather than
+  // derived with .partial(), because .partial() keeps a field's .default():
+  // omitting `features` still materialised [] and the writer saved it. A
+  // Publish/Hide toggle, which sends only isActive, silently wiped a plan's
+  // feature list, revoked grantsAllCourses and reset its position.
+  await db
+    .update(plans)
+    .set({
+      features: ["keep me", "and me"],
+      grantsAllCourses: true,
+      position: 7,
+      isFeatured: true,
+    })
+    .where(eq(plans.id, plan.id));
+
+  // Through the real schema: the defect was the schema injecting defaults,
+  // so calling updatePlan directly would pass even against the broken code.
+  await updatePlan(plan.id, planPatchSchema.parse({ isActive: false }));
+  const [afterToggle] = await db.select().from(plans).where(eq(plans.id, plan.id));
+
+  check("toggling a plan keeps its features", afterToggle.features.length === 2,
+    `got ${JSON.stringify(afterToggle.features)}`);
+  check("toggling a plan keeps grantsAllCourses", afterToggle.grantsAllCourses === true);
+  check("toggling a plan keeps its position", afterToggle.position === 7);
+  check("toggling a plan keeps isFeatured", afterToggle.isFeatured === true);
+  check("toggling a plan does change isActive", afterToggle.isActive === false);
+
+  // A real edit must still write what it is handed, including emptying a list.
+  await updatePlan(plan.id, planPatchSchema.parse({ features: [], commissionPercent: 12.5 }));
+  const [afterEdit] = await db.select().from(plans).where(eq(plans.id, plan.id));
+  check("an explicit edit still clears features", afterEdit.features.length === 0);
+  check("an explicit edit writes the commission rate", afterEdit.commissionRateBps === 1250,
+    `got ${afterEdit.commissionRateBps}`);
 
   // -------------------------------------------------------------- cleanup
   await db.delete(couponRedemptions).where(eq(couponRedemptions.userId, buyer.id));

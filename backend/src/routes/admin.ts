@@ -170,17 +170,61 @@ adminRoutes.post("/lessons/:lessonId/upload", requireAdmin, async (c) => {
 
 /* ------------------------------------------------------------- plans etc. */
 
+/**
+ * An optional number arriving from an HTML form.
+ *
+ * A blank input posts "", and z.coerce turns that into 0, not undefined. For
+ * durationDays that meant a lifetime plan (deliberately blank) failed min(1)
+ * and could be neither created nor saved. Empty means absent here.
+ */
+const optionalNumber = (min: number, max: number) =>
+  z.preprocess(
+    (v) => (v === "" || v === null ? undefined : v),
+    z.coerce.number().int().min(min).max(max).optional(),
+  );
+
 const planSchema = z.object({
   name: z.string().trim().min(2).max(60),
   tagline: z.string().trim().max(160).optional().or(z.literal("")),
   priceInRupees: z.coerce.number().int().min(0).max(1_000_000),
-  mrpInRupees: z.coerce.number().int().min(0).max(1_000_000).optional(),
-  durationDays: z.coerce.number().int().min(1).max(3650).optional(),
+  mrpInRupees: optionalNumber(0, 1_000_000),
+  durationDays: optionalNumber(1, 3650),
   commissionPercent: z.coerce.number().min(0).max(100),
   features: z.array(z.string()).max(20).default([]),
   grantsAllCourses: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   position: z.coerce.number().int().min(0).max(100).default(0),
+});
+
+/**
+ * The PATCH shape, built by hand rather than from planSchema.
+ *
+ * Two traps live here, and both cause silent data loss rather than an error.
+ *
+ * `.partial()` makes a field optional but does NOT drop its `.default()`. So
+ * `features: z.array(...).default([])` still materialises `[]` when the client
+ * omits it, and the writer — which only checks `!== undefined` — dutifully
+ * saves that empty array. The same applies to grantsAllCourses, isFeatured and
+ * position. A Publish/Hide toggle sending nothing but `isActive` would wipe a
+ * plan's feature list, revoke its catalogue access and reset its sort order.
+ *
+ * So every field here is optional with no default: absent means "leave alone".
+ */
+export const planPatchSchema = z.object({
+  name: z.string().trim().min(2).max(60).optional(),
+  tagline: z.string().trim().max(160).optional().or(z.literal("")),
+  priceInRupees: optionalNumber(0, 1_000_000),
+  mrpInRupees: optionalNumber(0, 1_000_000),
+  durationDays: optionalNumber(1, 3650),
+  commissionPercent: z.preprocess(
+    (v) => (v === "" || v === null ? undefined : v),
+    z.coerce.number().min(0).max(100).optional(),
+  ),
+  features: z.array(z.string()).max(20).optional(),
+  grantsAllCourses: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
+  position: optionalNumber(0, 100),
+  isActive: z.boolean().optional(),
 });
 
 adminRoutes.post("/plans", requireAdmin, async (c) => {
@@ -191,9 +235,7 @@ adminRoutes.post("/plans", requireAdmin, async (c) => {
 });
 
 adminRoutes.patch("/plans/:planId", requireAdmin, async (c) => {
-  const body = await parseBody(c, planSchema.partial({ features: true }).extend({
-    isActive: z.boolean().optional(),
-  }));
+  const body = await parseBody(c, planPatchSchema);
   if (!body.ok) return body.response;
   await write.updatePlan(c.req.param("planId"), body.data);
   return ok(c, { updated: true });
