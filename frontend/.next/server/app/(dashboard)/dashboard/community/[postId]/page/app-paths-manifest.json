@@ -1,3 +1,0 @@
-{
-  "/(dashboard)/dashboard/community/[postId]/page": "app/(dashboard)/dashboard/community/[postId]/page.js"
-}
