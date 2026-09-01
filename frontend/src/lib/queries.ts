@@ -40,26 +40,68 @@ export { getSession, getSession as auth, getSession as getSessionUser };
 
 /* ---------------------------------------------------------------- catalog */
 
+/**
+ * Public reads that must never take the page down with them.
+ *
+ * A marketing page has to render even when the API is unreachable — during a
+ * Render cold start, a deploy, or a misconfigured API_URL. Before this, an
+ * unreachable API turned the homepage into a blank 500, which is a far worse
+ * outcome than a page that renders with an empty pricing section.
+ *
+ * Authenticated reads deliberately do NOT use this: silently showing an empty
+ * dashboard would hide a real failure from someone who has paid.
+ */
+async function publicRead<T>(label: string, fn: () => Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    console.error(
+      `[queries] public read "${label}" failed — rendering without it. ` +
+        `Check API_URL and that the API is reachable.`,
+      err,
+    );
+    return fallback;
+  }
+}
+
 /** Public, identical for everyone — cached at the edge for a minute. */
 export const getCatalog = () =>
-  api<CatalogCourse[]>("/api/courses", { anonymous: true, revalidate: 60, tags: ["catalog"] });
+  publicRead(
+    "catalog",
+    () =>
+      api<CatalogCourse[]>("/api/courses", {
+        anonymous: true,
+        revalidate: 60,
+        tags: ["catalog"],
+      }),
+    [] as CatalogCourse[],
+  );
 
-export const getActivePlans = () =>
-  api<
-    Array<{
-      id: string;
-      slug: string;
-      name: string;
-      tagline: string | null;
-      priceInPaise: number;
-      mrpInPaise: number | null;
-      durationDays: number | null;
-      features: string[];
-      grantsAllCourses: boolean;
-      isFeatured: boolean;
-      commissionRateBps: number;
-    }>
-  >("/api/plans", { anonymous: true, revalidate: 60, tags: ["plans"] });
+type ActivePlan = {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string | null;
+  priceInPaise: number;
+  mrpInPaise: number | null;
+  durationDays: number | null;
+  features: string[];
+  grantsAllCourses: boolean;
+  isFeatured: boolean;
+  commissionRateBps: number;
+};
+
+export const getActivePlans = (): Promise<ActivePlan[]> =>
+  publicRead(
+    "plans",
+    () =>
+      api<ActivePlan[]>("/api/plans", {
+        anonymous: true,
+        revalidate: 60,
+        tags: ["plans"],
+      }),
+    [],
+  );
 
 /** Per-viewer (it carries `enrolled`), so never cached. */
 export const getCourseBySlug = (slug: string) =>

@@ -1,6 +1,6 @@
 {
   "node": {
-    "609859bb82d82eb1ef7a6929bbce7c329b02741193": {
+    "60a898ca348954652489fed2617006b4ba91ee30db": {
       "workers": {
         "app/(auth)/reset-password/page": {
           "moduleId": 98012,
@@ -11,7 +11,7 @@
       "exportedName": "resetPasswordAction",
       "filename": "frontend/src/actions/auth.ts"
     },
-    "60a21a48002e350a40838d5eca62166cdd2367a882": {
+    "60a0023f3b618dbca69eb2818955e83c3b94bdad41": {
       "workers": {
         "app/(auth)/reset-password/page": {
           "moduleId": 98012,

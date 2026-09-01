@@ -1,6 +1,6 @@
 {
   "node": {
-    "60b9b4f69ca67ad9dedf70cbbebcdb142abad8fe90": {
+    "6059815f2bc383b38f08d31a3759af8be7d34c395e": {
       "workers": {
         "app/(auth)/forgot-password/page": {
           "moduleId": 460512,

@@ -1,43 +1,34 @@
 #!/usr/bin/env bash
 # Diagnoses Cloudflare credentials in backend/.env without printing secrets.
 #
-#   ./backend/scripts/check-cloudflare.sh
+#   ./backend/scripts/check-cloudflare.sh              # tests what is in .env
+#   ./backend/scripts/check-cloudflare.sh <new-token>  # tests a token first
 #
-# Tells you which specific permission is missing, rather than the generic
-# "Authorization Failure" Cloudflare returns for every kind of scope problem.
+# Cloudflare returns the same generic "Authorization Failure" for every kind of
+# scope problem, so this separates "token is fake" from "token is real but has
+# no Stream permission" — which need completely different fixes.
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-get() { grep "^$1=" .env 2>/dev/null | cut -d'=' -f2- | tr -d '"'"'"; }
+get() { grep "^$1=" .env 2>/dev/null | cut -d'=' -f2- | tr -d '"' | tr -d "'"; }
 
 ACCOUNT_ID=$(get CLOUDFLARE_ACCOUNT_ID)
-TOKEN=$(get CLOUDFLARE_STREAM_TOKEN)
+# Accept a candidate token as $1 so a new one can be tested BEFORE it is saved
+# into .env — no point committing a token that turns out to lack permissions.
+TOKEN="${1:-$(get CLOUDFLARE_STREAM_TOKEN)}"
 
-if [ -z "$TOKEN" ]; then
-  echo "CLOUDFLARE_STREAM_TOKEN is empty in backend/.env"; exit 1
-fi
+if [ -z "$TOKEN" ]; then echo "CLOUDFLARE_STREAM_TOKEN is empty in backend/.env"; exit 1; fi
+if [ -z "$ACCOUNT_ID" ]; then echo "CLOUDFLARE_ACCOUNT_ID is empty in backend/.env"; exit 1; fi
 
-report() {
-  python3 -c '
-import json, sys
-label = sys.argv[1]
-try:
-    r = json.loads(sys.argv[2])
-except Exception:
-    print(f"  {label}: non-JSON response"); sys.exit()
-if r.get("success"):
-    print(f"  {label}: OK")
-else:
-    for e in r.get("errors", []):
-        print(f"  {label}: FAIL [{e.get(\"code\")}] {e.get(\"message\")}")
-' "$1" "$2"
-}
+R="scripts/cf-report.py"
+API=https://api.cloudflare.com/client/v4
 
-echo "Account: ${ACCOUNT_ID:0:8}…"
-report "token is valid " "$(curl -sS https://api.cloudflare.com/client/v4/user/tokens/verify -H "Authorization: Bearer $TOKEN")"
-report "stream:read    " "$(curl -sS "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/stream?per_page=1" -H "Authorization: Bearer $TOKEN")"
-report "stream:keys    " "$(curl -sS "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/stream/keys" -H "Authorization: Bearer $TOKEN")"
+echo "Account: ${ACCOUNT_ID:0:8}…  Token: ${TOKEN:0:5}…(${#TOKEN} chars)"
+python3 "$R" "token valid" "$(curl -sS $API/user/tokens/verify -H "Authorization: Bearer $TOKEN")"
+python3 "$R" "stream read" "$(curl -sS "$API/accounts/$ACCOUNT_ID/stream?per_page=1" -H "Authorization: Bearer $TOKEN")"
+python3 "$R" "stream keys" "$(curl -sS "$API/accounts/$ACCOUNT_ID/stream/keys" -H "Authorization: Bearer $TOKEN")"
 
 echo
-echo "If the token is valid but stream calls fail, the token is missing"
-echo "Account -> Stream -> Edit, or Account Resources does not include this account."
+echo "token valid OK + stream FAIL  -> token lacks Account > Stream > Edit,"
+echo "                                 or Account Resources excludes this account."
+echo "token valid FAIL              -> wrong/expired token string."
