@@ -23,9 +23,51 @@ async function cf<T>(path: string, init?: RequestInit): Promise<T> {
   const body = (await res.json()) as CfResponse<T>;
   if (!res.ok || !body.success) {
     const detail = body.errors?.map((e) => `${e.code}: ${e.message}`).join(", ") ?? res.statusText;
-    throw new Error(`Cloudflare Stream ${path} failed — ${detail}`);
+    throw new CloudflareStreamError(
+      `Cloudflare Stream ${path} failed — ${detail}`,
+      body.errors?.[0]?.code,
+      body.errors?.[0]?.message,
+    );
   }
   return body.result;
+}
+
+/**
+ * A Cloudflare failure that keeps its own error code.
+ *
+ * Every one of these used to reach the admin as "Check the Cloudflare
+ * credentials", which sent people to re-issue a perfectly good API token when
+ * the real answer was that the account had no Stream minutes left. The code
+ * travels with the error so the caller can say what actually went wrong.
+ */
+export class CloudflareStreamError extends Error {
+  constructor(
+    message: string,
+    readonly code?: number,
+    readonly cfMessage?: string,
+  ) {
+    super(message);
+    this.name = "CloudflareStreamError";
+  }
+
+  /** A sentence an administrator can act on. */
+  get adminMessage(): string {
+    switch (this.code) {
+      case 10011:
+        return "Cloudflare Stream is out of storage. Add minutes to the Stream subscription, or delete unused videos, then try again.";
+      case 10004:
+      case 10000:
+      case 9109:
+        return "Cloudflare rejected the API token. Check CLOUDFLARE_STREAM_TOKEN and that it has Stream:Edit on this account.";
+      case 10006:
+        return "This Cloudflare account does not have Stream enabled. Enable Stream in the dashboard first.";
+      default:
+        // Cloudflare's own wording beats anything generic we could invent.
+        return this.cfMessage
+          ? `Cloudflare rejected the upload: ${this.cfMessage}`
+          : "Could not start the upload. Check the Cloudflare configuration.";
+    }
+  }
 }
 
 /**

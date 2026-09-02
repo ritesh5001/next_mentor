@@ -19,7 +19,9 @@ import { invalidateTag } from "@/lib/cache";
 import { CATALOG_TAG, courseTag, slugify, uniqueSlug } from "./courses";
 import { PLANS_TAG } from "./plans";
 import { normalizeCouponCode } from "./coupons";
-import { createDirectUpload, deleteVideo } from "@/lib/cloudflare-stream";
+import { createDirectUpload, deleteVideo,
+  CloudflareStreamError,
+} from "@/lib/cloudflare-stream";
 import { deleteObject, createUploadAuth } from "@/lib/imagekit";
 import { formatPaise } from "@/lib/razorpay";
 import {
@@ -309,7 +311,12 @@ export async function requestLessonUpload(
     return { uploadUrl, videoId };
   } catch (err) {
     console.error("[admin] Could not create direct upload", err);
-    return { error: "Could not start the upload. Check the Cloudflare credentials." };
+    return {
+      error:
+        err instanceof CloudflareStreamError
+          ? err.adminMessage
+          : "Could not start the upload. Check the Cloudflare configuration.",
+    };
   }
 }
 
@@ -646,7 +653,12 @@ export async function requestTrainingUpload(
     return { uploadUrl, videoId };
   } catch (err) {
     console.error("[admin] Could not create training upload", err);
-    return { error: "Could not start the upload. Check the Cloudflare credentials." };
+    return {
+      error:
+        err instanceof CloudflareStreamError
+          ? err.adminMessage
+          : "Could not start the upload. Check the Cloudflare configuration.",
+    };
   }
 }
 
