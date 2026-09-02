@@ -11,6 +11,7 @@ import { uploadKycDocumentAction } from "@/actions";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { getMyKyc, requireUser } from "@/lib/queries";
+import { DetailField, DetailGrid, PageHeader, Panel } from "@/components/dashboard/panels";
 import { submitKycAction } from "@/actions";
 
 export const metadata: Metadata = {
@@ -32,13 +33,27 @@ export default async function KycPage() {
   };
 
   return (
-    <div className="flex max-w-2xl flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">KYC verification</h1>
-        <p className="text-sm text-[var(--color-muted-foreground)]">
-          Required before you can withdraw earnings.
-        </p>
-      </header>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="KYC verification"
+        subtitle="Required before you can withdraw earnings."
+        aside={
+          kyc ? (
+            <Badge
+              tone={
+                kyc.status === "approved"
+                  ? "success"
+                  : kyc.status === "rejected"
+                    ? "danger"
+                    : "neutral"
+              }
+              className="capitalize"
+            >
+              {kyc.status}
+            </Badge>
+          ) : undefined
+        }
+      />
 
       {kyc?.status === "approved" ? (
         <div className="flex flex-col gap-4">
@@ -56,19 +71,14 @@ export default async function KycPage() {
             </div>
           </div>
 
-          <dl className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5 text-sm">
-            {[
-              ["Name", kyc.fullName],
-              ["Account holder", kyc.bankAccountName],
-              ["Account number", `•••• ${kyc.accountNumberLast4}`],
-              ["IFSC", kyc.ifsc],
-            ].map(([k, v]) => (
-              <div key={k} className="flex justify-between gap-4">
-                <dt className="text-[var(--color-muted-foreground)]">{k}</dt>
-                <dd className="font-medium">{v}</dd>
-              </div>
-            ))}
-          </dl>
+          <Panel title="Verified details">
+            <DetailGrid>
+              <DetailField label="Name" value={kyc.fullName} />
+              <DetailField label="Account holder" value={kyc.bankAccountName} />
+              <DetailField label="Account number" value={`•••• ${kyc.accountNumberLast4}`} />
+              <DetailField label="IFSC" value={kyc.ifsc} />
+            </DetailGrid>
+          </Panel>
 
           <p className="text-xs text-[var(--color-muted-foreground)]">
             To change these details, contact support. Bank details cannot be edited after

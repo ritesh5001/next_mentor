@@ -1,8 +1,9 @@
 import Link from "next/link";
 // Only the icons this file actually renders. The sidebar resolves its own
 // icons from the `icon` name on each NavItem.
-import { BadgeCheck, GraduationCap } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 
+import { Logo } from "@/components/brand/logo";
 import { DashboardNav, type NavItem } from "@/components/dashboard/dashboard-nav";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
 import { requireUser } from "@/lib/queries";
@@ -39,13 +40,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="flex min-h-dvh flex-col bg-[var(--color-background)]">
       <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-background)]/85 surface-blur">
         <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6">
-          <Link href="/dashboard" className="flex items-center gap-2 font-extrabold tracking-tight">
-            <GraduationCap
-              className="size-6 text-[var(--color-primary)]"
-              strokeWidth={1.5}
-              aria-hidden="true"
-            />
-            NextMentor
+          {/* The real mark, matching the admin panel and the public site. A
+              stand-in icon here was the only place the brand was redrawn. */}
+          <Link href="/dashboard" aria-label="Dashboard">
+            <Logo className="h-8 w-auto" />
           </Link>
 
           <div className="flex items-center gap-3">
@@ -56,7 +54,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
               Browse courses
             </Link>
 
-            <div className="flex items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1.5 text-sm font-semibold text-[var(--color-on-primary)]">
+            {/* Hidden on phones. The logo, this pill and the sign-out button
+                together overflowed a 375px viewport and made the whole page
+                scroll sideways; the identity is the one of the three a visitor
+                can do without on a small screen. */}
+            <div className="hidden items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1.5 text-sm font-semibold text-[var(--color-on-primary)] sm:flex">
               <BadgeCheck className="size-4" strokeWidth={1.5} aria-hidden="true" />
               <span className="max-w-[10rem] truncate">{user.name ?? user.email}</span>
             </div>

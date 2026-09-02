@@ -38,7 +38,10 @@ export function SignOutButton({
         "flex min-h-11 items-center gap-1.5 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-colors disabled:opacity-60",
         variant === "header"
           ? "text-[var(--color-muted-foreground)] hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
-          : "w-full justify-start text-[var(--color-destructive)] hover:bg-[var(--color-destructive-subtle)]",
+          // The panel variant lives in the nav drawer, which is painted with
+          // the brand gradient, so it is light-on-dark rather than the
+          // destructive red that would fight the ground behind it.
+          : "w-full justify-start text-white/85 hover:bg-white/12 hover:text-white",
       )}
     >
       <LogOut className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />

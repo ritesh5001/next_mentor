@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Coins, Clock, Wallet as WalletIcon, TrendingUp } from "lucide-react";
 
 import { PayoutForm } from "@/components/dashboard/payout-form";
+import {
+  Cell, DataTable, PageHeader, Panel, Row, StatRow, StatTile,
+} from "@/components/dashboard/panels";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { formatPrice, formatDate, formatDateTime } from "@/lib/format";
@@ -44,39 +47,37 @@ export default async function EarningsPage() {
       value: formatPrice(wallet.availableInPaise),
       sub: "ready to withdraw",
       icon: WalletIcon,
-      money: true,
+      tone: "money" as const,
     },
     {
       label: "Pending",
       value: formatPrice(wallet.pendingInPaise),
       sub: "clears after the refund window",
       icon: Clock,
-      money: false,
+      tone: "info" as const,
     },
     {
       label: "Lifetime earned",
       value: formatPrice(wallet.lifetimeEarnedInPaise),
       sub: "gross commission",
       icon: TrendingUp,
-      money: false,
+      tone: "success" as const,
     },
     {
       label: "Withdrawn",
       value: formatPrice(wallet.withdrawnInPaise),
       sub: "paid out to date",
       icon: Coins,
-      money: false,
+      tone: "neutral" as const,
     },
   ];
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Associates &amp; earnings</h1>
-        <p className="text-sm text-[var(--color-muted-foreground)]">
-          What you have earned, and what is ready to withdraw.
-        </p>
-      </header>
+      <PageHeader
+        title="Associates &amp; earnings"
+        subtitle="What you have earned, and what is ready to withdraw."
+      />
 
       {/* A negative balance is a real debt from a refunded sale. Say so plainly
           rather than showing a confusing minus sign with no explanation. */}
@@ -87,64 +88,34 @@ export default async function EarningsPage() {
         </Alert>
       )}
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <StatRow>
         {tiles.map((t) => (
-          <div
+          <StatTile
             key={t.label}
-            className="flex flex-col gap-2 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-4"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-muted-foreground)]">
-                {t.label}
-              </span>
-              <t.icon
-                className={
-                  t.money
-                    ? "size-4 text-[var(--color-accent)]"
-                    : "size-4 text-[var(--color-muted-foreground)]"
-                }
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-            </div>
-            <span
-              className={
-                t.money
-                  ? "tabular text-2xl font-extrabold text-[var(--color-accent)]"
-                  : "tabular text-2xl font-extrabold"
-              }
-            >
-              {t.value}
-            </span>
-            <span className="text-xs text-[var(--color-muted-foreground)]">{t.sub}</span>
-          </div>
+            label={t.label}
+            value={t.value}
+            hint={t.sub}
+            tone={t.tone}
+            icon={<t.icon className="size-7" strokeWidth={1.4} aria-hidden="true" />}
+          />
         ))}
-      </div>
+      </StatRow>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
         <div className="flex min-w-0 flex-col gap-6">
-          <section className="flex flex-col gap-3">
-            <h2 className="text-lg font-bold tracking-tight">Commission history</h2>
-
-            {commissions.length === 0 ? (
-              <p className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-border)] bg-[var(--color-card)] px-6 py-12 text-center text-sm text-[var(--color-muted-foreground)]">
-                No commission yet. Share your affiliate link to get started.
-              </p>
-            ) : (
-              <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)]">
-                <table className="w-full min-w-[520px] text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--color-border)] text-left text-xs uppercase tracking-wide text-[var(--color-muted-foreground)]">
-                      <th scope="col" className="px-4 py-3 font-semibold">From</th>
-                      <th scope="col" className="px-4 py-3 text-right font-semibold">Rate</th>
-                      <th scope="col" className="px-4 py-3 text-right font-semibold">Earned</th>
-                      <th scope="col" className="px-4 py-3 font-semibold">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--color-border)]">
-                    {commissions.map((c) => (
-                      <tr key={c.id} className="transition-colors hover:bg-[var(--color-muted)]">
-                        <td className="px-4 py-3">
+          <Panel title="Direct commission">
+            <DataTable
+              head={["From", "Rate", "Earned", "Status"]}
+              minWidth={520}
+              empty={
+                commissions.length === 0
+                  ? "No commission yet. Share your affiliate link to get started."
+                  : undefined
+              }
+            >
+                    {commissions.map((c, i) => (
+                      <Row key={c.id} i={i}>
+                        <Cell>
                           <div className="font-medium">{c.sourceName ?? "—"}</div>
                           <div className="text-xs text-[var(--color-muted-foreground)]">
                             {formatDate(c.createdAt, {
@@ -155,12 +126,12 @@ export default async function EarningsPage() {
                             {" · on "}
                             {formatPrice(c.baseAmountInPaise)}
                           </div>
-                        </td>
-                        <td className="tabular px-4 py-3 text-right">{c.rateBps / 100}%</td>
-                        <td className="tabular px-4 py-3 text-right font-bold text-[var(--color-accent)]">
+                        </Cell>
+                        <Cell align="right" className="tabular">{c.rateBps / 100}%</Cell>
+                        <Cell align="right" className="tabular font-bold text-[var(--color-accent)]">
                           {formatPrice(c.amountInPaise)}
-                        </td>
-                        <td className="px-4 py-3">
+                        </Cell>
+                        <Cell>
                           <Badge tone={COMMISSION_TONE[c.status]} className="capitalize">
                             {c.status}
                           </Badge>
@@ -173,14 +144,11 @@ export default async function EarningsPage() {
                               })}
                             </div>
                           )}
-                        </td>
-                      </tr>
+                        </Cell>
+                      </Row>
                     ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
+            </DataTable>
+          </Panel>
 
           {ledger.length > 0 && (
             <section className="flex flex-col gap-3">

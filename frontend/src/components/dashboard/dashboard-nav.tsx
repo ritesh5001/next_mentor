@@ -40,11 +40,11 @@ function NavList({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => v
             <li key={item.href}>
               <div
                 aria-disabled="true"
-                className="flex cursor-not-allowed items-center gap-2.5 rounded-[var(--radius-control)] px-3 py-2 text-sm text-[var(--color-muted-foreground)] opacity-60"
+                className="flex min-h-11 cursor-not-allowed items-center gap-2.5 rounded-[var(--radius-control)] px-3 text-sm text-white/45"
               >
                 <Icon className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
                 <span className="flex-1 truncate">{item.label}</span>
-                <span className="rounded-full bg-[var(--color-muted)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                   Soon
                 </span>
               </div>
@@ -59,10 +59,13 @@ function NavList({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => v
               onClick={onNavigate}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-11 items-center gap-2.5 rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium transition-colors duration-150",
+                "flex min-h-11 items-center gap-2.5 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-colors duration-150",
+                // A white pill for the active row. The reference uses orange
+                // here, but amber is this product's money colour and using it
+                // for navigation would break that association everywhere else.
                 active
-                  ? "bg-[var(--color-primary)] text-[var(--color-on-primary)]"
-                  : "text-[var(--color-foreground)] hover:bg-[var(--color-muted)]",
+                  ? "bg-white font-bold text-[var(--brand-blue)] shadow-[var(--shadow-card)]"
+                  : "text-white/85 hover:bg-white/12 hover:text-white",
               )}
             >
               <Icon className="size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
@@ -86,7 +89,10 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
         aria-label="Dashboard"
         className="hidden w-60 shrink-0 lg:block"
       >
-        <div className="sticky top-24 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-2">
+        <div
+          className="sticky top-24 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-[var(--radius-card)] p-2.5 shadow-[var(--shadow-raised)]"
+          style={{ background: "var(--brand-gradient)" }}
+        >
           <NavList items={items} />
         </div>
       </nav>
@@ -114,15 +120,16 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
 
           <nav
             aria-label="Dashboard"
-            className="absolute inset-y-0 right-0 flex w-[85vw] max-w-xs flex-col bg-[var(--color-card)] shadow-[var(--shadow-overlay)]"
+            className="absolute inset-y-0 right-0 flex w-[85vw] max-w-xs flex-col shadow-[var(--shadow-overlay)]"
+            style={{ background: "var(--brand-gradient)" }}
           >
-            <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
-              <span className="text-sm font-bold">Menu</span>
+            <div className="flex items-center justify-between border-b border-white/15 px-4 py-3">
+              <span className="text-sm font-bold text-white">Menu</span>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close menu"
-                className="flex size-11 items-center justify-center rounded-[var(--radius-control)] hover:bg-[var(--color-muted)]"
+                className="flex size-11 items-center justify-center rounded-[var(--radius-control)] text-white hover:bg-white/12"
               >
                 <X className="size-5" strokeWidth={1.5} aria-hidden="true" />
               </button>
@@ -132,7 +139,7 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
               <NavList items={items} onNavigate={() => setOpen(false)} />
             </div>
 
-            <div className="border-t border-[var(--color-border)] p-2">
+            <div className="border-t border-white/15 p-2">
               <SignOutButton variant="panel" onSignOut={() => setOpen(false)} />
             </div>
           </nav>
