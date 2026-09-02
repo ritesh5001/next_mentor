@@ -1,10 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowUpRight,
   BadgeCheck,
   FileCheck2,
   PlayCircle,
+  Lightbulb,
   ShieldCheck,
+  Target,
+  Users,
   Wallet,
 } from "lucide-react";
 
@@ -75,102 +79,315 @@ export function SectionHead({
 export function Hero({ courseCount }: { courseCount: number }) {
   return (
     <section className="relative overflow-hidden" style={{ background: "var(--brand-hero-wash)" }}>
-      {/* One soft light source, off-canvas. Replaces the ring of floating
-          icons that used to sit here: four generic glyphs orbiting a fifth is
-          the stock illustration every AI-built landing page ships with. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-32 -top-32 size-[34rem] rounded-full opacity-[0.13] blur-3xl"
         style={{ background: "var(--brand-gradient)" }}
       />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="flex flex-col items-start gap-6">
-          <span className="pill inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-card)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)]">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full rounded-full bg-[var(--brand-green)] opacity-70" />
-              <span className="relative inline-flex size-2 rounded-full bg-[var(--brand-green-deep)]" />
+      {/* Two decorative marks, one per side, echoing the reference's dashes
+          and dot grid. Hidden below xl, where the portraits also disappear
+          and the composition becomes a plain centred column. */}
+      <Dashes className="absolute left-6 top-[62%] hidden xl:block" />
+      <DotGrid className="absolute right-10 top-[58%] hidden xl:block" />
+
+      <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 sm:pt-20">
+        <div className="flex items-center justify-center gap-8">
+          {/* The portraits flank the copy on wide screens only. They are
+              decorative, so they carry empty alt text and never become the
+              LCP element on a phone. */}
+          <Portrait
+            src="/images/hero-learner-a.jpg"
+            className="hidden shrink-0 xl:block"
+            size={220}
+          />
+
+          <div className="flex max-w-2xl flex-col items-center gap-6 text-center">
+            <span className="pill inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-card)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)]">
+              <span className="relative flex size-2">
+                <span className="absolute inline-flex size-full rounded-full bg-[var(--brand-green)] opacity-70" />
+                <span className="relative inline-flex size-2 rounded-full bg-[var(--brand-green-deep)]" />
+              </span>
+              {courseCount > 0
+                ? `${courseCount} course${courseCount === 1 ? "" : "s"} open for enrolment`
+                : "New courses opening soon"}
             </span>
-            {courseCount > 0
-              ? `${courseCount} course${courseCount === 1 ? "" : "s"} open for enrolment`
-              : "New courses opening soon"}
-          </span>
 
-          <h1 className="text-[38px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[var(--brand-ink)] sm:text-[54px] lg:text-[60px]">
-            Learn the skill.
-            <br />
-            Then <span className="brand-gradient-text">get paid for it.</span>
-          </h1>
+            <h1 className="text-[34px] font-extrabold leading-[1.1] tracking-[-0.02em] text-[var(--brand-ink)] sm:text-[50px] lg:text-[56px]">
+              Learn the skill.{" "}
+              <span className="brand-gradient-text">Then get paid for it.</span>
+            </h1>
 
-          <p className="max-w-lg text-base leading-relaxed text-[var(--color-muted-foreground)] sm:text-[17px]">
-            Short, project-led courses in marketing, AI and design. You finish
-            with something you built, a certificate anyone can check, and a
-            referral link that pays you for everyone you bring in.
-          </p>
+            <p className="max-w-xl text-base leading-relaxed text-[var(--color-muted-foreground)] sm:text-[17px]">
+              Short, project-led courses in marketing, AI and design. You finish
+              with something you built, a certificate anyone can check, and a
+              referral link that pays you for everyone you bring in.
+            </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <CtaButton href="/register" size="lg">
-              Start learning
-            </CtaButton>
-            <CtaButton href="/courses" variant="outline" size="lg">
-              See the courses
-            </CtaButton>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+              <CtaButton href="/courses" size="lg">
+                Explore courses
+              </CtaButton>
+              <CtaButton href="/register" variant="outline" size="lg">
+                Create an account
+              </CtaButton>
+            </div>
           </div>
 
-          <p className="flex items-center gap-2 pt-1 text-[13px] text-[var(--color-muted-foreground)]">
-            <ShieldCheck className="size-4 text-[var(--brand-green-deep)]" strokeWidth={1.5} aria-hidden="true" />
-            Buy once, keep access. No subscription.
-          </p>
+          <div className="relative hidden shrink-0 xl:block">
+            <Portrait src="/images/hero-learner-b.jpg" size={220} />
+            {/* The greeting bubble from the reference, tail and all. */}
+            <span
+              aria-hidden="true"
+              className="absolute -left-2 -top-3 rounded-full px-4 py-2 text-sm font-extrabold text-white shadow-[var(--shadow-card)]"
+              style={{ background: "var(--brand-green-deep)" }}
+            >
+              Hello
+              <span
+                className="absolute -bottom-1 left-6 size-3 rotate-45"
+                style={{ background: "var(--brand-green-deep)" }}
+              />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* The dark promise bar the reference floats over the fold. Four claims,
+          each one we can actually stand behind. */}
+      <div className="relative mx-auto max-w-6xl px-4 pb-14 sm:px-6">
+        <ul
+          className="grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-4"
+          style={{ background: "rgb(255 255 255 / 0.12)" }}
+        >
+          {PROMISES.map(({ Icon, lines }) => (
+            <li
+              key={lines[0]}
+              className="flex items-center gap-3 px-5 py-5"
+              style={{ background: "var(--brand-surface-dark)" }}
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/12">
+                <Icon className="size-5 text-white" strokeWidth={1.6} aria-hidden="true" />
+              </span>
+              <span className="text-sm font-bold leading-snug text-white">
+                {lines[0]}
+                <br />
+                {lines[1]}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+const PROMISES: Array<{ Icon: typeof ShieldCheck; lines: [string, string] }> = [
+  { Icon: Users, lines: ["Taught by people", "who do the work"] },
+  { Icon: FileCheck2, lines: ["Certificates anyone", "can verify"] },
+  { Icon: ShieldCheck, lines: ["One price,", "no second paywall"] },
+  { Icon: Wallet, lines: ["Commission paid", "to your bank"] },
+];
+
+/** A circular portrait with a soft ring, as on the reference. */
+function Portrait({
+  src,
+  size,
+  className,
+}: {
+  src: string;
+  size: number;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-full border-4 border-[var(--color-card)] shadow-[var(--shadow-raised)]",
+        className,
+      )}
+      style={{ width: size, height: size }}
+    >
+      <Image
+        src={src}
+        alt=""
+        width={size}
+        height={size}
+        // Decorative and beside the headline, so it must not delay the LCP.
+        loading="lazy"
+        className="size-full object-cover"
+      />
+    </div>
+  );
+}
+
+function Dashes({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      width="88"
+      height="64"
+      viewBox="0 0 88 64"
+      className={className}
+      fill="none"
+    >
+      {Array.from({ length: 12 }).map((_, i) => (
+        <line
+          key={i}
+          x1={(i % 4) * 22 + 2}
+          y1={Math.floor(i / 4) * 22 + 2}
+          x2={(i % 4) * 22 + 12}
+          y2={Math.floor(i / 4) * 22 + 14}
+          stroke="var(--brand-green)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          opacity="0.45"
+        />
+      ))}
+    </svg>
+  );
+}
+
+function DotGrid({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" width="76" height="76" viewBox="0 0 76 76" className={className}>
+      {Array.from({ length: 36 }).map((_, i) => (
+        <circle
+          key={i}
+          cx={(i % 6) * 14 + 4}
+          cy={Math.floor(i / 6) * 14 + 4}
+          r="2"
+          fill="var(--brand-blue)"
+          opacity="0.28"
+        />
+      ))}
+    </svg>
+  );
+}
+
+
+/* ------------------------------------------------------------------ about */
+
+/**
+ * The About band.
+ *
+ * Copy left, a photo collage right with two figures floating over it on
+ * connector lines, following the reference's composition. The stacked-card
+ * arrangement collapses to a simple two-up on small screens, where overlapping
+ * images and absolutely positioned callouts stop being legible.
+ */
+export function About() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="flex flex-col gap-5">
+          <SectionHead
+            eyebrow="About us"
+            title={
+              <>
+                Built by people who <span className="brand-gradient-text">do this work.</span>
+              </>
+            }
+            lede="NextMentor exists because most online courses teach theory and leave you exactly where you started. Every track here ends in something you have built and can show someone."
+          />
+
+          <div className="mt-2 grid gap-6 sm:grid-cols-2">
+            <div className="flex flex-col gap-2">
+              <h3 className="flex items-center gap-2 text-[15px] font-bold text-[var(--brand-ink)]">
+                <Target className="size-4 text-[var(--brand-blue)]" strokeWidth={1.8} aria-hidden="true" />
+                Our mission
+              </h3>
+              <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                Teach a skill well enough that someone can charge for it, then
+                give them a way to earn while they learn.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h3 className="flex items-center gap-2 text-[15px] font-bold text-[var(--brand-ink)]">
+                <Lightbulb className="size-4 text-[var(--brand-green-deep)]" strokeWidth={1.8} aria-hidden="true" />
+                Our vision
+              </h3>
+              <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                A course you finish on a Sunday should still be worth something
+                on Monday. We rebuild a module when its tools change.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <CtaButton href="/about">Know more</CtaButton>
+          </div>
         </div>
 
-        {/* The product's actual promise, drawn instead of described: you
-            finish a course, and money arrives. Real UI beats an icon cloud. */}
-        <div aria-hidden="true" className="relative hidden lg:block">
-          <div className="relative ml-auto w-full max-w-sm">
-            <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-5 shadow-[var(--shadow-raised)]">
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-subtle)]">
-                  <PlayCircle className="size-5 text-[var(--brand-blue)]" strokeWidth={1.6} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-[var(--brand-ink)]">
-                    Meta Ads, start to finish
-                  </p>
-                  <p className="text-xs text-[var(--color-muted-foreground)]">Module 4 of 6</p>
-                </div>
-              </div>
-              <div className="mt-4 h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-muted)]">
-                <div className="h-full w-[68%] rounded-full" style={{ background: "var(--brand-gradient)" }} />
-              </div>
-              <p className="mt-2 text-xs font-medium text-[var(--color-muted-foreground)]">68% complete</p>
+        {/* Collage. Decorative throughout, so every image has empty alt text
+            and the connector lines are hidden from assistive tech. */}
+        <div className="relative">
+          <div className="grid grid-cols-2 items-end gap-4 sm:gap-5">
+            <div className="overflow-hidden rounded-2xl shadow-[var(--shadow-raised)]">
+              <Image
+                src="/images/about-a.jpg"
+                alt=""
+                width={640}
+                height={800}
+                sizes="(max-width: 1024px) 45vw, 22vw"
+                className="aspect-[4/5] w-full object-cover"
+              />
             </div>
 
-            <div className="mt-3 flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-[var(--shadow-card)]">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-accent-subtle)]">
-                <Wallet className="size-5 text-[var(--color-accent)]" strokeWidth={1.6} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs text-[var(--color-muted-foreground)]">Referral payout cleared</p>
-                <p className="tabular text-lg font-extrabold text-[var(--color-accent)]">
-                  {formatPrice(240000)}
-                </p>
-              </div>
-              <BadgeCheck className="size-5 shrink-0 text-[var(--brand-green-deep)]" strokeWidth={1.6} />
+            <div className="overflow-hidden rounded-2xl shadow-[var(--shadow-raised)] sm:translate-y-8">
+              <Image
+                src="/images/about-b.jpg"
+                alt=""
+                width={640}
+                height={800}
+                sizes="(max-width: 1024px) 45vw, 22vw"
+                className="aspect-[4/5] w-full object-cover"
+              />
             </div>
+          </div>
 
-            <div className="mt-3 ml-8 flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-4 shadow-[var(--shadow-card)]">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-primary-subtle)]">
-                <FileCheck2 className="size-5 text-[var(--brand-blue)]" strokeWidth={1.6} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-[var(--brand-ink)]">Certificate issued</p>
-                <p className="text-xs text-[var(--color-muted-foreground)]">Verifiable by anyone</p>
-              </div>
-            </div>
+          {/* The two floating figures. Both hug the lower edges: the faces
+              sit mid-frame, and anything pinned to the top of a section can be
+              covered by the sticky header on the way down. Absolute only from
+              sm up; below that they sit in the flow. */}
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-0 sm:block">
+            <FloatingStat
+              value="6"
+              label="tracks, each project-led"
+              className="sm:absolute sm:-right-4 sm:bottom-0 sm:max-w-[11rem]"
+            />
+            <FloatingStat
+              value="7 days"
+              label="and commission clears"
+              className="sm:absolute sm:-left-5 sm:bottom-16 sm:max-w-[11rem]"
+            />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function FloatingStat({
+  value,
+  label,
+  className,
+}: {
+  value: string;
+  label: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-3 shadow-[var(--shadow-raised)]",
+        className,
+      )}
+    >
+      <span className="tabular text-xl font-extrabold leading-none text-[var(--brand-ink)]">
+        {value}
+      </span>
+      <span className="text-xs leading-snug text-[var(--color-muted-foreground)]">{label}</span>
+    </div>
   );
 }
 

@@ -3,6 +3,7 @@ import { envUrl } from "@nextmentor/shared";
 
 import { getActivePlans, getCatalog } from "@/lib/queries";
 import {
+  About,
   Hero,
   HowItWorks,
   WhatYouGet,
@@ -58,6 +59,7 @@ export default async function HomePage() {
           what it costs, who runs it, whether to believe them, then the ask.
           The dark EarnBand sits in the middle to break a long light scroll. */}
       <Hero courseCount={courses.length} />
+      <About />
       <HowItWorks />
       <FeaturedCourses courses={courses} />
       <WhatYouGet />
