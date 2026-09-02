@@ -14,7 +14,8 @@ import { requireUser } from "@/lib/queries";
  * a nav item that silently does nothing is worse than one that says why.
  */
 const NAV: NavItem[] = [
-  { href: "/dashboard", label: "My Courses", icon: "LayoutDashboard", ready: true },
+  { href: "/dashboard/overview", label: "Dashboard", icon: "LayoutDashboard", ready: true },
+  { href: "/dashboard", label: "My Courses", icon: "BookOpen", ready: true },
   { href: "/dashboard/profile", label: "Profile", icon: "UserCircle", ready: true },
   { href: "/dashboard/kyc", label: "KYC", icon: "ShieldCheck", ready: true },
   { href: "/dashboard/earnings", label: "Associates & Earnings", icon: "Coins", ready: true },

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
-  Award, Briefcase, Coins, FileBadge, Gift, GraduationCap, Handshake,
+  Award, BookOpen, Briefcase, Coins, FileBadge, Gift, GraduationCap, Handshake,
   LayoutDashboard, Megaphone, Menu, ShieldCheck, Sparkles, Target, Ticket,
   TrendingUp, Trophy, UserCircle, Users, X, type LucideIcon,
 } from "lucide-react";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/cn";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
 
 const ICONS: Record<string, LucideIcon> = {
-  LayoutDashboard, UserCircle, ShieldCheck, Coins, Trophy, Gift, Sparkles,
+  LayoutDashboard, BookOpen, UserCircle, ShieldCheck, Coins, Trophy, Gift, Sparkles,
   GraduationCap, TrendingUp, Handshake, Megaphone, Ticket, Users, Award,
   FileBadge, Target, Briefcase,
 };

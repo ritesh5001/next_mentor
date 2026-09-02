@@ -278,6 +278,31 @@ export type KycRecord = {
 
 export const getMyKyc = () => apiOrNull<KycRecord>("/api/affiliate/kyc");
 
+export const getOverview = () =>
+  api<{
+    earned: { today: number; last7: number; last30: number; allTime: number };
+    series: Array<{ day: string; amountInPaise: number }>;
+    sales: Array<{ planName: string; count: number }>;
+    totalSales: number;
+    members: { today: number; last7: number; last30: number; allTime: number };
+    clicks: { today: number; last7: number; last30: number; allTime: number };
+    wallet: {
+      availableInPaise: number;
+      pendingInPaise: number;
+      lifetimeEarnedInPaise: number;
+    };
+    recent: Array<{
+      userId: string;
+      name: string | null;
+      referralCode: string;
+      joinedAt: string | null;
+      amountInPaise: number;
+      status: "pending" | "approved" | "paid" | "reversed";
+    }>;
+    monthEarnedInPaise: number;
+    planName: string | null;
+  }>("/api/affiliate/overview");
+
 export const getTopPerformers = () =>
   api<
     Array<{

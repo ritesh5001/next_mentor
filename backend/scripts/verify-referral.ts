@@ -17,6 +17,7 @@ import { fulfilPaidOrder, reverseRefundedOrder } from "@/services/orders";
 import { maturePendingCommissions, reconcileWallet } from "@/lib/referral";
 import { generateUniqueReferralCode } from "@/lib/referral-code";
 import { uniqueSlug } from "@/services/courses";
+import { getOverview } from "@/services/overview";
 import { encryptSecret, decryptSecret, hashIp } from "@/lib/crypto";
 
 let failures = 0;
@@ -302,6 +303,68 @@ async function main() {
   check("ledger balances after full payout cycle",
     reconFinal.ledgerNetInPaise === reconFinal.walletTotalInPaise,
     `ledger=${reconFinal.ledgerNetInPaise} wallet=${reconFinal.walletTotalInPaise}`);
+
+  // ---------------------------------------------------- overview aggregates
+  //
+  // The overview screen reads from its own aggregation, not from the wallet.
+  // All-zero output is what a broken query returns too, so these assert against
+  // commissions this script actually created.
+  // A known, non-zero row. Without it every assertion below compares 0 to 0
+  // and would pass just as happily against a query that returns nothing.
+  const probeOrder = await db
+    .insert(orders)
+    .values({
+      userId: buyerA.id, itemType: "plan", planId: proPlan.id, listPriceInPaise: 500000,
+      amountInPaise: 500000, razorpayOrderId: `order_ov_${stamp}`, status: "paid",
+    })
+    .returning({ id: orders.id });
+
+  await db.insert(commissions).values({
+    earnerId: affiliate.id, sourceUserId: buyerA.id, orderId: probeOrder[0].id,
+    level: 1, rateBps: 1500, baseAmountInPaise: 500000, amountInPaise: 75000,
+    status: "approved", maturesAt: new Date(),
+  });
+
+  const ov = await getOverview(affiliate.id);
+
+  check("overview picks up a freshly approved commission",
+    ov.earned.allTime === 75000, `got ${ov.earned.allTime}, expected 75000`);
+  check("overview counts it in today's bucket",
+    ov.earned.today === 75000, `got ${ov.earned.today}`);
+  check("overview's last day of the series carries it",
+    ov.series[6].amountInPaise === 75000, `got ${ov.series[6].amountInPaise}`);
+  check("overview month-to-date includes it",
+    ov.monthEarnedInPaise === 75000, `got ${ov.monthEarnedInPaise}`);
+
+  const earnedRows = await db
+    .select({ amount: commissions.amountInPaise, status: commissions.status })
+    .from(commissions)
+    .where(eq(commissions.earnerId, affiliate.id));
+  const expectedAllTime = earnedRows
+    .filter((r) => r.status === "approved" || r.status === "paid")
+    .reduce((n, r) => n + r.amount, 0);
+
+  check("overview all-time earnings match the commission rows",
+    ov.earned.allTime === expectedAllTime,
+    `overview=${ov.earned.allTime} rows=${expectedAllTime}`);
+  check("overview excludes reversed commission",
+    !earnedRows.some((r) => r.status === "reversed") || ov.earned.allTime < earnedRows.reduce((n, r) => n + r.amount, 0),
+    "a reversed sale must not count as earned");
+  check("overview returns exactly 7 daily points", ov.series.length === 7,
+    `got ${ov.series.length}`);
+  check("overview fills days with no sale rather than dropping them",
+    ov.series.every((d) => typeof d.amountInPaise === "number"));
+  check("overview series is in ascending date order",
+    ov.series.every((d, i) => i === 0 || d.day > ov.series[i - 1].day));
+  check("overview counts referred members",
+    ov.members.allTime >= 2, `got ${ov.members.allTime}`);
+  check("overview sales total matches its own breakdown",
+    ov.totalSales === ov.sales.reduce((n, r) => n + r.count, 0));
+  check("overview recent joinings are populated",
+    ov.recent.length > 0, `got ${ov.recent.length}`);
+  check("overview month-to-date never exceeds all-time",
+    ov.monthEarnedInPaise <= ov.earned.allTime,
+    `month=${ov.monthEarnedInPaise} allTime=${ov.earned.allTime}`);
 
   // ------------------------------------------------------------ cleanup
   await db.delete(walletLedger).where(eq(walletLedger.userId, affiliate.id));

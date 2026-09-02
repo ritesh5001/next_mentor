@@ -23,6 +23,7 @@ import {
   MIN_PAYOUT_IN_PAISE,
 } from "@/services/affiliate";
 import { createPayoutRequest } from "@/services/payouts";
+import { getOverview } from "@/services/overview";
 import { requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 
@@ -56,6 +57,11 @@ affiliateRoutes.get("/affiliate/earnings", requireUser, async (c) => {
     minPayoutInPaise: MIN_PAYOUT_IN_PAISE,
   });
 });
+
+/** Everything the overview screen needs, in one round trip. */
+affiliateRoutes.get("/affiliate/overview", requireUser, async (c) =>
+  ok(c, await getOverview(currentUser(c).id)),
+);
 
 affiliateRoutes.get("/affiliate/leaderboard", requireUser, async (c) =>
   ok(c, await getTopPerformers(20)),
