@@ -266,3 +266,38 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Player scrubber and volume slider.
+   A range input cannot be styled with utilities alone: the thumb lives in a
+   vendor pseudo-element. Kept small and here rather than inline so both
+   sliders in the player stay identical. */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: none;
+  border-radius: 9999px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+}
+
+/* The scrubber is a thin line until pointed at, so it does not sit over the
+   picture more heavily than it needs to. */
+.nm-seek {
+  transition: height 150ms ease-out;
+}
+.nm-seek:hover,
+.nm-seek:focus-visible {
+  height: 0.5rem;
+}
