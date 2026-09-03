@@ -17,13 +17,14 @@
     "verify:phase2": "tsx --env-file=.env scripts/verify-plans-coupons.ts",
     "verify:referral": "tsx --env-file=.env scripts/verify-referral.ts",
     "verify:engagement": "tsx --env-file=.env scripts/verify-engagement.ts",
-    "verify:all": "pnpm verify:auth && pnpm verify:commerce && pnpm verify:phase2 && pnpm verify:referral && pnpm verify:engagement && pnpm verify:otp && pnpm verify:r2 && pnpm verify:imagekit && pnpm verify:kyc-docs && pnpm verify:course-access",
+    "verify:all": "pnpm verify:auth && pnpm verify:commerce && pnpm verify:phase2 && pnpm verify:referral && pnpm verify:engagement && pnpm verify:otp && pnpm verify:r2 && pnpm verify:imagekit && pnpm verify:kyc-docs && pnpm verify:course-access && pnpm verify:grants",
     "verify:otp": "tsx --env-file=.env scripts/verify-otp.ts",
     "verify:imagekit": "tsx --env-file=.env scripts/verify-imagekit.ts",
     "verify:kyc-docs": "tsx --env-file=.env scripts/verify-kyc-docs.ts",
     "verify:course-access": "tsx --env-file=.env scripts/verify-course-access.ts",
     "verify:r2": "tsx --env-file=.env scripts/verify-r2.ts",
-    "r2:cors": "tsx --env-file=.env scripts/r2-cors.ts"
+    "r2:cors": "tsx --env-file=.env scripts/r2-cors.ts",
+    "verify:grants": "tsx --env-file=.env scripts/verify-grants.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1121.0",

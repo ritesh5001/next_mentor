@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { ActionButton, ActionSelect } from "@/components/admin/row-actions";
@@ -85,7 +86,14 @@ export default async function AdminUsersPage({
                 <tr key={u.id} className="transition-colors hover:bg-[var(--color-muted)]">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold">{u.name ?? "—"}</span>
+                      {/* The name is the way into the user's access page —
+                          there is nowhere else to grant a course from. */}
+                      <Link
+                        href={`/admin/users/${u.id}`}
+                        className="font-semibold text-[var(--color-primary)] hover:underline"
+                      >
+                        {u.name ?? u.email}
+                      </Link>
                       {u.isBlocked && <Badge tone="danger">Blocked</Badge>}
                       {!u.emailVerified && <Badge tone="warning">Unverified</Badge>}
                     </div>

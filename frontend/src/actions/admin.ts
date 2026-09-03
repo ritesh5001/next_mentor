@@ -204,6 +204,37 @@ export async function setPlanActiveAction(planId: string, isActive: boolean): Pr
   );
 }
 
+/* ----------------------------------------------------------- user access */
+
+export async function grantAccessAction(
+  userId: string,
+  itemType: "course" | "plan",
+  itemId: string,
+): Promise<ActionState> {
+  return run(
+    () =>
+      api(`/api/admin/users/${userId}/access`, {
+        method: "POST",
+        body: { itemType, itemId },
+      }),
+    [`/admin/users/${userId}`, "/admin/users"],
+    itemType === "course" ? "Course access granted" : "Plan granted",
+  );
+}
+
+export async function revokeAccessAction(
+  userId: string,
+  itemType: "course" | "plan",
+  itemId?: string,
+): Promise<ActionState> {
+  const q = new URLSearchParams({ itemType, ...(itemId ? { itemId } : {}) });
+  return run(
+    () => api(`/api/admin/users/${userId}/access?${q}`, { method: "DELETE" }),
+    [`/admin/users/${userId}`, "/admin/users"],
+    "Access revoked",
+  );
+}
+
 /* ---------------------------------------------------------------- coupons */
 
 export async function createCouponAction(_p: ActionState, fd: FormData): Promise<ActionState> {

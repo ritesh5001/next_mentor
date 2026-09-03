@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   index,
   integer,
@@ -90,6 +91,15 @@ export const subscriptions = pgTable(
     // Null = lifetime, mirroring plans.durationDays.
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    /**
+     * Set when an administrator comped this rather than the member paying.
+     *
+     * Subscriptions carry no order reference, so without this a gifted plan
+     * would be indistinguishable from a bought one.
+     */
+    grantedById: text("granted_by_id").references((): AnyPgColumn => users.id, {
+      onDelete: "set null",
+    }),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

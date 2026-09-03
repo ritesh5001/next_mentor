@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   check,
   index,
   integer,
@@ -104,6 +105,16 @@ export const enrollments = pgTable(
       .notNull()
       .references(() => courses.id, { onDelete: "cascade" }),
     orderId: text("order_id").references(() => orders.id, { onDelete: "set null" }),
+    /**
+     * Set when an administrator comped this rather than the buyer paying.
+     *
+     * A granted enrollment has no order, so revenue reports that join orders
+     * exclude it automatically. This column is what says WHO decided that,
+     * which a null orderId alone cannot.
+     */
+    grantedById: text("granted_by_id").references((): AnyPgColumn => users.id, {
+      onDelete: "set null",
+    }),
     enrolledAt: timestamp("enrolled_at", { withTimezone: true }).notNull().defaultNow(),
     // Null means lifetime access. Set when access comes from a timed plan.
     expiresAt: timestamp("expires_at", { withTimezone: true }),

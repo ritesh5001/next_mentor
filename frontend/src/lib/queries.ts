@@ -576,6 +576,28 @@ export const listUsersForAdmin = (query?: string) =>
     }>
   >(`/api/admin/users${query ? `?q=${encodeURIComponent(query)}` : ""}`);
 
+export const getUserAccessForAdmin = (userId: string) =>
+  api<{
+    enrolled: Array<{
+      courseId: string;
+      title: string;
+      slug: string;
+      enrolledAt: string;
+      revokedAt: string | null;
+      isGranted: boolean;
+      grantedById: string | null;
+    }>;
+    membership: {
+      subscriptionId: string;
+      planId: string;
+      planName: string;
+      status: string;
+      startsAt: string;
+      expiresAt: string | null;
+      grantedById: string | null;
+    } | null;
+  }>(`/api/admin/users/${userId}/access`);
+
 export const listOrdersForAdmin = () =>
   api<
     Array<{

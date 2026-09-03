@@ -6,6 +6,7 @@ import { courseFormSchema, requestUploadSchema } from "@nextmentor/shared";
 import { db } from "@/db";
 import { lessonResources, lessons, modules, plans } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
+import * as grants from "@/services/grants";
 import { listPlansForAdmin } from "@/services/plans";
 import { listCouponsForAdmin } from "@/services/coupons";
 import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay } from "@/services/admin";
@@ -194,6 +195,53 @@ adminRoutes.post("/lessons/:lessonId/upload/confirm", requireAdmin, async (c) =>
     body.data.key,
     body.data.durationSeconds,
   );
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
+});
+
+/* ------------------------------------------------------------ user access */
+
+/**
+ * Comped access. See services/grants.ts for why none of this touches orders,
+ * wallets or commissions.
+ */
+const grantSchema = z.object({
+  itemType: z.enum(["course", "plan"]),
+  itemId: z.string().min(1),
+});
+
+adminRoutes.get("/users/:userId/access", requireAdmin, async (c) =>
+  ok(c, await grants.getUserAccess(c.req.param("userId"))),
+);
+
+adminRoutes.post("/users/:userId/access", requireAdmin, async (c) => {
+  const body = await parseBody(c, grantSchema);
+  if (!body.ok) return body.response;
+
+  const admin = currentUser(c);
+  const userId = c.req.param("userId");
+
+  const result =
+    body.data.itemType === "course"
+      ? await grants.grantCourse({ userId, courseId: body.data.itemId, grantedById: admin.id })
+      : await grants.grantPlan({ userId, planId: body.data.itemId, grantedById: admin.id });
+
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
+});
+
+adminRoutes.delete("/users/:userId/access", requireAdmin, async (c) => {
+  const itemType = c.req.query("itemType");
+  const itemId = c.req.query("itemId");
+
+  if (itemType !== "course" && itemType !== "plan") {
+    return fail(c, "Unknown item type.", "validation");
+  }
+
+  const userId = c.req.param("userId");
+  const result =
+    itemType === "course"
+      ? await grants.revokeCourse(userId, itemId ?? "")
+      : await grants.revokePlan(userId);
+
   return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
 });
 
