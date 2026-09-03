@@ -22,7 +22,8 @@
     "verify:imagekit": "tsx --env-file=.env scripts/verify-imagekit.ts",
     "verify:kyc-docs": "tsx --env-file=.env scripts/verify-kyc-docs.ts",
     "verify:course-access": "tsx --env-file=.env scripts/verify-course-access.ts",
-    "verify:r2": "tsx --env-file=.env scripts/verify-r2.ts"
+    "verify:r2": "tsx --env-file=.env scripts/verify-r2.ts",
+    "r2:cors": "tsx --env-file=.env scripts/r2-cors.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1121.0",

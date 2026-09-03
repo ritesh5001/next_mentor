@@ -146,7 +146,14 @@ function UploadButton({
         }
       };
       xhr.onerror = () => {
-        setError("Upload failed. Check your connection.");
+        // XHR reports a blocked cross-origin request exactly the same way it
+        // reports being offline: no status, no body, just an error. For an
+        // upload going straight to R2 the far likelier cause is that the
+        // bucket has no CORS rule for this domain, so name that first rather
+        // than sending an admin to check their wifi.
+        setError(
+          "Upload could not reach storage. If the connection is fine, the R2 bucket needs a CORS rule for this domain: run `pnpm r2:cors` on the API.",
+        );
         setProgress(null);
         resolve(false);
       };
