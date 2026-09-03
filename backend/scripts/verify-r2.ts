@@ -78,8 +78,16 @@ async function main() {
   // without a signature, or paid video is free to anyone who learns the key.
   const publicUrl = `https://${cfg.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${cfg.R2_BUCKET}/${key}`;
   const unsigned = await fetch(publicUrl);
-  check("an unsigned request is refused", unsigned.status === 401 || unsigned.status === 403,
-    `HTTP ${unsigned.status}`);
+  const unsignedBody = await unsigned.text();
+
+  // Assert the property, not a status code. R2 answers an unsigned GET with
+  // 400 InvalidArgument (complaining about the missing Authorization header)
+  // rather than the 401/403 an S3 reader would expect, and pinning the test to
+  // a number made a passing system look broken. What matters is that the
+  // object's bytes do not come back.
+  check("an unsigned request does not return the object",
+    !unsigned.ok && !unsignedBody.includes(payload.toString()),
+    `HTTP ${unsigned.status} ${unsignedBody.slice(0, 60)}`);
 
   const signed = await fetch(await signVideoUrl(key, 120));
   check("a signed request is served", signed.ok, `HTTP ${signed.status}`);

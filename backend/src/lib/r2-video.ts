@@ -157,3 +157,67 @@ export async function deleteVideo(key: string | null | undefined): Promise<void>
     console.error("[r2] Delete failed — object may be orphaned", key, err);
   }
 }
+
+/* -------------------------------------------------------- lesson resources */
+
+/** Worksheets and slide decks attached to a lesson. */
+export const ALLOWED_RESOURCE_TYPES = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
+
+export const MAX_RESOURCE_BYTES = 50 * 1024 * 1024;
+
+/**
+ * A presigned PUT for a lesson attachment.
+ *
+ * These used to be posted to a Server Action, which forwarded the bytes to
+ * ImageKit. Two limits made that fail silently: a Next.js Server Action caps
+ * its request body at 1MB, and Vercel caps a serverless request at 4.5MB. A
+ * course workbook is routinely larger than both, and the rejection surfaced as
+ * a spinner that never stopped.
+ *
+ * Going straight to R2 removes the middleman entirely: the bytes never touch
+ * Vercel, so the only ceiling is the one below. Privacy is unchanged — the
+ * bucket is private, and a download is a presigned GET minted only after the
+ * enrollment check.
+ */
+export async function createResourceUpload(params: {
+  courseId: string;
+  lessonId: string;
+  contentType: string;
+  fileName: string;
+}): Promise<{ uploadUrl: string; key: string }> {
+  if (!ALLOWED_RESOURCE_TYPES.has(params.contentType)) {
+    throw new Error(`Unsupported attachment type: ${params.contentType}`);
+  }
+
+  const cfg = env("r2");
+  const ext = params.fileName.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "pdf";
+  const key = `resources/${params.courseId}/${params.lessonId}/${crypto.randomUUID()}.${ext}`;
+
+  const uploadUrl = await getSignedUrl(
+    s3(),
+    new PutObjectCommand({
+      Bucket: cfg.R2_BUCKET,
+      Key: key,
+      ContentType: params.contentType,
+    }),
+    { expiresIn: 30 * 60 },
+  );
+
+  return { uploadUrl, key };
+}
+
+/**
+ * A download link for an attachment.
+ *
+ * An hour rather than the five minutes a KYC document gets: a student may open
+ * a lesson, read for a while, and download the worksheet at the end, and an
+ * expired link there is just an annoying bug report.
+ */
+export async function signedResourceUrl(key: string, expiresInSeconds = 60 * 60): Promise<string> {
+  return signVideoUrl(key, expiresInSeconds);
+}

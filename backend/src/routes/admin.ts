@@ -7,6 +7,13 @@ import { db } from "@/db";
 import { lessonResources, lessons, modules, plans } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
+import {
+  ALLOWED_RESOURCE_TYPES,
+  MAX_RESOURCE_BYTES,
+  createResourceUpload,
+  headVideo,
+  deleteVideo as deleteR2Object,
+} from "@/lib/r2-video";
 import { listPlansForAdmin } from "@/services/plans";
 import { listCouponsForAdmin } from "@/services/coupons";
 import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay } from "@/services/admin";
@@ -498,9 +505,25 @@ adminRoutes.delete("/content/mentorship/:id", requireAdmin, async (c) => {
  * Multipart through this API rather than browser-direct, so the server owns
  * `isPrivateFile`. This is paid content; see lib/imagekit.ts.
  */
-adminRoutes.post("/lessons/:lessonId/resources", requireAdmin, async (c) => {
-  const lessonId = c.req.param("lessonId");
+/**
+ * A presigned URL for attaching a file to a lesson.
+ *
+ * The bytes go browser -> R2 and never pass through this server or Vercel.
+ * The previous version accepted the file as multipart on a Server Action,
+ * which a Next.js 1MB body cap and Vercel's 4.5MB request cap both broke.
+ */
+adminRoutes.post("/lessons/:lessonId/resources/upload", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      contentType: z.string().min(1),
+      fileName: z.string().min(1).max(200),
+      sizeBytes: z.coerce.number().int().positive().max(MAX_RESOURCE_BYTES),
+    }),
+  );
+  if (!body.ok) return body.response;
 
+  const lessonId = c.req.param("lessonId");
   const [lesson] = await db
     .select({ id: lessons.id, courseId: modules.courseId })
     .from(lessons)
@@ -510,26 +533,57 @@ adminRoutes.post("/lessons/:lessonId/resources", requireAdmin, async (c) => {
 
   if (!lesson) return fail(c, "That lesson no longer exists.", "not_found");
 
-  let form: FormData;
-  try {
-    form = await c.req.formData();
-  } catch {
-    return fail(c, "Send the file as multipart form data.", "validation");
+  if (!ALLOWED_RESOURCE_TYPES.has(body.data.contentType)) {
+    return fail(c, "Attach a PDF or an image.", "validation");
   }
 
-  const file = form.get("file");
-  if (!(file instanceof File)) return fail(c, "No file was attached.", "validation");
+  try {
+    const { uploadUrl, key } = await createResourceUpload({
+      courseId: lesson.courseId,
+      lessonId,
+      contentType: body.data.contentType,
+      fileName: body.data.fileName,
+    });
+    return ok(c, { uploadUrl, key });
+  } catch (err) {
+    console.error("[admin] Could not create resource upload url", err);
+    return fail(c, "Could not start the upload. Check the R2 configuration.", "server_error");
+  }
+});
 
-  const title = String(form.get("title") ?? "").trim() || file.name || "Resource";
+/** Records the attachment once the browser's PUT has landed. */
+adminRoutes.post("/lessons/:lessonId/resources", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      key: z.string().min(1),
+      title: z.string().trim().min(1).max(160),
+      mimeType: z.string().min(1),
+    }),
+  );
+  if (!body.ok) return body.response;
 
-  const uploaded = await uploadCourseResource({
-    file: Buffer.from(await file.arrayBuffer()),
-    contentType: file.type,
-    courseId: lesson.courseId,
-    lessonId,
-  });
+  const lessonId = c.req.param("lessonId");
+  const [lesson] = await db
+    .select({ id: lessons.id, courseId: modules.courseId })
+    .from(lessons)
+    .innerJoin(modules, eq(modules.id, lessons.moduleId))
+    .where(eq(lessons.id, lessonId))
+    .limit(1);
 
-  if ("error" in uploaded) return fail(c, uploaded.error, "validation");
+  if (!lesson) return fail(c, "That lesson no longer exists.", "not_found");
+
+  // The key must belong to this lesson, or one lesson could be pointed at
+  // another course's file.
+  if (!body.data.key.startsWith(`resources/${lesson.courseId}/${lessonId}/`)) {
+    return fail(c, "That file does not belong to this lesson.", "validation");
+  }
+
+  // Trust the bucket, not the caller, for whether the upload happened.
+  const head = await headVideo(body.data.key);
+  if (!head || head.bytes === 0) {
+    return fail(c, "The upload did not complete. Try again.", "validation");
+  }
 
   const [{ maxPos }] = await db
     .select({ maxPos: max(lessonResources.position) })
@@ -540,15 +594,15 @@ adminRoutes.post("/lessons/:lessonId/resources", requireAdmin, async (c) => {
     .insert(lessonResources)
     .values({
       lessonId,
-      title: title.slice(0, 160),
-      filePath: uploaded.filePath,
-      sizeBytes: uploaded.sizeBytes,
-      mimeType: file.type,
+      title: body.data.title.slice(0, 160),
+      filePath: body.data.key,
+      sizeBytes: head.bytes,
+      mimeType: body.data.mimeType,
       position: (maxPos ?? -1) + 1,
     })
     .returning({ id: lessonResources.id });
 
-  return ok(c, { id: created.id, title, sizeBytes: uploaded.sizeBytes }, 201);
+  return ok(c, { id: created.id, title: body.data.title, sizeBytes: head.bytes }, 201);
 });
 
 adminRoutes.delete("/resources/:resourceId", requireAdmin, async (c) => {
@@ -558,7 +612,9 @@ adminRoutes.delete("/resources/:resourceId", requireAdmin, async (c) => {
     .returning({ filePath: lessonResources.filePath });
 
   // Drop the stored file too, or it bills forever with nothing pointing at it.
-  if (row?.filePath) await deleteObject(row.filePath);
+  // The object lives in R2 now, not ImageKit. Deleting through the wrong
+  // client would leave it in the bucket with nothing pointing at it.
+  if (row?.filePath) await deleteR2Object(row.filePath);
 
   return ok(c, { deleted: true });
 });

@@ -393,27 +393,36 @@ export async function cancelMentorshipSlotAction(id: string): Promise<ActionStat
  * Multipart forwarded straight to the API — the bytes go through the server so
  * it can force ImageKit's private flag. See lib/imagekit.ts on the backend.
  */
-export async function uploadLessonResourceAction(
+export async function requestResourceUploadAction(
   lessonId: string,
-  formData: FormData,
-): Promise<ActionState> {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!token) return { error: "Your session expired. Sign in again." };
-
+  input: { contentType: string; fileName: string; sizeBytes: number },
+): Promise<{ uploadUrl: string; key: string } | { error: string }> {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/lessons/${lessonId}/resources`, {
+    return await api(`/api/admin/lessons/${lessonId}/resources/upload`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
+      body: input,
     });
-    const payload = (await res.json()) as { ok: boolean; error?: string };
-    if (!payload.ok) return { error: payload.error ?? "Could not attach that file." };
-  } catch {
-    return { error: "Could not attach that file. Check your connection." };
+  } catch (err) {
+    return { error: err instanceof ApiError ? err.message : "Could not start the upload." };
   }
+}
 
-  revalidatePath("/admin/courses");
-  return { success: "Attached" };
+/**
+ * Records the attachment after the browser has PUT it to R2.
+ *
+ * The file itself never comes through here. A Server Action caps its request
+ * body at 1MB and Vercel caps a serverless request at 4.5MB, so the old
+ * version — which forwarded the bytes — silently failed on any real workbook.
+ */
+export async function confirmResourceUploadAction(
+  lessonId: string,
+  input: { key: string; title: string; mimeType: string },
+): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/lessons/${lessonId}/resources`, { method: "POST", body: input }),
+    ["/admin/courses"],
+    "Attached",
+  );
 }
 
 export async function deleteLessonResourceAction(resourceId: string): Promise<ActionState> {

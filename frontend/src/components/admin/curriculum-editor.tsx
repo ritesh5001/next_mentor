@@ -32,7 +32,14 @@ type Actions = {
   deleteModule: (moduleId: string) => Promise<ActionState>;
   addLesson: FormAction;
   deleteLesson: (lessonId: string) => Promise<ActionState>;
-  uploadResource: (lessonId: string, formData: FormData) => Promise<ActionState>;
+  requestResourceUpload: (
+    lessonId: string,
+    input: { contentType: string; fileName: string; sizeBytes: number },
+  ) => Promise<{ uploadUrl: string; key: string } | { error: string }>;
+  confirmResourceUpload: (
+    lessonId: string,
+    input: { key: string; title: string; mimeType: string },
+  ) => Promise<ActionState>;
   requestUpload: (
     lessonId: string,
     contentType: string,
@@ -51,6 +58,10 @@ type Actions = {
  * would upload, store and bill perfectly happily, then fail in every player.
  */
 const PLAYABLE = new Set(["video/mp4", "video/webm", "video/quicktime"]);
+
+/** What can be attached to a lesson. */
+const ATTACHABLE = new Set(["application/pdf", "image/jpeg", "image/png", "image/webp"]);
+const MAX_ATTACHMENT_BYTES = 50 * 1024 * 1024;
 
 /**
  * Reads a video's duration in the browser.
@@ -311,7 +322,8 @@ export function CurriculumEditor({
                     <ResourceButton
                       lessonId={lesson.id}
                       count={lesson.resourceCount ?? 0}
-                      uploadResource={actions.uploadResource}
+                      requestResourceUpload={actions.requestResourceUpload}
+                      confirmResourceUpload={actions.confirmResourceUpload}
                     />
 
                     <button
@@ -400,11 +412,19 @@ export function CurriculumEditor({
 function ResourceButton({
   lessonId,
   count,
-  uploadResource,
+  requestResourceUpload,
+  confirmResourceUpload,
 }: {
   lessonId: string;
   count: number;
-  uploadResource: (lessonId: string, formData: FormData) => Promise<ActionState>;
+  requestResourceUpload: (
+    lessonId: string,
+    input: { contentType: string; fileName: string; sizeBytes: number },
+  ) => Promise<{ uploadUrl: string; key: string } | { error: string }>;
+  confirmResourceUpload: (
+    lessonId: string,
+    input: { key: string; title: string; mimeType: string },
+  ) => Promise<ActionState>;
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -415,15 +435,58 @@ function ResourceButton({
     setError(null);
     setBusy(true);
 
-    const form = new FormData();
-    form.append("file", file);
-    form.append("title", file.name.replace(/\.[^.]+$/, ""));
+    // try/finally, not a bare await. Every failure path below used to leave
+    // `busy` true, and the button span forever with nothing said: that is what
+    // the endless "Attach PDF" spinner was.
+    try {
+      if (!ATTACHABLE.has(file.type)) {
+        setError("Attach a PDF or an image.");
+        return;
+      }
+      if (file.size > MAX_ATTACHMENT_BYTES) {
+        setError("Files must be under 50MB.");
+        return;
+      }
 
-    const result = await uploadResource(lessonId, form);
-    if (result?.error) setError(result.error);
-    else router.refresh();
+      const started = await requestResourceUpload(lessonId, {
+        contentType: file.type,
+        fileName: file.name,
+        sizeBytes: file.size,
+      });
+      if ("error" in started) {
+        setError(started.error);
+        return;
+      }
 
-    setBusy(false);
+      // Straight to R2, so a 20MB workbook never touches Vercel.
+      const res = await fetch(started.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!res.ok) {
+        setError(`Upload failed (${res.status}). Try again.`);
+        return;
+      }
+
+      const confirmed = await confirmResourceUpload(lessonId, {
+        key: started.key,
+        title: file.name.replace(/\.[^.]+$/, "").slice(0, 160) || "Resource",
+        mimeType: file.type,
+      });
+      if (confirmed?.error) {
+        setError(confirmed.error);
+        return;
+      }
+
+      router.refresh();
+    } catch {
+      setError(
+        "Upload could not reach storage. If the connection is fine, the R2 bucket needs a CORS rule for this domain.",
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

@@ -6,7 +6,7 @@ import { db } from "@/db";
 import { courses, lessonResources, lessons, modules } from "@/db/schema";
 import { getLearnView, getPlayback, saveProgress } from "@/services/playback";
 import { authorizeLessonPlayback, isEnrolled } from "@/lib/permissions";
-import { signedResourceUrl } from "@/lib/imagekit";
+import { signedResourceUrl } from "@/lib/r2-video";
 import { evaluateAchievementsQuietly } from "@/services/achievements";
 import { requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
@@ -117,7 +117,8 @@ learnRoutes.get("/resources/:resourceId", requireUser, async (c) => {
   const entitled = user.role === "admin" || (await isEnrolled(user.id, row.courseId));
   if (!entitled) return fail(c, "You do not have access to this course.", "forbidden");
 
-  const url = signedResourceUrl(row.filePath);
+  // Presigned R2 GET, minted only now that entitlement has been checked.
+  const url = await signedResourceUrl(row.filePath);
   if (!url) return fail(c, "Could not prepare that download.", "server_error");
 
   return ok(c, { url, title: row.title, mimeType: row.mimeType });
