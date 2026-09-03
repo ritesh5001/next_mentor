@@ -19,9 +19,12 @@ import { invalidateTag } from "@/lib/cache";
 import { CATALOG_TAG, courseTag, slugify, uniqueSlug } from "./courses";
 import { PLANS_TAG } from "./plans";
 import { normalizeCouponCode } from "./coupons";
-import { createDirectUpload, deleteVideo,
-  CloudflareStreamError,
-} from "@/lib/cloudflare-stream";
+import {
+  createVideoUpload,
+  headVideo,
+  deleteVideo,
+  ALLOWED_VIDEO_TYPES,
+} from "@/lib/r2-video";
 import { deleteObject, createUploadAuth } from "@/lib/imagekit";
 import { formatPaise } from "@/lib/razorpay";
 import {
@@ -205,7 +208,7 @@ async function safeDeleteVideo(videoId: string) {
   try {
     await deleteVideo(videoId);
   } catch (err) {
-    console.error("[admin] Stream delete failed — video may be orphaned", videoId, err);
+    console.error("[admin] R2 delete failed, object may be orphaned", videoId, err);
   }
 }
 
@@ -277,13 +280,19 @@ export async function deleteLesson(lessonId: string) {
 }
 
 /**
- * One-time Cloudflare upload URL for a lesson.
+ * One-time R2 upload URL for a lesson.
  *
- * The browser PUTs straight to Cloudflare, so a 2GB video is no harder than a
- * 20MB one and nothing streams through this server.
+ * The browser PUTs straight to R2, so a 2GB video is no harder than a 20MB one
+ * and nothing streams through this server.
+ *
+ * The old object is NOT deleted here. R2 stores what it is given with no
+ * processing step, so the moment the new key is written the lesson would point
+ * at an object the browser has not finished uploading. The previous video is
+ * dropped in `confirmLessonUpload`, once the replacement is known to exist.
  */
 export async function requestLessonUpload(
   lessonId: string,
+  contentType: string,
 ): Promise<{ uploadUrl: string; videoId: string } | { error: string }> {
   const [lesson] = await db
     .select({ id: lessons.id, courseId: modules.courseId, existing: lessons.streamVideoId })
@@ -294,30 +303,88 @@ export async function requestLessonUpload(
 
   if (!lesson) return { error: "That lesson no longer exists" };
 
+  if (!ALLOWED_VIDEO_TYPES.has(contentType)) {
+    return {
+      error:
+        "Upload an MP4 (H.264) or WebM. R2 stores the file as-is with no conversion, so anything else will not play in the browser.",
+    };
+  }
+
   try {
-    const { uploadUrl, videoId } = await createDirectUpload({
+    const { uploadUrl, key } = await createVideoUpload({
       lessonId: lesson.id,
       courseId: lesson.courseId,
+      contentType,
     });
 
     await db
       .update(lessons)
-      .set({ streamVideoId: videoId, videoStatus: "uploading", updatedAt: new Date() })
+      .set({ videoStatus: "uploading", updatedAt: new Date() })
       .where(eq(lessons.id, lessonId));
 
-    // Replacing a video: drop the old one so it stops billing.
-    if (lesson.existing && lesson.existing !== videoId) await safeDeleteVideo(lesson.existing);
-
-    return { uploadUrl, videoId };
+    return { uploadUrl, videoId: key };
   } catch (err) {
-    console.error("[admin] Could not create direct upload", err);
-    return {
-      error:
-        err instanceof CloudflareStreamError
-          ? err.adminMessage
-          : "Could not start the upload. Check the Cloudflare configuration.",
-    };
+    console.error("[admin] Could not create R2 upload url", err);
+    return { error: "Could not start the upload. Check the R2 configuration." };
   }
+}
+
+/**
+ * Marks a lesson playable once the browser reports its PUT finished.
+ *
+ * There is no transcode webhook to wait on any more, so this is what moves a
+ * lesson to `ready`. It does not take the client's word for it: HEAD confirms
+ * the object is actually in the bucket before anything is written, otherwise a
+ * forged call would mark an empty lesson playable.
+ *
+ * Duration comes from the browser, which read it off the video element. That
+ * is display metadata only — it drives the runtime label and the progress
+ * percentage, never entitlement — so a wrong value is cosmetic.
+ */
+export async function confirmLessonUpload(
+  lessonId: string,
+  key: string,
+  durationSeconds: number,
+): Promise<{ ok: true; bytes: number } | { error: string }> {
+  const [lesson] = await db
+    .select({ id: lessons.id, courseId: modules.courseId, existing: lessons.streamVideoId })
+    .from(lessons)
+    .innerJoin(modules, eq(modules.id, lessons.moduleId))
+    .where(eq(lessons.id, lessonId))
+    .limit(1);
+
+  if (!lesson) return { error: "That lesson no longer exists" };
+
+  // The key has to belong to this lesson. Without this check an admin could
+  // point one lesson at another course's object.
+  if (!key.startsWith(`videos/${lesson.courseId}/${lesson.id}/`)) {
+    return { error: "That video does not belong to this lesson." };
+  }
+
+  const head = await headVideo(key);
+  if (!head || head.bytes === 0) {
+    await db
+      .update(lessons)
+      .set({ videoStatus: "errored", updatedAt: new Date() })
+      .where(eq(lessons.id, lessonId));
+    return { error: "The upload did not complete. Try again." };
+  }
+
+  await db
+    .update(lessons)
+    .set({
+      streamVideoId: key,
+      videoStatus: "ready",
+      durationSeconds: Math.max(0, Math.round(durationSeconds)),
+      updatedAt: new Date(),
+    })
+    .where(eq(lessons.id, lessonId));
+
+  // Now that the replacement is confirmed present, drop the one it replaced.
+  if (lesson.existing && lesson.existing !== key) await safeDeleteVideo(lesson.existing);
+
+  invalidateTag(CATALOG_TAG);
+  return { ok: true, bytes: head.bytes };
 }
 
 /* ------------------------------------------------------------------- plans */
@@ -628,6 +695,7 @@ export async function createTrainingModule(input: {
 
 export async function requestTrainingUpload(
   moduleId: string,
+  contentType: string,
 ): Promise<{ uploadUrl: string; videoId: string } | { error: string }> {
   const [mod] = await db
     .select({ id: trainingModules.id, existing: trainingModules.streamVideoId })
@@ -637,29 +705,53 @@ export async function requestTrainingUpload(
 
   if (!mod) return { error: "That module no longer exists." };
 
+  if (!ALLOWED_VIDEO_TYPES.has(contentType)) {
+    return { error: "Upload an MP4 (H.264) or WebM." };
+  }
+
   try {
-    const { uploadUrl, videoId } = await createDirectUpload({
+    const { uploadUrl, key } = await createVideoUpload({
       lessonId: mod.id,
-      courseId: "affiliate-training",
+      courseId: TRAINING_COURSE_ID,
+      contentType,
     });
-
-    await db
-      .update(trainingModules)
-      .set({ streamVideoId: videoId })
-      .where(eq(trainingModules.id, moduleId));
-
-    if (mod.existing && mod.existing !== videoId) await safeDeleteVideo(mod.existing);
-
-    return { uploadUrl, videoId };
+    return { uploadUrl, videoId: key };
   } catch (err) {
     console.error("[admin] Could not create training upload", err);
-    return {
-      error:
-        err instanceof CloudflareStreamError
-          ? err.adminMessage
-          : "Could not start the upload. Check the Cloudflare configuration.",
-    };
+    return { error: "Could not start the upload. Check the R2 configuration." };
   }
+}
+
+/** Training videos live under a fixed pseudo-course prefix in the bucket. */
+const TRAINING_COURSE_ID = "affiliate-training";
+
+/** Mirrors confirmLessonUpload for the affiliate-training library. */
+export async function confirmTrainingUpload(
+  moduleId: string,
+  key: string,
+): Promise<{ ok: true } | { error: string }> {
+  const [mod] = await db
+    .select({ id: trainingModules.id, existing: trainingModules.streamVideoId })
+    .from(trainingModules)
+    .where(eq(trainingModules.id, moduleId))
+    .limit(1);
+
+  if (!mod) return { error: "That module no longer exists." };
+
+  if (!key.startsWith(`videos/${TRAINING_COURSE_ID}/${mod.id}/`)) {
+    return { error: "That video does not belong to this module." };
+  }
+
+  const head = await headVideo(key);
+  if (!head || head.bytes === 0) return { error: "The upload did not complete. Try again." };
+
+  await db
+    .update(trainingModules)
+    .set({ streamVideoId: key })
+    .where(eq(trainingModules.id, moduleId));
+
+  if (mod.existing && mod.existing !== key) await safeDeleteVideo(mod.existing);
+  return { ok: true };
 }
 
 export async function deleteTrainingModule(id: string) {

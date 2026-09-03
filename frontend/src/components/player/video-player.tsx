@@ -66,49 +66,38 @@ export function VideoPlayer({
     completedRef.current = false;
     lastSavedRef.current = startAtSeconds;
 
-    let hls: import("hls.js").default | null = null;
-    let cancelled = false;
+    // R2 serves the stored file directly over HTTP, so this is a plain <video>
+    // source rather than an HLS manifest. hls.js is gone with it.
+    //
+    // What that costs, stated plainly: one rendition per lesson. There is no
+    // transcode step behind R2, so a viewer on a weak connection buffers
+    // instead of dropping to a lower quality. R2 does honour range requests,
+    // so seeking still works without downloading the whole file.
+    video.src = manifestUrl;
 
-    async function attach() {
-      if (!video) return;
-
-      // Safari (and iOS in particular) plays HLS natively. Loading hls.js there
-      // would be a wasted ~150KB and actively worse — native playback gets
-      // AirPlay and PiP that MSE playback does not.
-      if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        video.src = manifestUrl;
+    const onVideoError = () => {
+      const code = video.error?.code;
+      // MEDIA_ERR_SRC_NOT_SUPPORTED is what a browser reports when a presigned
+      // URL has expired and R2 answers with XML instead of video bytes.
+      if (code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+        setError("Your viewing session expired. Refresh the page to continue.");
         return;
       }
-
-      // Dynamic import keeps hls.js out of the initial bundle for every page
-      // that is not the player.
-      const { default: Hls } = await import("hls.js");
-      if (cancelled || !Hls.isSupported()) {
-        if (!cancelled) setError("This browser cannot play the video.");
-        return;
-      }
-
-      hls = new Hls({ enableWorker: true, lowLatencyMode: false });
-      hls.loadSource(manifestUrl);
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.ERROR, (_evt, data) => {
-        if (!data.fatal) return;
-        // A 401/403 here almost always means the signed playback token expired
-        // mid-session. Say something actionable rather than "video error".
-        if (data.response?.code === 401 || data.response?.code === 403) {
-          setError("Your viewing session expired. Refresh the page to continue.");
-          return;
-        }
+      if (code === MediaError.MEDIA_ERR_NETWORK) {
         setError("The video could not be loaded. Check your connection and try again.");
-      });
-    }
+        return;
+      }
+      if (code === MediaError.MEDIA_ERR_DECODE) {
+        setError("This video could not be played. It may not be in a supported format.");
+        return;
+      }
+      setError("The video could not be loaded. Try again.");
+    };
 
-    void attach();
+    video.addEventListener("error", onVideoError);
 
     return () => {
-      cancelled = true;
-      hls?.destroy();
+      video.removeEventListener("error", onVideoError);
     };
   }, [manifestUrl, startAtSeconds]);
 

@@ -11,7 +11,14 @@ Browser ──▶ Vercel (frontend)  ──HTTPS──▶  Render (backend)  ─
 
 `frontend/` never touches Postgres. It calls the API over HTTP and forwards the
 user's JWT as a Bearer token. `backend/` owns the schema, the business logic,
-Razorpay, Cloudflare, Resend and the cron job.
+Razorpay, Cloudflare R2, Resend and the cron job.
+
+> **Video note.** Course video is stored in Cloudflare **R2**, not Cloudflare
+> Stream. R2 bills for bytes at rest with no egress fee; Stream billed per
+> minute stored and delivered. R2 does not transcode, so lessons are served as
+> a single H.264 MP4 with no adaptive bitrate, and there is no transcode
+> webhook: the admin's browser confirms the upload and the API verifies the
+> object landed before marking a lesson playable.
 
 `shared/` holds the zod schemas and types both sides compile against, so the two
 services cannot drift apart silently.
@@ -60,9 +67,7 @@ KYC_ENCRYPTION_KEY        openssl rand -base64 32
 CORS_ORIGINS              https://yourdomain.com
 WEB_ORIGIN                https://yourdomain.com
 RAZORPAY_KEY_ID / _SECRET / _WEBHOOK_SECRET
-CLOUDFLARE_ACCOUNT_ID / _STREAM_TOKEN / _STREAM_SIGNING_KEY_ID / _STREAM_SIGNING_KEY_PEM
-CLOUDFLARE_STREAM_WEBHOOK_SECRET
-R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET / R2_PUBLIC_URL
+R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET
 RESEND_API_KEY / EMAIL_FROM
 APP_URL                   https://yourdomain.com   (for links inside emails)
 ```
@@ -88,7 +93,6 @@ API_URL                   https://your-api.onrender.com   (server-side calls)
 NEXT_PUBLIC_API_URL       https://your-api.onrender.com   (browser calls)
 NEXT_PUBLIC_APP_URL       https://yourdomain.com
 NEXT_PUBLIC_RAZORPAY_KEY_ID
-NEXT_PUBLIC_R2_PUBLIC_URL
 ```
 
 **Set both API URLs to the same address.** They are read in different places —
@@ -132,7 +136,6 @@ This is the change most likely to be missed after the split.
 - **Razorpay** → `https://your-api.onrender.com/webhooks/razorpay`
   Events: `payment.captured`, `payment.failed`, `refund.created`, `refund.processed`
   **This is what grants course access.** Pointed at the old URL, people pay and get nothing.
-- **Cloudflare Stream** → `https://your-api.onrender.com/webhooks/cloudflare`
 
 ---
 
@@ -174,29 +177,20 @@ dashboard URL: `dash.cloudflare.com/<account-id>/...`
 
 | Variable | Where |
 | --- | --- |
-| `CLOUDFLARE_ACCOUNT_ID` / `R2_ACCOUNT_ID` | The dashboard URL. Both are the same value. |
-| `CLOUDFLARE_STREAM_TOKEN` | Manage account → **Account API tokens** → Create → **Start from scratch** → Account / Stream / **Edit** |
-| `CLOUDFLARE_STREAM_SIGNING_KEY_ID` + `_PEM` | **API only, no dashboard page.** Run `backend/scripts/get-stream-key.sh` |
-| `CLOUDFLARE_STREAM_WEBHOOK_SECRET` | **Stream** → Settings → Webhooks → add the URL, copy the secret it returns |
-| `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` | **R2** → API → **Manage API Tokens** → Object Read & Write |
+| `R2_ACCOUNT_ID` | The dashboard URL: `dash.cloudflare.com/<account-id>/...` |
+| `R2_ACCESS_KEY_ID` + `R2_SECRET_ACCESS_KEY` | **R2** → API → **Manage API Tokens** → Object Read & Write, scoped to your bucket |
 | `R2_BUCKET` | The bucket name you created |
-| `R2_PUBLIC_URL` | R2 → your bucket → Settings → **Custom Domains** (or the r2.dev subdomain for testing) |
 | `RESEND_API_KEY` | resend.com → API Keys. The sending domain must be **verified** or mail silently fails. |
 | `DATABASE_URL` | Render → your Postgres → Internal URL for the API, External for migrations |
 
 ### Traps
 
-- **Do not use the "Write all resources" template** for the Stream token. It is
-  166 permissions including DNS — a leak hands over the whole account. Stream /
-  Edit is everything the app uses.
 - **R2 tokens are not made on the Account API tokens page.** R2 has its own
-  token UI, and it issues S3-style credentials (access key + secret). An
-  Account API token will not authenticate against R2.
-- **The Stream signing key exists only through the API.** There is no UI for it.
-  Cloudflare returns base64 of a **PKCS#1** key (`BEGIN RSA PRIVATE KEY`), not
-  PKCS#8 — WebCrypto cannot import PKCS#1 at all, which is why the signer uses
-  `node:crypto.createPrivateKey`. Paste the `pem` field verbatim; a raw PEM
-  block also works. Run `pnpm verify:stream` to confirm it can actually sign.
+  token UI under R2 → API → Manage API Tokens. A general Account API token
+  will not authenticate against R2.
+- **Keep the bucket private.** Playback works through presigned URLs the API
+  mints after checking enrollment. Turning on public access or an r2.dev
+  subdomain would hand every paid video to anyone who learns a key.
 - **OAuth clients is unrelated.** That page is for letting people sign in to
   Cloudflare itself. It has nothing to do with this app.
 - Every one of these secrets is shown **once**. Store them before closing the tab.

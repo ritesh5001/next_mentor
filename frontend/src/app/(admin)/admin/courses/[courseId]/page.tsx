@@ -9,7 +9,7 @@ import { ThumbnailUpload } from "@/components/admin/thumbnail-upload";
 import { CurriculumEditor } from "@/components/admin/curriculum-editor";
 import { PublishControls } from "@/components/admin/publish-controls";
 import { Badge } from "@/components/ui/badge";
-import { createLessonAction, createModuleAction, deleteLessonAction, deleteModuleAction, requestLessonUploadAction,
+import { createLessonAction, createModuleAction, deleteLessonAction, deleteModuleAction, requestLessonUploadAction, confirmLessonUploadAction,
   uploadLessonResourceAction, requestThumbnailUploadAction, setCourseStatusAction, setCourseThumbnailAction, updateCourseAction } from "@/actions/admin";
 import { getCourseForEditor } from "@/lib/queries";
 
@@ -95,6 +95,7 @@ export default async function EditCoursePage({
             addLesson: createLessonAction,
             deleteLesson: deleteLessonAction,
             requestUpload: requestLessonUploadAction,
+          confirmUpload: confirmLessonUploadAction,
             uploadResource: uploadLessonResourceAction,
           }}
         />

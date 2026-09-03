@@ -29,6 +29,17 @@ const groups = {
     CLOUDFLARE_STREAM_SIGNING_KEY_PEM: z.string().min(1),
   }),
 
+  // Video lives in R2 rather than Stream: R2 charges for bytes stored with no
+  // egress fee, where Stream charges per minute stored and delivered. The
+  // trade is that R2 stores exactly what was uploaded — no transcoding, so no
+  // adaptive bitrate.
+  r2: z.object({
+    R2_ACCOUNT_ID: z.string().min(1),
+    R2_ACCESS_KEY_ID: z.string().min(1),
+    R2_SECRET_ACCESS_KEY: z.string().min(1),
+    R2_BUCKET: z.string().min(1),
+  }),
+
   imagekit: z.object({
     IMAGEKIT_PUBLIC_KEY: z.string().min(1),
     IMAGEKIT_PRIVATE_KEY: z.string().min(1),

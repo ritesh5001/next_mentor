@@ -103,12 +103,38 @@ export async function deleteLessonAction(lessonId: string): Promise<ActionState>
 
 export async function requestLessonUploadAction(
   lessonId: string,
+  contentType: string,
 ): Promise<{ uploadUrl: string; videoId: string } | { error: string }> {
   try {
-    return await api(`/api/admin/lessons/${lessonId}/upload`, { method: "POST" });
+    return await api(`/api/admin/lessons/${lessonId}/upload`, {
+      method: "POST",
+      body: { contentType },
+    });
   } catch (err) {
     return { error: err instanceof ApiError ? err.message : "Could not start the upload." };
   }
+}
+
+/**
+ * Marks the lesson playable after the browser finishes its PUT.
+ *
+ * R2 has no transcode webhook, so nothing else would ever flip the lesson to
+ * "ready". The server re-checks that the object exists before trusting this.
+ */
+export async function confirmLessonUploadAction(
+  lessonId: string,
+  key: string,
+  durationSeconds: number,
+): Promise<ActionState> {
+  return run(
+    () =>
+      api(`/api/admin/lessons/${lessonId}/upload/confirm`, {
+        method: "POST",
+        body: { key, durationSeconds },
+      }),
+    [`/admin/courses`],
+    "Video uploaded",
+  );
 }
 
 /* ------------------------------------------------------------ thumbnails */

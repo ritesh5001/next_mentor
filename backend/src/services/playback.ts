@@ -3,7 +3,7 @@ import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { courses, lessonProgress, lessonResources, lessons, modules } from "@/db/schema";
 import { authorizeLessonPlayback } from "@/lib/permissions";
-import { signPlaybackToken, hlsManifestUrl } from "@/lib/cloudflare-stream";
+import { signVideoUrl } from "@/lib/r2-video";
 
 /**
  * Turns a lesson into a playable stream URL — but only for someone entitled to it.
@@ -25,10 +25,13 @@ export async function getPlayback(
   if (!auth.streamVideoId) return { ok: false, reason: "not_found" };
   if (!auth.allowed) return { ok: false, reason: "forbidden" };
 
+  // A presigned R2 GET, not an HLS manifest. R2 honours range requests, so the
+  // browser's own player seeks without pulling the whole file. Two hours,
+  // matching the window the Stream token used.
   const expiresInSeconds = 2 * 60 * 60;
-  const token = await signPlaybackToken(auth.streamVideoId, { expiresInSeconds });
+  const manifestUrl = await signVideoUrl(auth.streamVideoId, expiresInSeconds);
 
-  return { ok: true, manifestUrl: hlsManifestUrl(token), expiresInSeconds };
+  return { ok: true, manifestUrl, expiresInSeconds };
 }
 
 /**

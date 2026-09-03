@@ -12,7 +12,6 @@
   "dependencies": {
     "@nextmentor/shared": "workspace:*",
     "clsx": "^2.1.1",
-    "hls.js": "^1.7.1",
     "lucide-react": "^1.35.0",
     "next": "16.3.3",
     "react": "19.2.8",

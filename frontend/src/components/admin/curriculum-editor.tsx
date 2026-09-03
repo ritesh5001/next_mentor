@@ -35,8 +35,47 @@ type Actions = {
   uploadResource: (lessonId: string, formData: FormData) => Promise<ActionState>;
   requestUpload: (
     lessonId: string,
+    contentType: string,
   ) => Promise<{ uploadUrl: string; videoId: string } | { error: string }>;
+  confirmUpload: (
+    lessonId: string,
+    key: string,
+    durationSeconds: number,
+  ) => Promise<ActionState>;
 };
+
+/**
+ * Formats a browser will play without a transcode step.
+ *
+ * R2 is object storage: it returns exactly the bytes it was handed. An .mkv
+ * would upload, store and bill perfectly happily, then fail in every player.
+ */
+const PLAYABLE = new Set(["video/mp4", "video/webm", "video/quicktime"]);
+
+/**
+ * Reads a video's duration in the browser.
+ *
+ * Cloudflare used to measure this during transcoding. Nothing does now, so the
+ * file is loaded into a detached <video> just far enough for metadata. It is
+ * display data only: the runtime label and the progress percentage. Nothing
+ * about entitlement depends on it, so a wrong number is cosmetic.
+ */
+function readDuration(file: File): Promise<number> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+    video.preload = "metadata";
+
+    const done = (value: number) => {
+      URL.revokeObjectURL(url);
+      resolve(Number.isFinite(value) && value > 0 ? Math.round(value) : 0);
+    };
+
+    video.onloadedmetadata = () => done(video.duration);
+    video.onerror = () => done(0);
+    video.src = url;
+  });
+}
 
 const STATUS: Record<string, { tone: "success" | "warning" | "danger" | "neutral"; label: string }> = {
   ready: { tone: "success", label: "Ready" },
@@ -49,9 +88,11 @@ const STATUS: Record<string, { tone: "success" | "warning" | "danger" | "neutral
 function UploadButton({
   lessonId,
   requestUpload,
+  confirmUpload,
 }: {
   lessonId: string;
   requestUpload: Actions["requestUpload"];
+  confirmUpload: Actions["confirmUpload"];
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,45 +103,68 @@ function UploadButton({
     setError(null);
     setProgress(0);
 
-    const result = await requestUpload(lessonId);
+    // R2 stores the file exactly as given, so the browser has to be able to
+    // play it back. Checked here as well as on the server so the admin is told
+    // before a 2GB upload rather than after.
+    if (!PLAYABLE.has(file.type)) {
+      setError("Upload an MP4 (H.264) or WebM. Other formats will not play in the browser.");
+      setProgress(null);
+      return;
+    }
+
+    // There is no transcode step to measure the video for us any more, so the
+    // duration is read off a throwaway <video> element before uploading.
+    const durationSeconds = await readDuration(file);
+
+    const result = await requestUpload(lessonId, file.type);
     if ("error" in result) {
       setError(result.error);
       setProgress(null);
       return;
     }
 
-    // Uploads go straight from the browser to Cloudflare. XHR rather than
-    // fetch() purely because fetch still has no upload progress events, and a
-    // 2GB upload with no progress bar looks like a hang.
-    await new Promise<void>((resolve) => {
+    // Straight from the browser to R2. A presigned PUT takes the raw file as
+    // the body, not multipart form-data: the signature covers the exact bytes
+    // and content type, so wrapping it in a FormData envelope would upload the
+    // envelope. XHR rather than fetch() purely because fetch still has no
+    // upload progress events, and a 2GB upload with no bar looks like a hang.
+    const uploaded = await new Promise<boolean>((resolve) => {
       const xhr = new XMLHttpRequest();
-      xhr.open("POST", result.uploadUrl, true);
+      xhr.open("PUT", result.uploadUrl, true);
+      xhr.setRequestHeader("Content-Type", file.type);
 
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable) setProgress(Math.round((e.loaded / e.total) * 100));
       };
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          setProgress(100);
-          // Transcoding continues on Cloudflare's side; the webhook flips the
-          // lesson to "ready" when it finishes.
-          router.refresh();
+          resolve(true);
         } else {
           setError(`Upload failed (${xhr.status}). Try again.`);
           setProgress(null);
+          resolve(false);
         }
-        resolve();
       };
       xhr.onerror = () => {
         setError("Upload failed. Check your connection.");
         setProgress(null);
-        resolve();
+        resolve(false);
       };
 
-      const form = new FormData();
-      form.append("file", file);
-      xhr.send(form);
+      xhr.send(file);
     });
+
+    if (!uploaded) return;
+
+    const confirmed = await confirmUpload(lessonId, result.videoId, durationSeconds);
+    if (confirmed?.error) {
+      setError(confirmed.error);
+      setProgress(null);
+      return;
+    }
+
+    setProgress(100);
+    router.refresh();
   }
 
   return (
@@ -231,7 +295,11 @@ export function CurriculumEditor({
                       </span>
                     )}
 
-                    <UploadButton lessonId={lesson.id} requestUpload={actions.requestUpload} />
+                    <UploadButton
+                      lessonId={lesson.id}
+                      requestUpload={actions.requestUpload}
+                      confirmUpload={actions.confirmUpload}
+                    />
 
                     <ResourceButton
                       lessonId={lesson.id}

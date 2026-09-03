@@ -174,60 +174,6 @@ async function notifyCommissionEarned(orderId: string, amountInPaise: number) {
   }
 }
 
-/**
- * Cloudflare Stream transcode callback.
- *
- * Fails closed without a secret: an unsigned endpoint that flips lessons to
- * "ready" would let anyone mark a lesson playable.
- */
-webhookRoutes.post("/cloudflare", async (c) => {
-  const rawBody = await c.req.text();
-  const secret = process.env.CLOUDFLARE_STREAM_WEBHOOK_SECRET;
-
-  if (!secret) {
-    console.error("[cf-webhook] CLOUDFLARE_STREAM_WEBHOOK_SECRET is not set — rejecting");
-    return c.json({ error: "Not configured" }, 503);
-  }
-
-  if (!verifyCloudflareSignature(rawBody, c.req.header("webhook-signature") ?? null, secret)) {
-    return c.json({ error: "Invalid signature" }, 400);
-  }
-
-  let body: {
-    uid?: string;
-    readyToStream?: boolean;
-    status?: { state?: string };
-    duration?: number;
-  };
-  try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return c.json({ error: "Malformed JSON" }, 400);
-  }
-
-  if (!body.uid) return c.json({ received: true });
-
-  const state = body.status?.state;
-  const videoStatus =
-    body.readyToStream && state === "ready" ? "ready" : state === "error" ? "errored" : "processing";
-
-  const durationSeconds = Math.round(body.duration ?? 0);
-
-  const updated = await db
-    .update(lessons)
-    .set({
-      videoStatus,
-      durationSeconds: durationSeconds > 0 ? durationSeconds : undefined,
-      updatedAt: new Date(),
-    })
-    .where(eq(lessons.streamVideoId, body.uid))
-    .returning({ id: lessons.id });
-
-  // Duration feeds the catalog card, so the cached copy is now stale.
-  if (updated.length > 0) invalidateTag(CATALOG_TAG);
-
-  return c.json({ received: true });
-});
 
 /**
  * `Webhook-Signature: time=<ts>,sig1=<hmac>` over `<ts>.<body>`.

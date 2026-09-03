@@ -17,7 +17,6 @@ import {
   uploadCourseResource,
   deleteObject,
 } from "@/lib/imagekit";
-import { createDirectUpload } from "@/lib/cloudflare-stream";
 import { requireAdmin, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 import * as write from "@/services/admin-write";
@@ -162,10 +161,40 @@ adminRoutes.delete("/lessons/:lessonId", requireAdmin, async (c) => {
   return ok(c, { deleted: true });
 });
 
-/** One-time Cloudflare upload URL — the file never passes through this server. */
+/** One-time R2 upload URL. The file never passes through this server. */
 adminRoutes.post("/lessons/:lessonId/upload", requireAdmin, async (c) => {
-  const result = await write.requestLessonUpload(c.req.param("lessonId"));
+  const body = await parseBody(c, z.object({ contentType: z.string().min(1) }));
+  if (!body.ok) return body.response;
+
+  const result = await write.requestLessonUpload(
+    c.req.param("lessonId"),
+    body.data.contentType,
+  );
   return "error" in result ? fail(c, result.error, "server_error") : ok(c, result);
+});
+
+/**
+ * Marks the lesson playable once the browser's PUT has finished.
+ *
+ * R2 has no transcode webhook, so this replaces the Cloudflare callback that
+ * used to flip a lesson to `ready`.
+ */
+adminRoutes.post("/lessons/:lessonId/upload/confirm", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      key: z.string().min(1),
+      durationSeconds: z.coerce.number().min(0).max(60 * 60 * 12).default(0),
+    }),
+  );
+  if (!body.ok) return body.response;
+
+  const result = await write.confirmLessonUpload(
+    c.req.param("lessonId"),
+    body.data.key,
+    body.data.durationSeconds,
+  );
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
 });
 
 /* ------------------------------------------------------------- plans etc. */
@@ -381,8 +410,19 @@ adminRoutes.post("/content/training", requireAdmin, async (c) => {
 });
 
 adminRoutes.post("/content/training/:id/upload", requireAdmin, async (c) => {
-  const result = await write.requestTrainingUpload(c.req.param("id"));
+  const body = await parseBody(c, z.object({ contentType: z.string().min(1) }));
+  if (!body.ok) return body.response;
+
+  const result = await write.requestTrainingUpload(c.req.param("id"), body.data.contentType);
   return "error" in result ? fail(c, result.error, "server_error") : ok(c, result);
+});
+
+adminRoutes.post("/content/training/:id/upload/confirm", requireAdmin, async (c) => {
+  const body = await parseBody(c, z.object({ key: z.string().min(1) }));
+  if (!body.ok) return body.response;
+
+  const result = await write.confirmTrainingUpload(c.req.param("id"), body.data.key);
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result);
 });
 
 adminRoutes.delete("/content/training/:id", requireAdmin, async (c) => {
@@ -401,7 +441,6 @@ adminRoutes.delete("/content/mentorship/:id", requireAdmin, async (c) => {
 });
 
 /** Cloudflare direct-creator-upload, reused by training videos. */
-export { createDirectUpload };
 
 /* ------------------------------------------------- lesson resource files */
 
