@@ -317,10 +317,14 @@ export async function requestLessonUpload(
       contentType,
     });
 
-    await db
-      .update(lessons)
-      .set({ videoStatus: "uploading", updatedAt: new Date() })
-      .where(eq(lessons.id, lessonId));
+    // The status is deliberately NOT moved to "uploading" here.
+    //
+    // Handing out a URL is not evidence that anything was uploaded. The PUT
+    // happens in the admin's browser and can fail — blocked by CORS, a dropped
+    // connection, a closed tab — and nothing would ever move the row back.
+    // A lesson that already had a video would show "Uploading" forever while
+    // still serving the old one. Only confirmLessonUpload, which checks the
+    // object is really in the bucket, changes the status.
 
     return { uploadUrl, videoId: key };
   } catch (err) {
