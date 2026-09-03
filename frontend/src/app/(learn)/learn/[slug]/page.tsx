@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle2, ChevronLeft, PlayCircle } from "lucide-react";
+import { CheckCircle2, PlayCircle } from "lucide-react";
 
 import { VideoPlayer } from "@/components/player/video-player";
 import { LessonResources } from "@/components/player/lesson-resources";
@@ -60,18 +60,12 @@ export default async function LearnPage({ params, searchParams }: Params) {
       : 0;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--color-foreground)]"
-        >
-          <ChevronLeft className="size-4" strokeWidth={1.5} aria-hidden="true" />
-          My courses
-        </Link>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-4 px-4 py-4 sm:px-6">
+      {/* Wider than the dashboard's 1400px and with the sidebar gone, the
+          player gets the room it was previously sharing with seventeen nav
+          items. The curriculum column keeps its own width so long lesson
+          titles do not wrap to three lines on a big screen. */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* --------------------------------------------------------- player */}
         <div className="flex min-w-0 flex-col gap-4">
           {playback ? (
