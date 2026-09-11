@@ -31,13 +31,12 @@ export function CtaButton({
     <Link
       href={href}
       className={cn(
-        "group inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] font-medium",
-        "transition-colors duration-150 ease-out",
+        "group inline-flex items-center justify-center gap-2 rounded-full font-semibold",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-blue)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background)]",
         size === "lg" ? "min-h-12 px-7 text-[15px]" : "min-h-11 px-5 text-sm",
         variant === "primary"
-          ? "bg-[var(--brand-fill)] text-white hover:bg-[var(--color-primary-hover)]"
-          : "border border-[var(--color-border)] text-[var(--brand-ink)] hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]",
+          ? "btn-glass"
+          : "border border-[var(--color-border)] text-[var(--brand-ink)] transition-colors duration-150 ease-out hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]",
         className,
       )}
     >

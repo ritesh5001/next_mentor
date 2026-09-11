@@ -5,8 +5,8 @@ type Variant = "primary" | "secondary" | "ghost" | "danger" | "money";
 type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] shadow-[var(--shadow-card)]",
+  // Fill, blur, colour and shadow all come from .btn-glass — see globals.css.
+  primary: "btn-glass",
   secondary:
     "bg-[var(--color-card)] text-[var(--color-foreground)] border border-[var(--color-border)] hover:bg-[var(--color-muted)]",
   ghost: "text-[var(--color-foreground)] hover:bg-[var(--color-muted)]",
@@ -34,10 +34,13 @@ export function buttonClasses({
   className,
 }: { variant?: Variant; size?: Size; className?: string } = {}) {
   return cn(
-    "inline-flex cursor-pointer items-center justify-center rounded-[var(--radius-control)] font-semibold",
-    "transition-[background-color,box-shadow,transform] duration-200 ease-out",
-    "active:scale-[0.98]",
+    "inline-flex cursor-pointer items-center justify-center rounded-full font-semibold",
     "disabled:pointer-events-none disabled:opacity-50",
+    // Primary brings its own transition from .btn-glass, which also animates
+    // backdrop-filter. A Tailwind `transition-[…]` here would win on cascade
+    // order and silently drop the blur from the animation.
+    variant !== "primary" &&
+      "transition-[background-color,box-shadow,transform] duration-200 ease-out active:scale-[0.98]",
     variants[variant],
     sizes[size],
     className,

@@ -209,10 +209,61 @@
     background: var(--brand-fill);
   }
 
-  /* Small chips and status badges only. Buttons use --radius-control, because
-     a fully-rounded CTA reads consumer, not professional. */
   .pill {
     border-radius: 500px;
+  }
+
+  /* ------------------------------------------------------------ glass CTA */
+
+  /**
+   * Solid navy at rest, frosted glass on hover.
+   *
+   * Only fill, blur, text colour and shadow move. Size, padding and radius are
+   * deliberately absent from the transition list, so the button cannot shift
+   * the layout around it mid-animation.
+   *
+   * The hover fill is white at 60%. That number is doing real work: white at
+   * 0.6 over pure black still resolves to ~0.32 relative luminance, which puts
+   * near-black label text at roughly 6.4:1 — so the label stays legible over
+   * any photo, video or dark band behind it, not just over a light page.
+   *
+   * Both states declare two shadows (the second is the top rim, transparent at
+   * rest). Equal-length shadow lists are what let box-shadow interpolate
+   * smoothly instead of snapping.
+   */
+  .btn-glass {
+    background-color: var(--brand-fill);
+    /* Literal white, not --color-on-primary: that token flips to dark navy in
+       dark mode, which would be 2.5:1 against the navy fill. --brand-fill stays
+       navy in both themes, so the label that sits on it stays white in both. */
+    color: #ffffff;
+    box-shadow:
+      0 6px 16px -6px rgb(15 23 42 / 0.35),
+      inset 0 1px 0 rgb(0 0 0 / 0);
+    /* blur(0px), not blur(0): the minifier strips a bare 0 and emits the
+       invalid blur(), which the browser then resolves to `none` — the blur
+       would snap in instead of animating. Unprefixed only; Lightning CSS adds
+       -webkit- from the browser targets, and hand-writing it here makes it
+       dedupe the two and drop the unprefixed one, breaking Firefox. */
+    backdrop-filter: blur(0px);
+    transition:
+      background-color 280ms ease-out,
+      color 280ms ease-out,
+      box-shadow 280ms ease-out,
+      backdrop-filter 280ms ease-out;
+  }
+
+  /* Hover-capable pointers only. On touch, :hover sticks after a tap and would
+     leave the button frozen in the glass state. */
+  @media (hover: hover) and (pointer: fine) {
+    .btn-glass:hover {
+      background-color: rgb(255 255 255 / 0.6);
+      color: #171717;
+      backdrop-filter: blur(12px) saturate(140%);
+      box-shadow:
+        0 2px 10px -4px rgb(15 23 42 / 0.2),
+        inset 0 1px 0 rgb(0 0 0 / 0.14);
+    }
   }
 
   .stagger-in > * {

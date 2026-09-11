@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { GraduationCap } from "lucide-react";
+
+import { Logo } from "@/components/brand/logo";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,16 +8,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       {/* Form column. On mobile this is the whole page — the marketing panel
           is decorative and should never push the form below the fold. */}
       <div className="flex flex-col px-6 py-8 sm:px-10">
-        <Link
-          href="/"
-          className="inline-flex w-fit items-center gap-2 text-lg font-bold tracking-tight"
-        >
-          <GraduationCap
-            className="size-6 text-[var(--color-primary)]"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          />
-          NextMentor
+        <Link href="/" className="w-fit" aria-label="NextMentor home">
+          <Logo className="h-8 w-auto" />
         </Link>
 
         <main id="main" className="flex flex-1 items-center justify-center py-10">

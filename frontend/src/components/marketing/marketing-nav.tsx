@@ -40,7 +40,7 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
           className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
           onClick={() => setOpen(false)}
         >
-          <Logo className="h-8 w-auto" />
+          <Logo className="h-9 w-auto" />
         </Link>
 
         <ul className="hidden items-center gap-1 lg:flex">
