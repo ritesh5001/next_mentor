@@ -22,8 +22,12 @@ export function CourseCard({ course }: { course: CourseCardData }) {
   const thumb = assetUrl(course.thumbnailKey);
   const off = discountPercent(course.priceInPaise, course.mrpInPaise);
 
+  // `relative` on the <article> is load-bearing: the stretched link below is an
+  // absolutely positioned ::after, and without it that ::after resolves against
+  // whatever ancestor happens to be positioned, covering a large slice of the
+  // page and swallowing clicks meant for other controls.
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] shadow-[var(--shadow-card)] transition-shadow duration-200 hover:shadow-[var(--shadow-raised)]">
+    <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] shadow-[var(--shadow-card)] transition-shadow duration-200 hover:shadow-[var(--shadow-raised)]">
       {/* aspect-video reserves the box before the image loads. Without it the
           whole grid reflows as thumbnails arrive — the main CLS risk here. */}
       <div className="relative aspect-video overflow-hidden bg-[var(--color-muted)]">

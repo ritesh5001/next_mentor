@@ -213,57 +213,124 @@
     border-radius: 500px;
   }
 
-  /* ------------------------------------------------------------ glass CTA */
+  /* --------------------------------------------------- liquid-fill button */
 
   /**
-   * Solid navy at rest, frosted glass on hover.
+   * Pill button whose fill wipes top-to-bottom into frosted glass on hover.
    *
-   * Only fill, blur, text colour and shadow move. Size, padding and radius are
-   * deliberately absent from the transition list, so the button cannot shift
-   * the layout around it mid-animation.
+   * The wipe is one background-image twice the button's height — glass on the
+   * top half, solid on the bottom — slid vertically. background-position is a
+   * real animatable length, so the boundary genuinely travels down the button
+   * rather than the two fills cross-fading in place.
    *
-   * The hover fill is white at 60%. That number is doing real work: white at
-   * 0.6 over pure black still resolves to ~0.32 relative luminance, which puts
-   * near-black label text at roughly 6.4:1 — so the label stays legible over
-   * any photo, video or dark band behind it, not just over a light page.
-   *
-   * Both states declare two shadows (the second is the top rim, transparent at
-   * rest). Equal-length shadow lists are what let box-shadow interpolate
-   * smoothly instead of snapping.
+   * Deliberately NOT a ::before panel, for two reasons. A positioned
+   * pseudo-element paints above a button's bare text node, so it would cover
+   * the label unless every call site wrapped its text in a span. And
+   * backdrop-filter on that panel samples what is painted behind the panel —
+   * the button's own opaque background — so you get blurred --primary instead
+   * of a window onto the page. Putting the blur on the button itself and the
+   * wipe in its background fixes both: the opaque half of the gradient hides
+   * the blur, the translucent half reveals it.
    */
-  .btn-glass {
-    background-color: var(--brand-fill);
-    /* Literal white, not --color-on-primary: that token flips to dark navy in
-       dark mode, which would be 2.5:1 against the navy fill. --brand-fill stays
-       navy in both themes, so the label that sits on it stays white in both. */
-    color: #ffffff;
-    box-shadow:
-      0 6px 16px -6px rgb(15 23 42 / 0.35),
-      inset 0 1px 0 rgb(0 0 0 / 0);
-    /* blur(0px), not blur(0): the minifier strips a bare 0 and emits the
-       invalid blur(), which the browser then resolves to `none` — the blur
-       would snap in instead of animating. Unprefixed only; Lightning CSS adds
-       -webkit- from the browser targets, and hand-writing it here makes it
-       dedupe the two and drop the unprefixed one, breaking Firefox. */
+  .btn-liquid {
+    --primary: var(--brand-fill);
+    --secondary: #ffffff;
+    --secondary-invert: #171717;
+    --glass-fill: rgb(255 255 255 / 0.62);
+    --glass-fill-solid: rgb(255 255 255 / 0.95);
+    --surface: var(--color-card);
+    --liquid-duration: 360ms;
+
+    /* Never `1px solid transparent`: with backdrop-filter the blurred page
+       shows through the border box and reads as a pale gap inside the pill.
+       Rims are expressed as inset shadows instead. */
+    border: 0;
+    border-radius: 999px;
+    color: var(--secondary);
+
+    background-image: linear-gradient(
+      to bottom,
+      var(--glass-fill) 0 50%,
+      var(--primary) 50% 100%
+    );
+    background-size: 100% 200%;
+    background-position: 0% 100%;
+    background-repeat: no-repeat;
+
+    /* blur(0px) at rest, not a permanent blur: leaving it engaged costs a
+       compositing layer full-time and produces edge artefacts. */
     backdrop-filter: blur(0px);
+
+    /* Both states declare two shadows — the second is the top rim, transparent
+       here. Equal-length lists are what let box-shadow interpolate instead of
+       snapping. */
+    box-shadow:
+      0 10px 26px color-mix(in srgb, var(--primary) 30%, transparent),
+      inset 0 1px 0 rgb(0 0 0 / 0);
+
     transition:
-      background-color 280ms ease-out,
-      color 280ms ease-out,
-      box-shadow 280ms ease-out,
-      backdrop-filter 280ms ease-out;
+      background-position var(--liquid-duration) ease-in-out,
+      color var(--liquid-duration) ease-in-out,
+      box-shadow var(--liquid-duration) ease-in-out,
+      backdrop-filter var(--liquid-duration) ease-in-out;
   }
 
-  /* Hover-capable pointers only. On touch, :hover sticks after a tap and would
-     leave the button frozen in the glass state. */
-  @media (hover: hover) and (pointer: fine) {
-    .btn-glass:hover {
-      background-color: rgb(255 255 255 / 0.6);
-      color: #171717;
-      backdrop-filter: blur(12px) saturate(140%);
+  /* Hover-capable pointers only. On touch, :hover latches after a tap and the
+     button stays frozen mid-glass. */
+  @media (hover: hover) {
+    .btn-liquid:hover {
+      background-position: 0% 0%;
+      color: var(--secondary-invert);
+      backdrop-filter: blur(14px) saturate(160%);
       box-shadow:
-        0 2px 10px -4px rgb(15 23 42 / 0.2),
-        inset 0 1px 0 rgb(0 0 0 / 0.14);
+        0 4px 14px rgb(0 0 0 / 0.13),
+        inset 0 1px 0 rgb(0 0 0 / 0.18);
     }
+  }
+
+  /* Same end state for keyboard users, who never fire :hover — plus a ring,
+     since the fill change alone is not a focus indicator. */
+  .btn-liquid:focus-visible {
+    background-position: 0% 0%;
+    color: var(--secondary-invert);
+    backdrop-filter: blur(14px) saturate(160%);
+    box-shadow:
+      0 4px 14px rgb(0 0 0 / 0.13),
+      inset 0 1px 0 rgb(0 0 0 / 0.18);
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 2px;
+  }
+
+  /* Without backdrop-filter the glass never frosts, so a 62% fill would leave
+     --secondary-invert sitting on a see-through pill. Fall back to near-opaque. */
+  @supports not (backdrop-filter: blur(1px)) {
+    .btn-liquid {
+      --glass-fill: var(--glass-fill-solid);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-liquid {
+      --liquid-duration: 1ms;
+    }
+  }
+
+  /* Variants swap only the solid half of the gradient. */
+
+  .btn-liquid--light {
+    --primary: var(--surface);
+    --secondary: var(--brand-ink);
+    /* The label is already dark, so it does not need to invert. */
+    --secondary-invert: var(--brand-ink);
+  }
+
+  .btn-liquid--outline {
+    --primary: transparent;
+    --secondary: var(--brand-ink);
+    /* A real stroke, so the gradient must stop at the padding edge or it
+       bleeds under the border and muddies it. */
+    border: 1.5px solid var(--brand-blue);
+    background-clip: padding-box;
   }
 
   .stagger-in > * {

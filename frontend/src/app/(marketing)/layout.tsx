@@ -76,7 +76,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
 
             <Link
               href="/contact"
-              className="pill mt-2 inline-flex w-fit items-center gap-2 bg-white/10 px-5 py-2.5 text-sm font-semibold transition-colors hover:bg-white/20"
+              className="btn-liquid btn-liquid--light mt-2 inline-flex min-h-11 w-fit items-center gap-2 px-5 text-sm font-semibold"
             >
               Contact With Us
             </Link>
