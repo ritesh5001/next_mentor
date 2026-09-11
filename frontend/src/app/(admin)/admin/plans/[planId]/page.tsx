@@ -46,7 +46,7 @@ export default async function EditPlanPage({
         </Link>
 
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-extrabold tracking-tight">{plan.name}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{plan.name}</h1>
           <Badge tone={plan.isActive ? "success" : "neutral"}>
             {plan.isActive ? "Live" : "Hidden"}
           </Badge>

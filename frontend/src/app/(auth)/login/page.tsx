@@ -26,7 +26,7 @@ export default async function LoginPage({
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-extrabold tracking-tight">Welcome back</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Sign in to pick up where you left off.
         </p>

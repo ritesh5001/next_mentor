@@ -25,7 +25,7 @@ export default async function RegisterPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-extrabold tracking-tight">Create your account</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Start learning today. No card needed to sign up.
         </p>

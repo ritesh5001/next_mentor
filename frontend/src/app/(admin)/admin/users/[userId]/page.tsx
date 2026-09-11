@@ -54,7 +54,7 @@ export default async function AdminUserPage({
         </Link>
 
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-extrabold tracking-tight">{user.name ?? user.email}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{user.name ?? user.email}</h1>
           {user.role !== "student" && (
             <Badge tone="money" className="capitalize">
               {user.role}

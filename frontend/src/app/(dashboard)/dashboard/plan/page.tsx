@@ -23,7 +23,7 @@ export default async function PlanPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Upgrade your plan</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Upgrade your plan</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           A higher tier unlocks more of the catalog and raises your commission rate.
         </p>

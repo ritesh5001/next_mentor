@@ -22,7 +22,7 @@ export default function NewCoursePage() {
       </Link>
 
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">New course</h1>
+        <h1 className="text-2xl font-bold tracking-tight">New course</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           It starts as a draft. Add lessons and upload videos before publishing.
         </p>

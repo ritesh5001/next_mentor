@@ -31,7 +31,7 @@ export default async function ProfilePage() {
           reference. The band is the brand gradient rather than a photo: there
           is no cover-image field, and inventing one would be a lie. */}
       <section className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] shadow-[var(--shadow-card)]">
-        <div className="h-28 sm:h-36" style={{ background: "var(--brand-gradient)" }} />
+        <div className="h-28 sm:h-36" style={{ background: "var(--brand-fill)" }} />
 
         <div className="flex flex-col items-center gap-3 px-5 pb-5 text-center">
           <div className="-mt-12 rounded-full border-4 border-[var(--color-card)] bg-[var(--color-card)] sm:-mt-14">
@@ -39,7 +39,7 @@ export default async function ProfilePage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-extrabold tracking-tight">{me.name ?? "Your profile"}</h1>
+            <h1 className="text-xl font-bold tracking-tight">{me.name ?? "Your profile"}</h1>
             <p className="text-sm text-[var(--color-muted-foreground)]">{me.email}</p>
           </div>
 

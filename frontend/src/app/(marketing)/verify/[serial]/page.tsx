@@ -33,7 +33,7 @@ export default async function VerifyCertificatePage({ params }: Params) {
             aria-hidden="true"
           />
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight">No such certificate</h1>
+        <h1 className="text-2xl font-bold tracking-tight">No such certificate</h1>
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
           We have no record of certificate{" "}
           <span className="font-mono font-semibold">{serial}</span>. Check the number and
@@ -56,7 +56,7 @@ export default async function VerifyCertificatePage({ params }: Params) {
             aria-hidden="true"
           />
         </div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Certificate revoked</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Certificate revoked</h1>
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
           This certificate was issued but has since been revoked and is no longer valid.
         </p>
@@ -75,7 +75,7 @@ export default async function VerifyCertificatePage({ params }: Params) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-extrabold tracking-tight text-[var(--color-success)]">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--color-success)]">
           Genuine certificate
         </h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">

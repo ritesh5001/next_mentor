@@ -59,7 +59,7 @@ export function PlanCard({
       )}
 
       <header className="flex flex-col gap-1.5">
-        <h3 className="text-lg font-extrabold tracking-tight">{plan.name}</h3>
+        <h3 className="text-lg font-bold tracking-tight">{plan.name}</h3>
         {plan.tagline && (
           <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
             {plan.tagline}
@@ -69,7 +69,7 @@ export function PlanCard({
 
       <div className="flex flex-col gap-1">
         <div className="flex items-baseline gap-2">
-          <span className="tabular text-3xl font-extrabold">
+          <span className="tabular text-3xl font-bold">
             {plan.priceInPaise === 0 ? "Free" : formatPrice(plan.priceInPaise)}
           </span>
           {off !== null && plan.mrpInPaise && (

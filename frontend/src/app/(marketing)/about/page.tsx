@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
-      <h1 className="text-3xl font-extrabold tracking-tight text-[var(--brand-ink)] sm:text-4xl">
-        About <span className="brand-gradient-text">NextMentor</span>
+      <h1 className="text-3xl font-bold tracking-tight text-[var(--brand-ink)] sm:text-4xl">
+        About <span className="brand-accent-text">NextMentor</span>
       </h1>
 
       <div className="mt-6 flex flex-col gap-5 text-[16px] leading-relaxed text-[var(--color-foreground)]/85">

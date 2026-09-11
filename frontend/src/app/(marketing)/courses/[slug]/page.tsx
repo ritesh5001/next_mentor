@@ -86,7 +86,7 @@ export default async function CourseDetailPage({ params }: Params) {
               </span>
             </div>
 
-            <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
               {course.title}
             </h1>
 
@@ -217,7 +217,7 @@ export default async function CourseDetailPage({ params }: Params) {
             </div>
 
             <div className="flex items-baseline gap-2">
-              <span className="tabular text-3xl font-extrabold">
+              <span className="tabular text-3xl font-bold">
                 {course.priceInPaise === 0 ? "Free" : formatPrice(course.priceInPaise)}
               </span>
               {off !== null && course.mrpInPaise && (

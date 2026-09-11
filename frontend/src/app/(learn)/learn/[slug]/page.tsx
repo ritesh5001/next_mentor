@@ -40,7 +40,7 @@ export default async function LearnPage({ params, searchParams }: Params) {
   if (!view) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-20 text-center">
-        <h1 className="text-2xl font-extrabold tracking-tight">Nothing to watch yet</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Nothing to watch yet</h1>
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
           Either you are not enrolled in this course, or its lessons are still
           being prepared.
@@ -87,7 +87,7 @@ export default async function LearnPage({ params, searchParams }: Params) {
           )}
 
           <header className="flex flex-col gap-1">
-            <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
               {view.active.title}
             </h1>
             <p className="text-sm text-[var(--color-muted-foreground)]">

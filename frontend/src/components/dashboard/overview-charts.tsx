@@ -180,7 +180,7 @@ export function SalesDonut({
         <span className="max-w-[7rem] truncate text-center text-xs font-bold text-[var(--color-foreground)]">
           {top[0]?.planName}
         </span>
-        <span className="tabular text-2xl font-extrabold text-[var(--color-foreground)]">
+        <span className="tabular text-2xl font-bold text-[var(--color-foreground)]">
           {top[0]?.count}
         </span>
       </div>

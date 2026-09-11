@@ -21,7 +21,7 @@ export default function Unauthorized() {
         />
       </div>
 
-      <h1 className="text-2xl font-extrabold tracking-tight">Sign in to continue</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Sign in to continue</h1>
       <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
         You need an account to view this page.
       </p>

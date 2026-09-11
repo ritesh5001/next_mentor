@@ -52,7 +52,7 @@ export default async function EditCoursePage({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-extrabold tracking-tight">{course.title}</h1>
+              <h1 className="text-2xl font-bold tracking-tight">{course.title}</h1>
               <Badge tone={STATUS_TONE[course.status]} className="capitalize">
                 {course.status}
               </Badge>

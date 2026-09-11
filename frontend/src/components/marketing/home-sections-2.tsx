@@ -125,7 +125,7 @@ export function Packages({ plans }: { plans: PackageCard[] }) {
               {plan.isFeatured && (
                 <span
                   className="pill absolute -top-3 left-6 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white"
-                  style={{ background: "var(--brand-gradient)" }}
+                  style={{ background: "var(--brand-fill)" }}
                 >
                   Most popular
                 </span>
@@ -139,7 +139,7 @@ export function Packages({ plans }: { plans: PackageCard[] }) {
               </div>
 
               <p className="flex items-baseline gap-2">
-                <span className="tabular text-3xl font-extrabold tracking-tight text-[var(--brand-ink)]">
+                <span className="tabular text-3xl font-bold tracking-tight text-[var(--brand-ink)]">
                   {plan.priceInPaise === 0 ? "Free" : formatPrice(plan.priceInPaise)}
                 </span>
                 {plan.mrpInPaise != null && plan.mrpInPaise > plan.priceInPaise && (
@@ -226,7 +226,7 @@ export function Testimonials() {
                 <span
                   aria-hidden="true"
                   className="flex size-8 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
-                  style={{ background: "var(--brand-gradient)" }}
+                  style={{ background: "var(--brand-fill)" }}
                 >
                   {t.name
                     .split(" ")

@@ -87,7 +87,7 @@ export function CourseCard({ course }: { course: CourseCardData }) {
 
         <div className="mt-auto flex items-end justify-between gap-2 pt-1">
           <div className="flex items-baseline gap-2">
-            <span className="tabular text-lg font-extrabold">
+            <span className="tabular text-lg font-bold">
               {course.priceInPaise === 0 ? "Free" : formatPrice(course.priceInPaise)}
             </span>
             {off !== null && course.mrpInPaise && (

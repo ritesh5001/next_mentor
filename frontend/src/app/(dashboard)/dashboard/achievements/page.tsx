@@ -34,7 +34,7 @@ export default async function AchievementsPage() {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">My achievements</h1>
+        <h1 className="text-2xl font-bold tracking-tight">My achievements</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           {unlocked.length} of {board.length} unlocked
         </p>

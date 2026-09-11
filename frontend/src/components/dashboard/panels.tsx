@@ -40,7 +40,7 @@ export function Panel({
       {title && (
         <header
           className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-white sm:px-5"
-          style={{ background: "var(--brand-gradient)" }}
+          style={{ background: "var(--brand-fill)" }}
         >
           <h2 className="text-sm font-bold tracking-wide">{title}</h2>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -147,7 +147,7 @@ export function StatTile({
         >
           {label}
         </span>
-        <span className="tabular text-2xl font-extrabold leading-tight">{value}</span>
+        <span className="tabular text-2xl font-bold leading-tight">{value}</span>
         {hint && (
           <span className="text-[11px] leading-snug" style={{ color: t.sub }}>
             {hint}
@@ -266,7 +266,7 @@ export function PageHeader({
   return (
     <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-4">
       <div className="flex min-w-0 flex-col gap-1">
-        <h1 className="text-xl font-extrabold tracking-tight text-[var(--color-foreground)] sm:text-2xl">
+        <h1 className="text-xl font-bold tracking-tight text-[var(--color-foreground)] sm:text-2xl">
           {title}
         </h1>
         {subtitle && (
@@ -317,7 +317,7 @@ export function Avatar({
         width: size,
         height: size,
         fontSize: Math.max(10, size * 0.36),
-        background: "var(--brand-gradient)",
+        background: "var(--brand-fill)",
       }}
     >
       {initials}

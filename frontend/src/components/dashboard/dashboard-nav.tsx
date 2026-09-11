@@ -91,7 +91,7 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
       >
         <div
           className="sticky top-24 max-h-[calc(100dvh-7rem)] overflow-y-auto rounded-[var(--radius-card)] p-2.5 shadow-[var(--shadow-raised)]"
-          style={{ background: "var(--brand-gradient)" }}
+          style={{ background: "var(--brand-fill)" }}
         >
           <NavList items={items} />
         </div>
@@ -121,7 +121,7 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
           <nav
             aria-label="Dashboard"
             className="absolute inset-y-0 right-0 flex w-[85vw] max-w-xs flex-col shadow-[var(--shadow-overlay)]"
-            style={{ background: "var(--brand-gradient)" }}
+            style={{ background: "var(--brand-fill)" }}
           >
             <div className="flex items-center justify-between border-b border-white/15 px-4 py-3">
               <span className="text-sm font-bold text-white">Menu</span>

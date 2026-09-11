@@ -59,7 +59,7 @@ export default async function PostPage({
           </Badge>
         </div>
 
-        <h1 className="text-2xl font-extrabold leading-snug tracking-tight">{post.title}</h1>
+        <h1 className="text-2xl font-bold leading-snug tracking-tight">{post.title}</h1>
 
         <div className="flex items-center gap-2 text-xs text-[var(--color-muted-foreground)]">
           <span className="font-medium">{post.authorName ?? "Someone"}</span>

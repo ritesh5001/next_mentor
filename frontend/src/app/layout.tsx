@@ -1,16 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { envUrl } from "@nextmentor/shared";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "@/styles/globals.css";
 
 // Self-hosted by next/font — no render-blocking request to fonts.googleapis.com.
-// Weights are limited to the five the design system actually uses; each extra
-// weight is bytes on the critical path for no visual gain.
-const jakarta = Plus_Jakarta_Sans({
+// Four weights, not five: the design tops out at 700, and Poppins ExtraBold at
+// display sizes reads as loud rather than confident.
+const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-jakarta",
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={jakarta.variable} suppressHydrationWarning>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className="min-h-dvh antialiased">
         <a
           href="#main"

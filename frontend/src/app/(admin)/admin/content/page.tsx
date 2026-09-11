@@ -26,7 +26,7 @@ export default async function AdminContentPage() {
   return (
     <div className="flex flex-col gap-10">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Content</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Content</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Promotional material, affiliate training and mentorship sessions.
         </p>

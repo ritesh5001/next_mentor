@@ -26,7 +26,7 @@ export default async function DashboardPage() {
         title={
           <>
             Welcome{" "}
-            <span className="brand-gradient-text">
+            <span className="brand-accent-text">
               {user.name ? user.name.split(" ")[0] : "back"}
             </span>
           </>
@@ -99,7 +99,7 @@ export default async function DashboardPage() {
                     <span className="absolute inset-x-0 bottom-0 h-1 bg-black/10">
                       <span
                         className="block h-full"
-                        style={{ width: `${pct}%`, background: "var(--brand-gradient)" }}
+                        style={{ width: `${pct}%`, background: "var(--brand-fill)" }}
                       />
                     </span>
                   </div>

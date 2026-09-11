@@ -36,7 +36,7 @@ export default async function VerifyPage({
       </div>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-extrabold tracking-tight">Check your email</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
         <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
           {email ? (
             <>

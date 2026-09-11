@@ -62,7 +62,7 @@ export function SectionHead({
           {eyebrow}
         </span>
       )}
-      <h2 className="text-[26px] font-extrabold leading-[1.15] tracking-tight text-[var(--brand-ink)] sm:text-[36px]">
+      <h2 className="text-[26px] font-bold leading-[1.15] tracking-tight text-[var(--brand-ink)] sm:text-[36px]">
         {title}
       </h2>
       {lede && (
@@ -76,101 +76,69 @@ export function SectionHead({
 
 /* -------------------------------------------------------------------- hero */
 
+/**
+ * Hero.
+ *
+ * One column, centred, nothing else. The blurred blob, the dash and dot-grid
+ * marks, the two stock portraits and the "Hello" bubble were all decoration
+ * that made the fold busier without making the offer clearer — and stock faces
+ * of people unconnected to the business is the fastest way to look less
+ * credible, not more.
+ */
 export function Hero({ courseCount }: { courseCount: number }) {
   return (
-    <section className="relative overflow-hidden" style={{ background: "var(--brand-hero-wash)" }}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-32 -top-32 size-[34rem] rounded-full opacity-[0.13] blur-3xl"
-        style={{ background: "var(--brand-gradient)" }}
-      />
+    <section style={{ background: "var(--brand-hero-wash)" }}>
+      <div className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 sm:pb-16 sm:pt-24">
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
+          <span className="pill inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-card)] px-3.5 py-1.5 text-xs font-medium text-[var(--color-muted-foreground)]">
+            <span className="size-1.5 rounded-full bg-[var(--brand-green-deep)]" aria-hidden="true" />
+            {courseCount > 0
+              ? `${courseCount} course${courseCount === 1 ? "" : "s"} open for enrolment`
+              : "New courses opening soon"}
+          </span>
 
-      {/* Two decorative marks, one per side, echoing the reference's dashes
-          and dot grid. Hidden below xl, where the portraits also disappear
-          and the composition becomes a plain centred column. */}
-      <Dashes className="absolute left-6 top-[62%] hidden xl:block" />
-      <DotGrid className="absolute right-10 top-[58%] hidden xl:block" />
+          <h1 className="text-[32px] font-bold leading-[1.12] tracking-[-0.02em] text-[var(--brand-ink)] sm:text-[46px] lg:text-[54px]">
+            Learn the skill.{" "}
+            <span className="brand-accent-text">Freelance with confidence.</span>
+          </h1>
 
-      <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-14 sm:px-6 sm:pt-20">
-        <div className="flex items-center justify-center gap-8">
-          {/* The portraits flank the copy on wide screens only. They are
-              decorative, so they carry empty alt text and never become the
-              LCP element on a phone. */}
-          <Portrait
-            src="/images/hero-learner-a.jpg"
-            className="hidden shrink-0 xl:block"
-            size={220}
-          />
+          <p className="max-w-xl text-base leading-relaxed text-[var(--color-muted-foreground)] sm:text-[17px]">
+            Practical, project-based courses that help you build in-demand
+            skills, create real work, and start your freelancing journey.
+          </p>
 
-          <div className="flex max-w-2xl flex-col items-center gap-6 text-center">
-            <span className="pill inline-flex items-center gap-2 border border-[var(--color-border)] bg-[var(--color-card)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-muted-foreground)]">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full rounded-full bg-[var(--brand-green)] opacity-70" />
-                <span className="relative inline-flex size-2 rounded-full bg-[var(--brand-green-deep)]" />
-              </span>
-              {courseCount > 0
-                ? `${courseCount} course${courseCount === 1 ? "" : "s"} open for enrolment`
-                : "New courses opening soon"}
-            </span>
-
-            <h1 className="text-[34px] font-extrabold leading-[1.1] tracking-[-0.02em] text-[var(--brand-ink)] sm:text-[50px] lg:text-[56px]">
-              Learn the skill.{" "}
-              <span className="brand-gradient-text">Freelance with confidence.</span>
-            </h1>
-
-            <p className="max-w-xl text-base leading-relaxed text-[var(--color-muted-foreground)] sm:text-[17px]">
-              Practical, project-based courses that help you build in-demand
-              skills, create real work, and start your freelancing journey.
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
-              <CtaButton href="/courses" size="lg">
-                Explore courses
-              </CtaButton>
-              <CtaButton href="/register" variant="outline" size="lg">
-                Create an account
-              </CtaButton>
-            </div>
-          </div>
-
-          <div className="relative hidden shrink-0 xl:block">
-            <Portrait src="/images/hero-learner-b.jpg" size={220} />
-            {/* The greeting bubble from the reference, tail and all. */}
-            <span
-              aria-hidden="true"
-              className="absolute -left-2 -top-3 rounded-full px-4 py-2 text-sm font-extrabold text-white shadow-[var(--shadow-card)]"
-              style={{ background: "var(--brand-green-deep)" }}
+          <div className="flex w-full flex-col gap-3 pt-2 sm:w-auto sm:flex-row sm:items-center">
+            <CtaButton href="/courses" size="lg" className="justify-center">
+              Explore courses
+            </CtaButton>
+            <CtaButton
+              href="/register"
+              variant="outline"
+              size="lg"
+              className="justify-center"
             >
-              Hello
-              <span
-                className="absolute -bottom-1 left-6 size-3 rotate-45"
-                style={{ background: "var(--brand-green-deep)" }}
-              />
-            </span>
+              Create an account
+            </CtaButton>
           </div>
         </div>
       </div>
 
-      {/* The dark promise bar the reference floats over the fold. Four claims,
-          each one we can actually stand behind. */}
-      <div className="relative mx-auto max-w-6xl px-4 pb-14 sm:px-6">
-        <ul
-          className="grid gap-px overflow-hidden rounded-2xl sm:grid-cols-2 lg:grid-cols-4"
-          style={{ background: "rgb(255 255 255 / 0.12)" }}
-        >
+      {/* Four claims, each one we can actually stand behind. A plain bordered
+          strip rather than a floating dark card: less weight, same content. */}
+      <div className="mx-auto max-w-6xl px-4 pb-14 sm:px-6">
+        <ul className="grid overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] sm:grid-cols-2 lg:grid-cols-4">
           {PROMISES.map(({ Icon, lines }) => (
             <li
               key={lines[0]}
-              className="flex items-center gap-3 px-5 py-5"
-              style={{ background: "var(--brand-surface-dark)" }}
+              className="flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-4 last:border-b-0 sm:border-r sm:[&:nth-child(2n)]:border-r-0 sm:[&:nth-last-child(-n+2)]:border-b-0 lg:border-b-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0"
             >
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/12">
-                <Icon className="size-5 text-white" strokeWidth={1.6} aria-hidden="true" />
-              </span>
-              <span className="text-sm font-bold leading-snug text-white">
-                {lines[0]}
-                <br />
-                {lines[1]}
+              <Icon
+                className="size-5 shrink-0 text-[var(--brand-blue)]"
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
+              <span className="text-[13px] font-medium leading-snug text-[var(--color-foreground)]">
+                {lines[0]} {lines[1]}
               </span>
             </li>
           ))}
@@ -186,82 +154,6 @@ const PROMISES: Array<{ Icon: typeof ShieldCheck; lines: [string, string] }> = [
   { Icon: ShieldCheck, lines: ["One price,", "no second paywall"] },
   { Icon: Wallet, lines: ["Commission paid", "to your bank"] },
 ];
-
-/** A circular portrait with a soft ring, as on the reference. */
-function Portrait({
-  src,
-  size,
-  className,
-}: {
-  src: string;
-  size: number;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-full border-4 border-[var(--color-card)] shadow-[var(--shadow-raised)]",
-        className,
-      )}
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src={src}
-        alt=""
-        width={size}
-        height={size}
-        // Decorative and beside the headline, so it must not delay the LCP.
-        loading="lazy"
-        className="size-full object-cover"
-      />
-    </div>
-  );
-}
-
-function Dashes({ className }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      width="88"
-      height="64"
-      viewBox="0 0 88 64"
-      className={className}
-      fill="none"
-    >
-      {Array.from({ length: 12 }).map((_, i) => (
-        <line
-          key={i}
-          x1={(i % 4) * 22 + 2}
-          y1={Math.floor(i / 4) * 22 + 2}
-          x2={(i % 4) * 22 + 12}
-          y2={Math.floor(i / 4) * 22 + 14}
-          stroke="var(--brand-green)"
-          strokeWidth="3"
-          strokeLinecap="round"
-          opacity="0.45"
-        />
-      ))}
-    </svg>
-  );
-}
-
-function DotGrid({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden="true" width="76" height="76" viewBox="0 0 76 76" className={className}>
-      {Array.from({ length: 36 }).map((_, i) => (
-        <circle
-          key={i}
-          cx={(i % 6) * 14 + 4}
-          cy={Math.floor(i / 6) * 14 + 4}
-          r="2"
-          fill="var(--brand-blue)"
-          opacity="0.28"
-        />
-      ))}
-    </svg>
-  );
-}
-
 
 /* ------------------------------------------------------------------ about */
 
@@ -282,7 +174,7 @@ export function About() {
             eyebrow="About us"
             title={
               <>
-                Built by someone who <span className="brand-gradient-text">does this work.</span>
+                Built by someone who <span className="brand-accent-text">does this work.</span>
               </>
             }
             lede="NextMentor exists because most online courses teach theory and leave you exactly where you started. Every track here ends in something you have built and can show someone."
@@ -317,11 +209,12 @@ export function About() {
           </div>
         </div>
 
-        {/* Collage. Decorative throughout, so every image has empty alt text
-            and the connector lines are hidden from assistive tech. */}
-        <div className="relative">
-          <div className="grid grid-cols-2 items-end gap-4 sm:gap-5">
-            <div className="overflow-hidden rounded-2xl shadow-[var(--shadow-raised)]">
+        {/* Two photographs, aligned. The staggered offset, the drop shadows
+            and the stat cards floating over the images all went: overlap is
+            the opposite of minimal, and the numbers read better in the flow. */}
+        <div className="flex flex-col gap-5">
+          <div className="grid grid-cols-2 gap-4 sm:gap-5">
+            <div className="overflow-hidden rounded-[var(--radius-card)]">
               <Image
                 src="/images/about-a.jpg"
                 alt=""
@@ -332,7 +225,7 @@ export function About() {
               />
             </div>
 
-            <div className="overflow-hidden rounded-2xl shadow-[var(--shadow-raised)] sm:translate-y-8">
+            <div className="overflow-hidden rounded-[var(--radius-card)]">
               <Image
                 src="/images/about-b.jpg"
                 alt=""
@@ -344,49 +237,24 @@ export function About() {
             </div>
           </div>
 
-          {/* The two floating figures. Both hug the lower edges: the faces
-              sit mid-frame, and anything pinned to the top of a section can be
-              covered by the sticky header on the way down. Absolute only from
-              sm up; below that they sit in the flow. */}
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-0 sm:block">
-            <FloatingStat
-              value="6"
-              label="tracks, each project-led"
-              className="sm:absolute sm:-right-4 sm:bottom-0 sm:max-w-[11rem]"
-            />
-            <FloatingStat
-              value="7 days"
-              label="and commission clears"
-              className="sm:absolute sm:-left-5 sm:bottom-16 sm:max-w-[11rem]"
-            />
-          </div>
+          <dl className="grid grid-cols-2 gap-4 border-t border-[var(--color-border)] pt-5">
+            {[
+              { value: "6", label: "tracks, each project-led" },
+              { value: "7 days", label: "and commission clears" },
+            ].map(({ value, label }) => (
+              <div key={value} className="flex flex-col gap-1">
+                <dt className="tabular text-2xl font-bold leading-none text-[var(--brand-ink)]">
+                  {value}
+                </dt>
+                <dd className="text-xs leading-snug text-[var(--color-muted-foreground)]">
+                  {label}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </section>
-  );
-}
-
-function FloatingStat({
-  value,
-  label,
-  className,
-}: {
-  value: string;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex flex-col gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-3 shadow-[var(--shadow-raised)]",
-        className,
-      )}
-    >
-      <span className="tabular text-xl font-extrabold leading-none text-[var(--brand-ink)]">
-        {value}
-      </span>
-      <span className="text-xs leading-snug text-[var(--color-muted-foreground)]">{label}</span>
-    </div>
   );
 }
 
@@ -427,13 +295,13 @@ export function HowItWorks() {
       <ol className="mt-12 grid gap-10 sm:mt-14 lg:grid-cols-3 lg:gap-8">
         {STEPS.map((step) => (
           <li key={step.n} className="flex flex-col gap-3">
-            <span className="tabular text-[44px] font-extrabold leading-none tracking-tight text-[var(--brand-ink)]/12">
+            <span className="tabular text-[44px] font-bold leading-none tracking-tight text-[var(--brand-ink)]/12">
               {step.n}
             </span>
             <span
               aria-hidden="true"
               className="h-px w-14 rounded-full"
-              style={{ background: "var(--brand-gradient)" }}
+              style={{ background: "var(--brand-fill)" }}
             />
             <h3 className="pt-1 text-lg font-bold text-[var(--brand-ink)]">{step.title}</h3>
             <p className="text-[15px] leading-relaxed text-[var(--color-muted-foreground)]">
@@ -506,18 +374,12 @@ export function WhatYouGet() {
 export function EarnBand() {
   return (
     <section className="relative overflow-hidden bg-[var(--brand-surface-dark)]">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-24 -bottom-24 size-96 rounded-full opacity-25 blur-3xl"
-        style={{ background: "var(--brand-gradient)" }}
-      />
-
       <div className="relative mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center">
         <div className="flex flex-col gap-4">
           <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--brand-green)]">
             Partner program
           </span>
-          <h2 className="text-[26px] font-extrabold leading-[1.15] tracking-tight text-white sm:text-[36px]">
+          <h2 className="text-[26px] font-bold leading-[1.15] tracking-tight text-white sm:text-[36px]">
             Study once. Keep earning after.
           </h2>
           <p className="max-w-md text-[15px] leading-relaxed text-white/70">
@@ -565,11 +427,6 @@ export function Founder() {
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
       <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         <div className="relative mx-auto w-full max-w-sm lg:mx-0">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -left-4 -top-4 size-32 rounded-full opacity-20 blur-2xl"
-            style={{ background: "var(--brand-gradient)" }}
-          />
           <div className="relative overflow-hidden rounded-3xl shadow-[var(--shadow-raised)]">
             <Image
               src="/images/founder-saurabh.jpg"
@@ -588,7 +445,7 @@ export function Founder() {
             title={
               <>
                 Taught by the person who{" "}
-                <span className="brand-gradient-text">built the business.</span>
+                <span className="brand-accent-text">built the business.</span>
               </>
             }
           />
@@ -628,7 +485,7 @@ export function Founder() {
                 key={value}
                 className="flex flex-col gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-3"
               >
-                <dt className="tabular text-xl font-extrabold leading-none text-[var(--brand-ink)]">
+                <dt className="tabular text-xl font-bold leading-none text-[var(--brand-ink)]">
                   {value}
                 </dt>
                 <dd className="text-xs leading-snug text-[var(--color-muted-foreground)]">
@@ -652,13 +509,8 @@ export function ClosingCta() {
         className="relative overflow-hidden rounded-3xl px-6 py-14 text-center sm:px-12 sm:py-20"
         style={{ background: "var(--brand-hero-wash)" }}
       >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-0 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-3xl"
-          style={{ background: "var(--brand-gradient)" }}
-        />
         <div className="relative flex flex-col items-center gap-5">
-          <h2 className="max-w-xl text-[26px] font-extrabold leading-[1.15] tracking-tight text-[var(--brand-ink)] sm:text-[36px]">
+          <h2 className="max-w-xl text-[26px] font-bold leading-[1.15] tracking-tight text-[var(--brand-ink)] sm:text-[36px]">
             Pick one course and start this week.
           </h2>
           <p className="max-w-md text-[15px] leading-relaxed text-[var(--color-muted-foreground)]">

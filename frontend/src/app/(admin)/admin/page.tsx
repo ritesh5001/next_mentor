@@ -40,8 +40,8 @@ function StatCard({
       <span
         className={
           money
-            ? "tabular text-2xl font-extrabold text-[var(--color-accent)]"
-            : "tabular text-2xl font-extrabold"
+            ? "tabular text-2xl font-bold text-[var(--color-accent)]"
+            : "tabular text-2xl font-bold"
         }
       >
         {value}
@@ -114,7 +114,7 @@ export default async function AdminOverviewPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Overview</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Overview</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Revenue and activity across the platform.
         </p>

@@ -64,7 +64,7 @@ export default function CoursesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
       <header className="mb-8 flex flex-col gap-2">
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">All courses</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">All courses</h1>
         <p className="max-w-2xl text-base leading-relaxed text-[var(--color-muted-foreground)]">
           Practical, project-led courses taught by people who do the work. Buy once, keep access.
         </p>

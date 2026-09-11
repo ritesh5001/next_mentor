@@ -33,7 +33,7 @@ export default async function CommunityPage({
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Community</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Community</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Ask questions, share what worked, help each other out.
         </p>

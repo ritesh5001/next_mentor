@@ -19,7 +19,7 @@ export default async function CouponsPage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Exclusive coupons</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Exclusive coupons</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Apply these at checkout on any course or plan.
         </p>
@@ -47,7 +47,7 @@ export default async function CouponsPage() {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex flex-col gap-0.5">
                   {/* Amber: this is money off. */}
-                  <span className="tabular text-2xl font-extrabold text-[var(--color-accent)]">
+                  <span className="tabular text-2xl font-bold text-[var(--color-accent)]">
                     {c.discountType === "percent"
                       ? `${c.value / 100}% off`
                       : `${formatPrice(c.value)} off`}

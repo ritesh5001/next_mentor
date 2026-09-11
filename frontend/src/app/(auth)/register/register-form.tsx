@@ -62,19 +62,46 @@ export function RegisterForm() {
         placeholder="••••••••"
       />
 
-      <SubmitButton />
+      <label className="flex cursor-pointer items-start gap-3 text-[13px] leading-relaxed text-[var(--color-muted-foreground)]">
+        <input
+          type="checkbox"
+          name="acceptedTerms"
+          required
+          className="mt-0.5 size-4 shrink-0 cursor-pointer rounded-[4px] border border-[var(--color-border)] accent-[var(--brand-fill)]"
+        />
+        <span>
+          I accept the{" "}
+          <a
+            href="/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-[var(--brand-blue)] underline underline-offset-2"
+          >
+            Terms &amp; Conditions
+          </a>
+          ,{" "}
+          <a
+            href="/refund"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-[var(--brand-blue)] underline underline-offset-2"
+          >
+            Refund Policy
+          </a>{" "}
+          and{" "}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-[var(--brand-blue)] underline underline-offset-2"
+          >
+            Privacy Policy
+          </a>
+          .
+        </span>
+      </label>
 
-      <p className="text-xs leading-relaxed text-[var(--color-muted-foreground)]">
-        By creating an account you agree to our{" "}
-        <a href="/terms" className="underline hover:text-[var(--color-foreground)]">
-          Terms
-        </a>{" "}
-        and{" "}
-        <a href="/privacy" className="underline hover:text-[var(--color-foreground)]">
-          Privacy Policy
-        </a>
-        .
-      </p>
+      <SubmitButton />
     </form>
   );
 }

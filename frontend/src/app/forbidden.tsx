@@ -23,7 +23,7 @@ export default function Forbidden() {
         />
       </div>
 
-      <h1 className="text-2xl font-extrabold tracking-tight">No access</h1>
+      <h1 className="text-2xl font-bold tracking-tight">No access</h1>
       <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
         Your account does not have permission to view this page.
       </p>

@@ -30,7 +30,7 @@ export default async function AdminUsersPage({
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Users</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Users</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           {users.length} shown{q ? ` for “${q}”` : ""}
         </p>

@@ -47,7 +47,7 @@ export default async function OverviewPage() {
         <div className="flex min-w-0 items-center gap-4">
           <Avatar name={user.name ?? user.email} src={user.image} size={64} />
           <div className="flex min-w-0 flex-col">
-            <h1 className="truncate text-lg font-extrabold tracking-tight sm:text-xl">
+            <h1 className="truncate text-lg font-bold tracking-tight sm:text-xl">
               {user.name ?? "Your dashboard"}
             </h1>
             <p className="truncate text-sm text-[var(--color-muted-foreground)]">{user.email}</p>
@@ -55,7 +55,7 @@ export default async function OverviewPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="pill inline-flex min-h-11 items-center px-4 text-sm font-bold text-white" style={{ background: "var(--brand-gradient)" }}>
+          <span className="pill inline-flex min-h-11 items-center px-4 text-sm font-bold text-white" style={{ background: "var(--brand-fill)" }}>
             {data.planName ?? "No plan"}
           </span>
           <Link href="/dashboard/earnings" className={buttonClasses({ variant: "secondary" })}>
@@ -93,7 +93,7 @@ export default async function OverviewPage() {
               ))}
               <li className="flex items-center justify-between gap-3 border-t border-[var(--color-border)] pt-1.5 text-sm">
                 <span className="font-semibold">Total sales</span>
-                <span className="tabular font-extrabold">{data.totalSales}</span>
+                <span className="tabular font-bold">{data.totalSales}</span>
               </li>
             </ul>
           )}
@@ -139,7 +139,7 @@ export default async function OverviewPage() {
           >
             <div
               className="h-full rounded-full transition-[width] duration-500 ease-out"
-              style={{ width: `${pct}%`, background: "var(--brand-gradient)" }}
+              style={{ width: `${pct}%`, background: "var(--brand-fill)" }}
             />
           </div>
           <div className="flex flex-wrap justify-between gap-2 text-sm">
@@ -230,7 +230,7 @@ function PeriodTable({
           <dt className="text-[10px] font-bold uppercase tracking-wide text-[var(--color-muted-foreground)]">
             {label}
           </dt>
-          <dd className="tabular text-lg font-extrabold">{value}</dd>
+          <dd className="tabular text-lg font-bold">{value}</dd>
           <span className="sr-only">{head}</span>
         </div>
       ))}

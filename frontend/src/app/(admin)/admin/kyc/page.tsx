@@ -29,7 +29,7 @@ export default async function AdminKycPage({
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">KYC review</h1>
+        <h1 className="text-2xl font-bold tracking-tight">KYC review</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           {submissions.length} {status ?? "pending"} submission(s)
         </p>

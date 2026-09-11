@@ -58,7 +58,7 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
-      <h1 className="text-3xl font-extrabold tracking-tight text-[var(--brand-ink)] sm:text-4xl">
+      <h1 className="text-3xl font-bold tracking-tight text-[var(--brand-ink)] sm:text-4xl">
         {policy.title}
       </h1>
 

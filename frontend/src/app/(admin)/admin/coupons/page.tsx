@@ -19,7 +19,7 @@ export default async function AdminCouponsPage() {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Coupons</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Coupons</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Discount codes that apply at checkout on any course or plan.
         </p>

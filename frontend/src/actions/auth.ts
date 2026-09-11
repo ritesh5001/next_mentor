@@ -72,6 +72,9 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
         email,
         password: String(formData.get("password") ?? ""),
         confirmPassword: String(formData.get("confirmPassword") ?? ""),
+        // An unticked checkbox is absent from FormData entirely, so this is
+        // false rather than undefined and fails the schema with a real message.
+        acceptedTerms: formData.get("acceptedTerms") === "on",
         referralCode,
       },
     });

@@ -25,7 +25,7 @@ export default async function AdminCoursesPage() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-extrabold tracking-tight">Courses</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Courses</h1>
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {courses.length} total
           </p>

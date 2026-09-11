@@ -37,7 +37,7 @@ export default async function AdminPayoutsPage({
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="text-2xl font-extrabold tracking-tight">Payouts</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Payouts</h1>
           <p className="text-sm text-[var(--color-muted-foreground)]">
             {payouts.length} {status ?? "requested"} request(s)
           </p>
@@ -48,7 +48,7 @@ export default async function AdminPayoutsPage({
             <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-accent)]">
               Outstanding
             </span>
-            <div className="tabular text-xl font-extrabold text-[var(--color-accent)]">
+            <div className="tabular text-xl font-bold text-[var(--color-accent)]">
               {formatPrice(totalOwed)}
             </div>
           </div>
@@ -85,7 +85,7 @@ export default async function AdminPayoutsPage({
             >
               <div className="flex min-w-0 flex-col gap-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="tabular text-xl font-extrabold text-[var(--color-accent)]">
+                  <span className="tabular text-xl font-bold text-[var(--color-accent)]">
                     {formatPrice(p.amountInPaise)}
                   </span>
                   <Badge tone={TONE[p.status]} className="capitalize">

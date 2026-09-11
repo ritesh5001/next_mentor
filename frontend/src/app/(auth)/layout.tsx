@@ -9,7 +9,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex flex-col px-6 py-8 sm:px-10">
         <Link
           href="/"
-          className="inline-flex w-fit items-center gap-2 text-lg font-extrabold tracking-tight"
+          className="inline-flex w-fit items-center gap-2 text-lg font-bold tracking-tight"
         >
           <GraduationCap
             className="size-6 text-[var(--color-primary)]"
@@ -34,7 +34,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         aria-hidden="true"
         className="relative hidden overflow-hidden bg-[var(--color-primary)] lg:block"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.18),transparent_60%)]" />
         <div className="relative flex h-full flex-col justify-end gap-6 p-12 text-[var(--color-on-primary)]">
           <blockquote className="max-w-md text-2xl font-bold leading-snug tracking-tight">
             &ldquo;I finished the Meta Ads track on a Sunday and ran my first
@@ -52,7 +51,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               ["4.8", "avg rating"],
             ].map(([value, label]) => (
               <div key={label}>
-                <dt className="text-2xl font-extrabold tabular">{value}</dt>
+                <dt className="text-2xl font-bold tabular">{value}</dt>
                 <dd className="text-xs uppercase tracking-wide opacity-80">{label}</dd>
               </div>
             ))}

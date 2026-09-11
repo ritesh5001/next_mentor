@@ -66,7 +66,7 @@ export function Newsletter() {
           />
           <button
             type="submit"
-            className="pill brand-gradient-bg inline-flex min-h-12 items-center justify-center gap-2 px-7 text-[15px] font-semibold text-white transition-[filter] hover:brightness-110"
+            className="pill brand-solid-bg inline-flex min-h-12 items-center justify-center gap-2 px-7 text-[15px] font-semibold text-white transition-[filter] hover:brightness-110"
           >
             Subscribe
             <ArrowRight className="size-4" strokeWidth={2} aria-hidden="true" />

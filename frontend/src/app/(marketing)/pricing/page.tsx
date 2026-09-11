@@ -18,7 +18,7 @@ export default async function PricingPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-20">
       <header className="mx-auto mb-12 flex max-w-2xl flex-col items-center gap-3 text-center">
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Pick your plan
         </h1>
         <p className="text-lg leading-relaxed text-[var(--color-muted-foreground)]">

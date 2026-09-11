@@ -50,6 +50,16 @@ export const registerSchema = z
       .regex(/[A-Z]/, "Include an uppercase letter")
       .regex(/[0-9]/, "Include a number"),
     confirmPassword: z.string(),
+    /**
+     * Consent to the Terms and Privacy Policy, ticked at sign-up.
+     *
+     * Validated server-side as well as in the form: a checkbox is trivial to
+     * bypass from the client, and "they agreed" needs to be true for every
+     * account, not just the ones created through our own UI.
+     */
+    acceptedTerms: z.literal(true, {
+      error: "Accept the Terms & Conditions and Privacy Policy to continue",
+    }),
     /** First-touch referral code, captured by the frontend's edge proxy. */
     referralCode: z.string().trim().max(16).optional(),
   })

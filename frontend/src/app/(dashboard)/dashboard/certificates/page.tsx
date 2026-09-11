@@ -23,7 +23,7 @@ export default async function CertificatesPage() {
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Certificates</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Certificates</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Finish every lesson in a course to earn a verifiable certificate.
         </p>

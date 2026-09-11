@@ -33,7 +33,7 @@ export default async function AffiliatePage() {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-extrabold tracking-tight">Your affiliate link</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Your affiliate link</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
           Share it anywhere. You earn on every purchase made by someone who joins through it.
         </p>
@@ -75,7 +75,7 @@ export default async function AffiliatePage() {
                 aria-hidden="true"
               />
             </div>
-            <span className="tabular text-2xl font-extrabold">{t.value}</span>
+            <span className="tabular text-2xl font-bold">{t.value}</span>
             <span className="text-xs text-[var(--color-muted-foreground)]">{t.sub}</span>
           </div>
         ))}

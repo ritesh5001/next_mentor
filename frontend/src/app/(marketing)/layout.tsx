@@ -10,6 +10,7 @@ import {
 
 import { Logo } from "@/components/brand/logo";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
+import { FooterGroup } from "@/components/marketing/footer-group";
 import { auth } from "@/lib/queries";
 import { SITE_CONTACT } from "@/lib/site";
 
@@ -48,9 +49,11 @@ export default async function MarketingLayout({ children }: { children: React.Re
 
       {/* -------------------------------------------------------------- footer */}
       <footer className="bg-[#0B1437] text-white">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
-          <div className="flex flex-col gap-4">
-            <Logo className="h-10 w-auto" inverted />
+        {/* No row gap on phones: the columns are accordion rows there and
+            should sit flush against each other's dividers. */}
+        <div className="mx-auto grid max-w-6xl gap-x-10 px-4 py-12 sm:gap-y-10 sm:px-6 sm:py-14 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
+          <div className="flex flex-col gap-4 pb-6 sm:pb-0">
+            <Logo className="h-9 w-auto" inverted />
             <p className="w-full max-w-xs text-sm leading-relaxed text-white/70">
               Live as if you were to die tomorrow. Learn as if you were to live forever.
             </p>
@@ -79,11 +82,8 @@ export default async function MarketingLayout({ children }: { children: React.Re
             </Link>
           </div>
 
-          <nav aria-labelledby="footer-useful" className="flex flex-col gap-3">
-            <h2 id="footer-useful" className="text-sm font-bold uppercase tracking-wide">
-              Useful Links
-            </h2>
-            <ul className="flex flex-col gap-2 text-sm text-white/70">
+          <FooterGroup title="Useful Links">
+            <ul className="flex flex-col gap-2.5 text-sm text-white/70">
               {USEFUL_LINKS.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="transition-colors hover:text-white">
@@ -92,13 +92,10 @@ export default async function MarketingLayout({ children }: { children: React.Re
                 </li>
               ))}
             </ul>
-          </nav>
+          </FooterGroup>
 
-          <nav aria-labelledby="footer-imp" className="flex flex-col gap-3">
-            <h2 id="footer-imp" className="text-sm font-bold uppercase tracking-wide">
-              Imp Links
-            </h2>
-            <ul className="flex flex-col gap-2 text-sm text-white/70">
+          <FooterGroup title="Imp Links">
+            <ul className="flex flex-col gap-2.5 text-sm text-white/70">
               {IMP_LINKS.map((l) => (
                 <li key={l.href}>
                   <Link href={l.href} className="transition-colors hover:text-white">
@@ -107,10 +104,9 @@ export default async function MarketingLayout({ children }: { children: React.Re
                 </li>
               ))}
             </ul>
-          </nav>
+          </FooterGroup>
 
-          <div className="flex flex-col gap-3">
-            <h2 className="text-sm font-bold uppercase tracking-wide">Get Contact</h2>
+          <FooterGroup title="Get Contact">
             <ul className="flex flex-col gap-3 text-sm text-white/70">
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
@@ -129,7 +125,7 @@ export default async function MarketingLayout({ children }: { children: React.Re
                 <span>India</span>
               </li>
             </ul>
-          </div>
+          </FooterGroup>
         </div>
 
         <div className="border-t border-white/10">

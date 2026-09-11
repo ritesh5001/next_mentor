@@ -43,8 +43,8 @@ const CHANNELS = [
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 sm:py-20">
-      <h1 className="text-3xl font-extrabold tracking-tight text-[var(--brand-ink)] sm:text-4xl">
-        Contact <span className="brand-gradient-text">us</span>
+      <h1 className="text-3xl font-bold tracking-tight text-[var(--brand-ink)] sm:text-4xl">
+        Contact <span className="brand-accent-text">us</span>
       </h1>
       <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--color-muted-foreground)]">
         Questions about a course, a payment or the affiliate programme? Reach us

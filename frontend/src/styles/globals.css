@@ -7,7 +7,7 @@
    --------------------------------------------------------------------------- */
 
 @theme {
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 
   /* NOTE: do NOT define --spacing-<name> here.
      In Tailwind v4 the --spacing-* namespace backs the NAMED size scale, so a
@@ -57,9 +57,9 @@
   --color-ring: #1b3fa0;
   --color-overlay: rgb(15 23 42 / 0.5);
 
-  /* Marketing-only. The logo's arrow gradient: blue into green. Used for
-     accent headline words and primary CTAs on the public site — never in the
-     dashboard, where amber alone signals money. */
+  /* Marketing-only. The navy carries the brand on its own: no gradients.
+     A gradient reads as decoration, and decoration is the first thing to go
+     when the brief is "minimal and professional". */
   --brand-ink: #101a47;
 
   /* Deliberately NOT redefined in .dark. --brand-ink flips to near-white for
@@ -70,16 +70,16 @@
   --brand-surface-dark: #101a47;
   --brand-blue: #1b3fa0;
   --brand-blue-bright: #2e6fd4;
-  --brand-green: #22c55e;
-  --brand-green-deep: #12a150;
-  --brand-gradient: linear-gradient(
-    100deg,
-    #1b3fa0 0%,
-    #2e6fd4 32%,
-    #22c55e 68%,
-    #12a150 100%
-  );
-  --brand-hero-wash: linear-gradient(165deg, #f2f7ff 0%, #eefaf3 55%, #f8fbff 100%);
+
+  /* Green is now a signal, not a brand colour: live state, success, verified,
+     paid. If it is not saying "this is good/done", it should not be green. */
+  --brand-green: #12a150;
+  --brand-green-deep: #0f8442;
+
+  /* Solid navy fill. Replaces the old blue-to-green gradient; kept as a token
+     so every filled brand surface changes in one place. */
+  --brand-fill: #1b3fa0;
+  --brand-hero-wash: #f4f7fc;
 
   color-scheme: light;
 }
@@ -117,14 +117,9 @@
   --brand-blue-bright: #93b4f4;
   --brand-green: #34d399;
   --brand-green-deep: #22c55e;
-  --brand-gradient: linear-gradient(
-    100deg,
-    #6f9bef 0%,
-    #93b4f4 32%,
-    #34d399 68%,
-    #22c55e 100%
-  );
-  --brand-hero-wash: linear-gradient(165deg, #0f1a38 0%, #0d2130 55%, #0f172a 100%);
+
+  --brand-fill: #2a4fb8;
+  --brand-hero-wash: #0f1a38;
 
   color-scheme: dark;
 }
@@ -204,30 +199,18 @@
     -webkit-backdrop-filter: blur(12px);
   }
 
-  /* Gradient headline word — the reference site clips a gradient to the text
-     of the emphasised word in every section heading. */
-  .brand-gradient-text {
-    background: var(--brand-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    /* Painting the real colour first means the word is still readable if
-       background-clip fails, rather than rendering as an invisible gap. */
-    -webkit-text-fill-color: transparent;
+  /* Emphasised headline word. Solid navy: the emphasis comes from the colour
+     shift against near-black body text, which is enough without a gradient. */
+  .brand-accent-text {
+    color: var(--brand-blue);
   }
 
-  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-    .brand-gradient-text {
-      color: var(--brand-blue);
-      -webkit-text-fill-color: currentColor;
-    }
+  .brand-solid-bg {
+    background: var(--brand-fill);
   }
 
-  .brand-gradient-bg {
-    background: var(--brand-gradient);
-  }
-
-  /* Fully-rounded pill CTA, matching the reference site's 500px radius. */
+  /* Small chips and status badges only. Buttons use --radius-control, because
+     a fully-rounded CTA reads consumer, not professional. */
   .pill {
     border-radius: 500px;
   }
