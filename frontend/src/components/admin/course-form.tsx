@@ -90,7 +90,7 @@ export function CourseForm({
         label="Instructor name"
         name="instructorName"
         defaultValue={values?.instructorName ?? ""}
-        placeholder="Aishwarya Sharma"
+        placeholder="Saurabh Namdev"
         maxLength={80}
       />
 

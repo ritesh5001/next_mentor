@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
+import { SITE_CONTACT } from "@/lib/site";
+
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with the NextMentor team.",
@@ -18,22 +20,22 @@ const CHANNELS = [
   {
     Icon: Mail,
     label: "Email",
-    value: "hello@nextmentor.in",
-    href: "mailto:hello@nextmentor.in",
+    value: SITE_CONTACT.email,
+    href: `mailto:${SITE_CONTACT.email}`,
     note: "Best for course, billing and payout questions. We reply within a working day.",
   },
   {
     Icon: Phone,
     label: "Phone",
-    value: "+91 12345 67890",
-    href: "tel:+911234567890",
+    value: SITE_CONTACT.phone,
+    href: SITE_CONTACT.phoneHref,
     note: "Monday to Saturday, 10am – 7pm IST.",
   },
   {
     Icon: MessageCircle,
     label: "WhatsApp",
-    value: "+91 12345 67890",
-    href: "https://wa.me/911234567890",
+    value: SITE_CONTACT.phone,
+    href: SITE_CONTACT.whatsappHref,
     note: "Quick questions and support for existing students.",
   },
 ];

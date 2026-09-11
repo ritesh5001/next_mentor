@@ -177,58 +177,6 @@ export function Packages({ plans }: { plans: PackageCard[] }) {
   );
 }
 
-/* ---------------------------------------------------------------- founders */
-
-const FOUNDERS = [
-  {
-    name: "Saurabh Namdev",
-    role: "Founder",
-    bio: "Saurabh started NextMentor to fix one problem: most online courses teach theory and leave you where you started. Every track here ends in something you have built and can show.",
-  },
-  {
-    name: "Aishwarya Sharma",
-    role: "Co-Founder",
-    bio: "Aishwarya runs curriculum. Every instructor still does the work they teach, and a module gets rebuilt when the tools change. What you learn on a Sunday should still work on Monday.",
-  },
-];
-
-export function Founders() {
-  return (
-    <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
-      <SectionHead eyebrow="Who runs it" title="The two people behind this." />
-
-      <div className="mt-10 grid gap-8 sm:grid-cols-2 sm:gap-12">
-        {FOUNDERS.map((f) => (
-          <article key={f.name} className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              {/* Placeholder portrait. Swap for a real photo when there is one. */}
-              <span
-                aria-hidden="true"
-                className="flex size-12 shrink-0 items-center justify-center rounded-full text-sm font-extrabold text-white"
-                style={{ background: "var(--brand-gradient)" }}
-              >
-                {f.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </span>
-              <span className="flex flex-col">
-                <span className="text-[15px] font-bold text-[var(--brand-ink)]">{f.name}</span>
-                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--brand-blue)]">
-                  {f.role}
-                </span>
-              </span>
-            </div>
-            <p className="text-[15px] leading-relaxed text-[var(--color-muted-foreground)]">
-              {f.bio}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 /* ------------------------------------------------------------- testimonials */
 
 const TESTIMONIALS = [

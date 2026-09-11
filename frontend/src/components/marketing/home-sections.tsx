@@ -115,13 +115,12 @@ export function Hero({ courseCount }: { courseCount: number }) {
 
             <h1 className="text-[34px] font-extrabold leading-[1.1] tracking-[-0.02em] text-[var(--brand-ink)] sm:text-[50px] lg:text-[56px]">
               Learn the skill.{" "}
-              <span className="brand-gradient-text">Then get paid for it.</span>
+              <span className="brand-gradient-text">Freelance with confidence.</span>
             </h1>
 
             <p className="max-w-xl text-base leading-relaxed text-[var(--color-muted-foreground)] sm:text-[17px]">
-              Short, project-led courses in marketing, AI and design. You finish
-              with something you built, a certificate anyone can check, and a
-              referral link that pays you for everyone you bring in.
+              Practical, project-based courses that help you build in-demand
+              skills, create real work, and start your freelancing journey.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
@@ -182,7 +181,7 @@ export function Hero({ courseCount }: { courseCount: number }) {
 }
 
 const PROMISES: Array<{ Icon: typeof ShieldCheck; lines: [string, string] }> = [
-  { Icon: Users, lines: ["Taught by people", "who do the work"] },
+  { Icon: Users, lines: ["Taught by someone", "who does the work"] },
   { Icon: FileCheck2, lines: ["Certificates anyone", "can verify"] },
   { Icon: ShieldCheck, lines: ["One price,", "no second paywall"] },
   { Icon: Wallet, lines: ["Commission paid", "to your bank"] },
@@ -283,7 +282,7 @@ export function About() {
             eyebrow="About us"
             title={
               <>
-                Built by people who <span className="brand-gradient-text">do this work.</span>
+                Built by someone who <span className="brand-gradient-text">does this work.</span>
               </>
             }
             lede="NextMentor exists because most online courses teach theory and leave you exactly where you started. Every track here ends in something you have built and can show someone."
@@ -549,56 +548,97 @@ export function EarnBand() {
   );
 }
 
-/* ------------------------------------------------------------------- people */
+/* ------------------------------------------------------------------ founder */
 
-const INSTRUCTORS = [
-  { name: "Aishwarya Sharma", role: "Meta Ads" },
-  { name: "Ayush Sharma", role: "Video Editing" },
-  { name: "Sahil Verma", role: "SEO & Google Ads" },
-  { name: "Kishan Chaudhari", role: "Funnel Building" },
-  { name: "Deepak Dubey", role: "Landing Pages" },
-  { name: "Neha Kamble", role: "UI/UX Design" },
-  { name: "Mohd Shahid", role: "AI & Automation" },
-  { name: "Luv Dixit", role: "Web Development" },
+const FOUNDER_CREDENTIALS = [
+  { value: "6+ years", label: "in entrepreneurship, sales and leadership" },
+  { value: "14,000+", label: "people in the community he has led" },
 ];
 
-function initials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("");
-}
-
-export function People() {
+/**
+ * One person teaches here, so this is a profile rather than a roster. A grid
+ * built for eight names reads as a gap when only one is filled; a single
+ * portrait beside the copy reads as deliberate.
+ */
+export function Founder() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-      <SectionHead
-        eyebrow="Who teaches"
-        title="People who do this work for a living."
-        lede="Each track is taught by someone running it professionally, not by a generalist reading from a script."
-      />
+      <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <div className="relative mx-auto w-full max-w-sm lg:mx-0">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-4 -top-4 size-32 rounded-full opacity-20 blur-2xl"
+            style={{ background: "var(--brand-gradient)" }}
+          />
+          <div className="relative overflow-hidden rounded-3xl shadow-[var(--shadow-raised)]">
+            <Image
+              src="/images/founder-saurabh.jpg"
+              alt="Saurabh Namdev, Founder and CEO of NextMentor"
+              width={941}
+              height={1672}
+              sizes="(max-width: 1024px) 90vw, 30vw"
+              className="aspect-[4/5] w-full object-cover object-top"
+            />
+          </div>
+        </div>
 
-      <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {INSTRUCTORS.map(({ name, role }) => (
-          <li
-            key={name}
-            className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-3.5 transition-transform duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]"
-          >
-            <span
-              aria-hidden="true"
-              className="flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-              style={{ background: "var(--brand-gradient)" }}
-            >
-              {initials(name)}
+        <div className="flex flex-col gap-5">
+          <SectionHead
+            eyebrow="Who teaches"
+            title={
+              <>
+                Taught by the person who{" "}
+                <span className="brand-gradient-text">built the business.</span>
+              </>
+            }
+          />
+
+          <div className="flex flex-col">
+            <span className="text-[17px] font-bold text-[var(--brand-ink)]">
+              Saurabh Namdev
             </span>
-            <span className="flex min-w-0 flex-col">
-              <span className="truncate text-[13px] font-bold text-[var(--brand-ink)]">{name}</span>
-              <span className="truncate text-xs text-[var(--color-muted-foreground)]">{role}</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--brand-blue)]">
+              Founder &amp; CEO, NextMentor
             </span>
-          </li>
-        ))}
-      </ul>
+          </div>
+
+          <div className="flex flex-col gap-4 text-[15px] leading-relaxed text-[var(--color-muted-foreground)]">
+            <p>
+              With 6+ years of experience in entrepreneurship, sales, leadership
+              and team building, Saurabh has built and led a community of more
+              than 14,000 people, gaining practical experience in communication,
+              business development, digital marketing and leadership.
+            </p>
+            <p>
+              His vision for NextMentor is to turn real-world experience into
+              practical, career-focused learning that helps people develop
+              valuable skills, build confidence, and explore opportunities
+              through freelancing and digital entrepreneurship.
+            </p>
+            <p>
+              The focus is on skills that go beyond theory — skills you can
+              apply in the real world to create meaningful career and business
+              opportunities.
+            </p>
+          </div>
+
+          <dl className="mt-1 grid gap-3 sm:grid-cols-2">
+            {FOUNDER_CREDENTIALS.map(({ value, label }) => (
+              <div
+                key={value}
+                className="flex flex-col gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] px-4 py-3"
+              >
+                <dt className="tabular text-xl font-extrabold leading-none text-[var(--brand-ink)]">
+                  {value}
+                </dt>
+                <dd className="text-xs leading-snug text-[var(--color-muted-foreground)]">
+                  {label}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
     </section>
   );
 }

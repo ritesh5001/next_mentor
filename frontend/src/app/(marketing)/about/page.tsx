@@ -25,9 +25,9 @@ export default function AboutPage() {
           deployed site, an edited reel — not a certificate for having watched.
         </p>
         <p>
-          Every instructor still does the work they teach. When a platform
-          changes its rules or a tool ships a new version, the module gets
-          rebuilt. What you learn on a Sunday should still work on Monday.
+          Every course is taught by someone who still does the work. When a
+          platform changes its rules or a tool ships a new version, the module
+          gets rebuilt. What you learn on a Sunday should still work on Monday.
         </p>
         <p>
           The other half is the partner programme. If you learn something here

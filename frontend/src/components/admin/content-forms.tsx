@@ -256,7 +256,7 @@ export function MentorshipSlotForm({
 
       <Field label="Session title" name="title" required maxLength={120} placeholder="Campaign teardown — live" />
       <Field label="Description" name="description" maxLength={500} />
-      <Field label="Mentor name" name="mentorName" required maxLength={80} placeholder="Aishwarya Sharma" />
+      <Field label="Mentor name" name="mentorName" required maxLength={80} placeholder="Saurabh Namdev" />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Field

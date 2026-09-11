@@ -67,7 +67,7 @@ async function main() {
         "You will set up Business Manager correctly, build audiences that convert, " +
         "write creative that stops the scroll, and read the numbers well enough to " +
         "know when to scale and when to kill.",
-      instructorName: "Aishwarya Sharma",
+      instructorName: "Saurabh Namdev",
       priceInPaise: 249900, mrpInPaise: 499900,
       level: "beginner", language: "en",
       status: "published", publishedAt: new Date(),

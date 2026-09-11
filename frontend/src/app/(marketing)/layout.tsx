@@ -11,6 +11,7 @@ import {
 import { Logo } from "@/components/brand/logo";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { auth } from "@/lib/queries";
+import { SITE_CONTACT } from "@/lib/site";
 
 const USEFUL_LINKS = [
   { href: "/about", label: "About Us" },
@@ -113,14 +114,14 @@ export default async function MarketingLayout({ children }: { children: React.Re
             <ul className="flex flex-col gap-3 text-sm text-white/70">
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
-                <a href="tel:+911234567890" className="hover:text-white">
-                  +91 12345 67890
+                <a href={SITE_CONTACT.phoneHref} className="hover:text-white">
+                  {SITE_CONTACT.phone}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
-                <a href="mailto:hello@nextmentor.in" className="hover:text-white">
-                  hello@nextmentor.in
+                <a href={`mailto:${SITE_CONTACT.email}`} className="hover:text-white">
+                  {SITE_CONTACT.email}
                 </a>
               </li>
               <li className="flex items-start gap-2">

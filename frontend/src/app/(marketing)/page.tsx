@@ -8,27 +8,26 @@ import {
   HowItWorks,
   WhatYouGet,
   EarnBand,
-  People,
+  Founder,
   ClosingCta,
 } from "@/components/marketing/home-sections";
 import {
   FeaturedCourses,
   Packages,
-  Founders,
   Testimonials,
   Faq,
   Newsletter,
 } from "@/components/marketing/home-sections-2";
 
 export const metadata: Metadata = {
-  title: "Learn the skill, then get paid for it | NextMentor",
+  title: "Learn the skill, freelance with confidence | NextMentor",
   description:
-    "Short, project-led courses in marketing, AI and design. Finish with something you built, a certificate anyone can check, and a referral link that pays.",
+    "Practical, project-based courses that help you build in-demand skills, create real work, and start your freelancing journey.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Learn the skill, then get paid for it | NextMentor",
+    title: "Learn the skill, freelance with confidence | NextMentor",
     description:
-      "Project-led courses in marketing, AI and design. Learn the skill, then earn from it.",
+      "Practical, project-based courses that help you build in-demand skills and start freelancing.",
     type: "website",
   },
 };
@@ -75,8 +74,7 @@ export default async function HomePage() {
           isFeatured: p.isFeatured,
         }))}
       />
-      <People />
-      <Founders />
+      <Founder />
       <Testimonials />
       <Faq />
       <Newsletter />
