@@ -79,7 +79,7 @@
   /* Solid navy fill. Replaces the old blue-to-green gradient; kept as a token
      so every filled brand surface changes in one place. */
   --brand-fill: #1b3fa0;
-  --brand-hero-wash: #f4f7fc;
+  --brand-hero-wash: #f6f8fc;
 
   color-scheme: light;
 }
@@ -346,6 +346,29 @@
   .stagger-in > *:nth-child(8) { animation-delay: 280ms; }
 }
 
+/* Section reveal. Scroll-driven, so it costs no JavaScript and simply does not
+   run in browsers without animation-timeline — content is visible either way.
+   Small on purpose: 16px and a fade, finished before the element is a third of
+   the way into the viewport. */
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -358,6 +381,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Scroll-driven animations ignore animation-duration, so the rule below
+     would not stop them; switch reveals off explicitly. */
+  .reveal {
+    animation: none !important;
+  }
+
   *,
   *::before,
   *::after {

@@ -7,9 +7,10 @@ import Image from "next/image";
  * plate knocked out — not the hand-traced SVG that used to live here, which
  * only approximated it (and carried gradients the brand has since dropped).
  *
- * Two files rather than one recolourable vector: the wordmark is near-black,
- * which disappears on the dark footer, so `inverted` swaps in a copy whose
- * wordmark is painted white. The mark keeps its colours in both.
+ * Two files rather than one recolourable vector. On dark backgrounds the navy
+ * parts of the mark and the near-black wordmark both disappear, so `inverted`
+ * swaps in a copy recoloured from the same artwork: everything white except
+ * the green arrow, which keeps its colour. Nothing is redrawn.
  *
  * Sized 844×200 so a 36px-tall render still has headroom on a 3x screen;
  * next/image serves a downscaled AVIF/WebP from there.

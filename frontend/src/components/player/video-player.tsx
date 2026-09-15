@@ -162,6 +162,10 @@ export function VideoPlayer({
   const [fullscreen, setFullscreen] = useState(false);
   const [waiting, setWaiting] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(true);
+  // Screen recordings made on a phone are 9:16. Squeezed into the 16:9 box the
+  // recorded UI shrinks to a quarter of the player's width and its text becomes
+  // unreadable, so a portrait video gets a box shaped like itself instead.
+  const [portrait, setPortrait] = useState(false);
 
   const shellRef = useRef<HTMLDivElement>(null);
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -249,11 +253,22 @@ export function VideoPlayer({
         controlsList="nodownload noremoteplayback"
         disablePictureInPicture
         onContextMenu={(e) => e.preventDefault()}
-        className="aspect-video w-full"
+        // Portrait: as tall as the viewport comfortably allows, centred on the
+        // black shell. This does resize the box once metadata arrives, but that
+        // is before the viewer can press play, and the alternative is a lesson
+        // nobody can read.
+        className={
+          portrait
+            ? fullscreen
+              ? "mx-auto h-full w-auto max-w-full"
+              : "mx-auto block h-[min(78vh,56rem)] w-auto max-w-full"
+            : "aspect-video w-full"
+        }
         onClick={toggle}
         onLoadedMetadata={(e) => {
           handleLoadedMetadata();
           setDuration(e.currentTarget.duration || 0);
+          setPortrait(e.currentTarget.videoHeight > e.currentTarget.videoWidth);
         }}
         onTimeUpdate={(e) => {
           handleTimeUpdate();

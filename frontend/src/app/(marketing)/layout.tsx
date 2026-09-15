@@ -1,39 +1,39 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
 
-import {
-  FacebookIcon,
-  InstagramIcon,
-  LinkedinIcon,
-  YoutubeIcon,
-} from "@/components/marketing/social-icons";
-
 import { Logo } from "@/components/brand/logo";
 import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { FooterGroup } from "@/components/marketing/footer-group";
 import { auth } from "@/lib/queries";
 import { SITE_CONTACT } from "@/lib/site";
 
-const USEFUL_LINKS = [
-  { href: "/about", label: "About Us" },
-  { href: "/courses", label: "Courses" },
-  { href: "/pricing", label: "Plans" },
-  { href: "/register", label: "Register As a Partner" },
-  { href: "/contact", label: "Contact Us" },
-];
-
-const IMP_LINKS = [
-  { href: "/login", label: "Login | Register" },
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/terms", label: "Terms & Conditions" },
-  { href: "/refund", label: "Cancel & Refund Policy" },
-];
-
-const SOCIALS = [
-  { href: "https://facebook.com", label: "Facebook", Icon: FacebookIcon },
-  { href: "https://instagram.com", label: "Instagram", Icon: InstagramIcon },
-  { href: "https://youtube.com", label: "YouTube", Icon: YoutubeIcon },
-  { href: "https://linkedin.com", label: "LinkedIn", Icon: LinkedinIcon },
+const FOOTER_COLUMNS = [
+  {
+    title: "Explore",
+    links: [
+      { href: "/courses", label: "Courses" },
+      { href: "/pricing", label: "Plans" },
+      { href: "/#how-it-works", label: "How it works" },
+      { href: "/#partner-programme", label: "Partner programme" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
+      { href: "/login", label: "Log in" },
+      { href: "/register", label: "Create an account" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy policy" },
+      { href: "/terms", label: "Terms & conditions" },
+      { href: "/refund", label: "Refund policy" },
+    ],
+  },
 ];
 
 export default async function MarketingLayout({ children }: { children: React.ReactNode }) {
@@ -48,101 +48,59 @@ export default async function MarketingLayout({ children }: { children: React.Re
       </main>
 
       {/* -------------------------------------------------------------- footer */}
-      <footer className="bg-[#0B1437] text-white">
-        {/* No row gap on phones: the columns are accordion rows there and
-            should sit flush against each other's dividers. */}
-        <div className="mx-auto grid max-w-6xl gap-x-10 px-4 py-12 sm:gap-y-10 sm:px-6 sm:py-14 lg:grid-cols-[1.4fr_1fr_1fr_1.3fr]">
-          <div className="flex flex-col gap-4 pb-6 sm:pb-0">
-            <Logo className="h-9 w-auto" inverted />
-            <p className="w-full max-w-xs text-sm leading-relaxed text-white/70">
-              Live as if you were to die tomorrow. Learn as if you were to live forever.
-            </p>
-
-            <ul className="flex gap-2 pt-1">
-              {SOCIALS.map(({ href, label, Icon }) => (
-                <li key={label}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    className="flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
-                  >
-                    <Icon className="size-4" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              href="/contact"
-              className="btn-liquid btn-liquid--light mt-2 inline-flex min-h-11 w-fit items-center gap-2 px-5 text-sm font-semibold"
-            >
-              Contact With Us
+      {/* No social links until real profile URLs exist: the old icons pointed
+          at facebook.com, instagram.com and so on, not at NextMentor. */}
+      <footer className="bg-[var(--brand-surface-dark)] text-white">
+        <div className="mx-auto grid max-w-7xl gap-x-12 px-5 pt-14 sm:grid-cols-2 sm:gap-y-12 sm:px-8 sm:pt-16 md:grid-cols-[1fr_1fr_1fr_1.4fr] xl:grid-cols-[1.5fr_1fr_1fr_1fr_1.3fr]">
+          <div className="flex flex-col items-start pb-8 sm:col-span-2 sm:pb-0 md:col-span-4 xl:col-span-1">
+            <Link href="/" aria-label="NextMentor home">
+              <Logo className="h-9 w-auto" inverted />
             </Link>
+            <p className="mt-5 max-w-xs text-[15px] leading-[1.6] text-white/60">
+              Practical digital skills, taught by someone who does the work.
+            </p>
           </div>
 
-          <FooterGroup title="Useful Links">
-            <ul className="flex flex-col gap-2.5 text-sm text-white/70">
-              {USEFUL_LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="transition-colors hover:text-white">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </FooterGroup>
+          {FOOTER_COLUMNS.map((col) => (
+            <FooterGroup key={col.title} title={col.title}>
+              <ul className="flex flex-col gap-3 text-[15px] text-white/65">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="transition-colors hover:text-white">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </FooterGroup>
+          ))}
 
-          <FooterGroup title="Imp Links">
-            <ul className="flex flex-col gap-2.5 text-sm text-white/70">
-              {IMP_LINKS.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="transition-colors hover:text-white">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </FooterGroup>
-
-          <FooterGroup title="Get Contact">
-            <ul className="flex flex-col gap-3 text-sm text-white/70">
-              <li className="flex items-start gap-2">
-                <Phone className="mt-0.5 size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
+          <FooterGroup title="Support">
+            <ul className="flex flex-col gap-3 text-[15px] text-white/65">
+              <li className="flex items-start gap-2.5">
+                <Mail className="mt-[3px] size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
+                <a href={`mailto:${SITE_CONTACT.email}`} className="whitespace-nowrap hover:text-white">
+                  {SITE_CONTACT.email}
+                </a>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Phone className="mt-[3px] size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
                 <a href={SITE_CONTACT.phoneHref} className="hover:text-white">
                   {SITE_CONTACT.phone}
                 </a>
               </li>
-              <li className="flex items-start gap-2">
-                <Mail className="mt-0.5 size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
-                <a href={`mailto:${SITE_CONTACT.email}`} className="hover:text-white">
-                  {SITE_CONTACT.email}
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
+              <li className="flex items-start gap-2.5">
+                <MapPin className="mt-[3px] size-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
                 <span>India</span>
               </li>
             </ul>
           </FooterGroup>
         </div>
 
-        <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <p>© {new Date().getFullYear()} NextMentor. All rights reserved.</p>
-            <div className="flex flex-wrap gap-4">
-              <Link href="/privacy" className="hover:text-white">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="hover:text-white">
-                Terms &amp; Conditions
-              </Link>
-              <Link href="/refund" className="hover:text-white">
-                Cancel &amp; Refund Policy
-              </Link>
-            </div>
-          </div>
+        <div className="mx-auto mt-10 max-w-7xl px-5 sm:mt-14 sm:px-8">
+          <p className="border-t border-white/10 pb-8 pt-6 text-[13px] text-white/45">
+            © {new Date().getFullYear()} NextMentor. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

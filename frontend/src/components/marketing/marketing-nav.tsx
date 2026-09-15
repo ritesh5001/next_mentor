@@ -1,38 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
+import { cn } from "@/lib/cn";
 
-const PACKAGES = ["Mini", "Basic", "Standard", "Prime", "Infinity", "Legacy"];
-
+/**
+ * Only routes that exist. The old "Course Package" menu listed Mini, Basic,
+ * Standard, Prime, Infinity and Legacy — none of which is a real plan — so it
+ * is gone rather than restyled.
+ */
 const LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/pricing", label: "Course Package", packages: true },
-  { href: "/contact", label: "Contact" },
   { href: "/courses", label: "Courses" },
+  { href: "/#how-it-works", label: "How it works" },
+  { href: "/pricing", label: "Plans" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 /**
  * Marketing header.
  *
- * Two layouts from one markup. Below lg the logo is absolutely centred and the
- * menu button sits right, which is the phone convention; from lg up the logo
- * returns to the flow on the left and the links sit beside it. Doing it with
- * position rather than two separate trees keeps one set of links to maintain.
+ * Below lg the logo is absolutely centred with the menu button on the right;
+ * from lg up the logo returns to the flow on the left. One markup, two layouts.
  */
 export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
   const [open, setOpen] = useState(false);
-  const [pkgOpen, setPkgOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // A hairline appears once the page moves under the header, not before: at
+  // the very top it would draw a line across the hero for no reason.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-background)]/90 surface-blur">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b surface-blur transition-colors duration-200",
+        scrolled
+          ? "border-[var(--color-border)] bg-[var(--color-background)]/95"
+          : "border-transparent bg-[var(--brand-hero-wash)]",
+      )}
+    >
       <nav
         aria-label="Main"
-        className="relative mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6"
+        className="relative mx-auto flex h-[72px] max-w-7xl items-center gap-10 px-5 sm:px-8"
       >
         <Link
           href="/"
@@ -40,101 +58,110 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
           className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
           onClick={() => setOpen(false)}
         >
-          <Logo className="h-9 w-auto" />
+          <Logo className="h-[34px] w-auto" />
         </Link>
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden items-center gap-2 lg:flex">
           {LINKS.map((l) => (
-            <li key={l.href} className="relative">
-              {l.packages ? (
-                <div
-                  onMouseEnter={() => setPkgOpen(true)}
-                  onMouseLeave={() => setPkgOpen(false)}
-                >
-                  <Link
-                    href={l.href}
-                    aria-expanded={pkgOpen}
-                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--brand-blue)]"
-                  >
-                    {l.label}
-                    <ChevronDown className="size-3.5" strokeWidth={2} aria-hidden="true" />
-                  </Link>
-
-                  {pkgOpen && (
-                    <ul className="absolute left-0 top-full w-48 overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] py-1 shadow-[var(--shadow-overlay)]">
-                      {PACKAGES.map((p) => (
-                        <li key={p}>
-                          <Link
-                            href={`/pricing#${p.toLowerCase()}`}
-                            className="block px-4 py-2 text-sm font-medium transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--brand-blue)]"
-                          >
-                            {p}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  href={l.href}
-                  className="px-3 py-2 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--brand-blue)]"
-                >
-                  {l.label}
-                </Link>
-              )}
+            <li key={l.href}>
+              <Link
+                href={l.href}
+                className="rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--brand-ink)]"
+              >
+                {l.label}
+              </Link>
             </li>
           ))}
         </ul>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link
-            href={isSignedIn ? "/dashboard" : "/login"}
-            className="hidden min-h-10 items-center rounded-[var(--radius-control)] border border-[var(--color-border)] px-4 text-sm font-medium transition-colors hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)] sm:inline-flex"
-          >
-            {isSignedIn ? "Dashboard" : "Login"}
-          </Link>
+          {isSignedIn ? (
+            <Link
+              href="/dashboard"
+              className="btn-liquid hidden min-h-11 items-center px-5 text-[15px] font-semibold lg:inline-flex"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden rounded-full px-4 py-2 text-[15px] font-medium text-[var(--brand-ink)] transition-colors hover:text-[var(--brand-blue)] lg:inline-flex"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                className="btn-liquid hidden min-h-11 items-center px-5 text-[15px] font-semibold lg:inline-flex"
+              >
+                Get started
+              </Link>
+            </>
+          )}
 
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
+            aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="-mr-2 flex size-11 items-center justify-center rounded-[var(--radius-control)] text-[var(--color-foreground)] lg:hidden"
+            className="-mr-2 flex size-11 items-center justify-center rounded-full text-[var(--brand-ink)] lg:hidden"
           >
             {open ? (
-              <X className="size-5" strokeWidth={1.5} aria-hidden="true" />
+              <X className="size-5" strokeWidth={1.75} aria-hidden="true" />
             ) : (
-              <Menu className="size-5" strokeWidth={1.5} aria-hidden="true" />
+              <Menu className="size-5" strokeWidth={1.75} aria-hidden="true" />
             )}
           </button>
         </div>
       </nav>
 
       {open && (
-        <div className="border-t border-[var(--color-border)] bg-[var(--color-card)] lg:hidden">
-          <ul className="mx-auto flex max-w-6xl flex-col px-4 py-2 sm:px-6">
+        <div
+          id="mobile-menu"
+          className="border-t border-[var(--color-border)] bg-[var(--color-card)] lg:hidden"
+        >
+          <ul className="mx-auto flex max-w-7xl flex-col px-5 py-3 sm:px-8">
             {LINKS.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-12 items-center border-b border-[var(--color-border)] text-[15px] font-medium"
+                  className="flex min-h-12 items-center border-b border-[var(--color-border)] text-base font-medium text-[var(--brand-ink)]"
                 >
                   {l.label}
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                href={isSignedIn ? "/dashboard" : "/login"}
-                onClick={() => setOpen(false)}
-                className="flex min-h-12 items-center text-[15px] font-medium text-[var(--brand-blue)]"
-              >
-                {isSignedIn ? "Dashboard" : "Login | Register"}
-              </Link>
-            </li>
           </ul>
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 pb-5 sm:px-8">
+            {isSignedIn ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="btn-liquid inline-flex min-h-12 items-center justify-center text-base font-semibold"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/register"
+                  onClick={() => setOpen(false)}
+                  className="btn-liquid inline-flex min-h-12 items-center justify-center text-base font-semibold"
+                >
+                  Get started
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="btn-liquid btn-liquid--outline inline-flex min-h-12 items-center justify-center text-base font-semibold"
+                >
+                  Log in
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
     </header>

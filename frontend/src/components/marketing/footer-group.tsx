@@ -30,8 +30,8 @@ export function FooterGroup({
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           className={cn(
-            "flex w-full items-center justify-between py-4 text-sm font-semibold uppercase tracking-wide",
-            "sm:pointer-events-none sm:py-0 sm:pb-3",
+            "flex w-full items-center justify-between py-4 text-[13px] font-semibold uppercase tracking-[0.16em] text-white",
+            "sm:pointer-events-none sm:py-0 sm:pb-5",
           )}
         >
           {title}

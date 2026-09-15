@@ -100,7 +100,7 @@ export default async function CourseDetailPage({ params }: Params) {
               <div className="flex items-center gap-1.5">
                 <BookOpen className="size-4" strokeWidth={1.5} aria-hidden="true" />
                 <dt className="sr-only">Lessons</dt>
-                <dd className="tabular">{course.lessonCount} lessons</dd>
+                <dd className="tabular">{course.lessonCount} {course.lessonCount === 1 ? "lesson" : "lessons"}</dd>
               </div>
               <div className="flex items-center gap-1.5">
                 <Clock className="size-4" strokeWidth={1.5} aria-hidden="true" />
@@ -147,7 +147,7 @@ export default async function CourseDetailPage({ params }: Params) {
                         {mod.title}
                       </h3>
                       <span className="tabular shrink-0 text-xs text-[var(--color-muted-foreground)]">
-                        {mod.lessons.length} lessons
+                        {mod.lessons.length} {mod.lessons.length === 1 ? "lesson" : "lessons"}
                       </span>
                     </div>
 
@@ -269,7 +269,7 @@ export default async function CourseDetailPage({ params }: Params) {
             <ul className="flex flex-col gap-2 border-t border-[var(--color-border)] pt-3 text-sm text-[var(--color-muted-foreground)]">
               {[
                 "Lifetime access",
-                `${course.lessonCount} video lessons`,
+                `${course.lessonCount} video ${course.lessonCount === 1 ? "lesson" : "lessons"}`,
                 "Learn on any device",
               ].map((item) => (
                 <li key={item} className="flex items-center gap-2">

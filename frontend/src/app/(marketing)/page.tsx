@@ -3,7 +3,7 @@ import { envUrl } from "@nextmentor/shared";
 
 import { getActivePlans, getCatalog } from "@/lib/queries";
 import {
-  About,
+  WhyNextMentor,
   Hero,
   HowItWorks,
   WhatYouGet,
@@ -16,7 +16,6 @@ import {
   Packages,
   Testimonials,
   Faq,
-  Newsletter,
 } from "@/components/marketing/home-sections-2";
 
 export const metadata: Metadata = {
@@ -57,12 +56,12 @@ export default async function HomePage() {
       {/* Section order is a funnel, not a list: what this is, how it works,
           what it costs, who runs it, whether to believe them, then the ask.
           The dark EarnBand sits in the middle to break a long light scroll. */}
-      <Hero courseCount={courses.length} />
-      <About />
-      <HowItWorks />
+      <Hero courses={courses} />
+      <WhyNextMentor />
       <FeaturedCourses courses={courses} />
-      <WhatYouGet />
+      <HowItWorks />
       <EarnBand />
+      <WhatYouGet />
       <Packages
         plans={plans.map((p) => ({
           slug: p.slug,
@@ -70,6 +69,7 @@ export default async function HomePage() {
           tagline: p.tagline,
           priceInPaise: p.priceInPaise,
           mrpInPaise: p.mrpInPaise,
+          durationDays: p.durationDays,
           features: p.features,
           isFeatured: p.isFeatured,
         }))}
@@ -77,7 +77,6 @@ export default async function HomePage() {
       <Founder />
       <Testimonials />
       <Faq />
-      <Newsletter />
       <ClosingCta />
     </>
   );
