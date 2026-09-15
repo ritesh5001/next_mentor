@@ -272,7 +272,7 @@ const STEPS = [
 export function HowItWorks() {
   return (
     <section id="how-it-works" className="scroll-mt-24 bg-[#f8fafd]">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
         <div className="grid gap-6 lg:grid-cols-2 lg:items-end lg:gap-20">
           <SectionHead
             eyebrow="How it works"
@@ -340,7 +340,7 @@ const INCLUDED = [
 export function WhatYouGet() {
   return (
     <section className="bg-[var(--color-card)]">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
         <SectionHead
           eyebrow="What's included"
           title={
