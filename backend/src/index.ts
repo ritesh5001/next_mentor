@@ -16,6 +16,7 @@ import { certificateRoutes } from "@/routes/certificates";
 import { adminRoutes } from "@/routes/admin";
 import { webhookRoutes } from "@/routes/webhooks";
 import { cronRoutes } from "@/routes/cron";
+import { startSelfPing } from "@/lib/self-ping";
 
 /**
  * NextMentor API — deploys to Render as a long-lived Node service.
@@ -84,6 +85,7 @@ const hostname = process.env.HOST ?? "0.0.0.0";
 serve({ fetch: app.fetch, port, hostname }, (info) => {
   console.info(`[api] listening on ${hostname}:${info.port}`);
   console.info(`[api] CORS origins: ${allowedOrigins().join(", ")}`);
+  startSelfPing();
 });
 
 export type AppType = typeof app;
