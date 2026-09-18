@@ -47,7 +47,7 @@ export default async function CouponsPage() {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex flex-col gap-0.5">
                   {/* Amber: this is money off. */}
-                  <span className="tabular text-2xl font-bold text-[var(--color-accent)]">
+                  <span className="tabular text-2xl font-bold text-[var(--brand-green)]">
                     {c.discountType === "percent"
                       ? `${c.value / 100}% off`
                       : `${formatPrice(c.value)} off`}

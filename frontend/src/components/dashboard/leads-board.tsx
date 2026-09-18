@@ -29,7 +29,7 @@ export type LeadRow = {
 const COLUMNS: { status: LeadStatus; label: string; accent: string }[] = [
   { status: "new", label: "New", accent: "border-t-[var(--color-muted-foreground)]" },
   { status: "contacted", label: "Contacted", accent: "border-t-[var(--color-primary)]" },
-  { status: "qualified", label: "Qualified", accent: "border-t-[var(--color-accent)]" },
+  { status: "qualified", label: "Qualified", accent: "border-t-[var(--brand-green-bright)]" },
   { status: "converted", label: "Converted", accent: "border-t-[var(--color-success)]" },
   { status: "lost", label: "Lost", accent: "border-t-[var(--color-destructive)]" },
 ];

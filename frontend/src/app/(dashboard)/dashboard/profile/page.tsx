@@ -30,16 +30,27 @@ export default async function ProfilePage() {
       {/* Cover band with the avatar straddling its lower edge, as on the
           reference. The band is the brand gradient rather than a photo: there
           is no cover-image field, and inventing one would be a lie. */}
-      <section className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] shadow-[var(--shadow-card)]">
-        <div className="h-28 sm:h-36" style={{ background: "var(--brand-fill)" }} />
+      <section className="overflow-hidden rounded-[24px] bg-[var(--color-card)] shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] ring-1 ring-[rgb(16_26_71/0.07)]">
+        <div className="relative h-28 overflow-hidden bg-[linear-gradient(135deg,#101a47_0%,#132a6b_55%,#0b4a34_100%)] sm:h-36">
+          <span
+            aria-hidden="true"
+            className="absolute -right-16 -top-20 size-64 rounded-full bg-[radial-gradient(circle,rgb(61_220_114/0.3),transparent_65%)]"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute bottom-3 left-6 h-16 w-32 bg-[radial-gradient(circle,rgb(255_255_255/0.2)_1.5px,transparent_1.6px)] [background-size:12px_12px]"
+          />
+        </div>
 
         <div className="flex flex-col items-center gap-3 px-5 pb-5 text-center">
-          <div className="-mt-12 rounded-full border-4 border-[var(--color-card)] bg-[var(--color-card)] sm:-mt-14">
+          {/* relative: the cover is positioned, so without its own stacking
+              the avatar would paint underneath it. */}
+          <div className="relative -mt-12 rounded-full border-4 border-[var(--color-card)] bg-[var(--color-card)] shadow-[0_12px_28px_-12px_rgb(16_26_71/0.5)] sm:-mt-14">
             <Avatar name={me.name ?? me.email} src={me.avatarUrl} size={96} />
           </div>
 
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-bold tracking-tight">{me.name ?? "Your profile"}</h1>
+            <h1 className="text-[22px] font-bold tracking-[-0.5px] text-[var(--brand-ink)]">{me.name ?? "Your profile"}</h1>
             <p className="text-sm text-[var(--color-muted-foreground)]">{me.email}</p>
           </div>
 

@@ -123,7 +123,7 @@ export function SalesDonut({
     token("--brand-green-deep", "#12a150"),
     token("--brand-blue-bright", "#2e6fd4"),
     token("--brand-green", "#22c55e"),
-    token("--color-accent", "#d97706"),
+    token("--brand-green-bright", "#3ddc72"),
   ];
 
   if (total === 0) {

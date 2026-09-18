@@ -50,7 +50,7 @@ export default async function AffiliatePage() {
           .
         </Alert>
       ) : (
-        <div className="rounded-[var(--radius-card)] bg-[var(--color-accent-subtle)] px-4 py-3 text-sm font-semibold text-[var(--color-accent)]">
+        <div className="rounded-[var(--radius-card)] bg-[#e5f2e3] px-4 py-3 text-sm font-semibold text-[var(--brand-green)]">
           You earn {plan.commissionRateBps / 100}% on every purchase your referrals make.
         </div>
       )}
@@ -134,7 +134,7 @@ export default async function AffiliatePage() {
                       })}
                     </td>
                     <td className="tabular px-4 py-3 text-right">{a.purchaseCount}</td>
-                    <td className="tabular px-4 py-3 text-right font-bold text-[var(--color-accent)]">
+                    <td className="tabular px-4 py-3 text-right font-bold text-[var(--brand-green)]">
                       {a.earnedInPaise > 0 ? formatPrice(a.earnedInPaise) : "—"}
                     </td>
                   </tr>

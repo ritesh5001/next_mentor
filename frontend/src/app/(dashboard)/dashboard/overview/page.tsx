@@ -55,7 +55,7 @@ export default async function OverviewPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="pill inline-flex min-h-11 items-center px-4 text-sm font-bold text-white" style={{ background: "var(--brand-fill)" }}>
+          <span className="pill inline-flex min-h-11 items-center px-4 text-sm font-bold text-white" style={{ background: "linear-gradient(145deg,#1b3fa0,#101a47)" }}>
             {data.planName ?? "No plan"}
           </span>
           <Link href="/dashboard/earnings" className={buttonClasses({ variant: "secondary" })}>
@@ -64,7 +64,7 @@ export default async function OverviewPage() {
         </div>
       </section>
 
-      {/* Earnings by period. All four are money, so all four are amber. */}
+      {/* Earnings by period. All four are money, so all four share the green tone. */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Today" value={formatPrice(data.earned.today)} tone="money"
           icon={<CalendarDays className="size-7" strokeWidth={1.4} aria-hidden="true" />} />
@@ -139,13 +139,13 @@ export default async function OverviewPage() {
           >
             <div
               className="h-full rounded-full transition-[width] duration-500 ease-out"
-              style={{ width: `${pct}%`, background: "var(--brand-fill)" }}
+              style={{ width: `${pct}%`, background: "linear-gradient(145deg,#1b3fa0,#101a47)" }}
             />
           </div>
           <div className="flex flex-wrap justify-between gap-2 text-sm">
             <span className="text-[var(--color-muted-foreground)]">
               Earned{" "}
-              <span className="tabular font-bold text-[var(--color-accent)]">
+              <span className="tabular font-bold text-[var(--brand-green)]">
                 {formatPrice(data.monthEarnedInPaise)}
               </span>{" "}
               ({pct}%)

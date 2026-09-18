@@ -41,7 +41,7 @@ export default async function TopPerformersPage() {
           on the page, because it is the only row the viewer came to find. */}
       <div
         className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] px-5 py-4 text-white shadow-[var(--shadow-card)]"
-        style={{ background: "var(--brand-fill)" }}
+        style={{ background: "linear-gradient(145deg,#1b3fa0,#101a47)" }}
       >
         <span className="text-xs font-bold uppercase tracking-[0.14em] text-white/70">
           Your rank
@@ -90,7 +90,7 @@ export default async function TopPerformersPage() {
                     <span className="w-full truncate text-center text-xs font-bold sm:text-sm">
                       {maskName(p.name)}
                     </span>
-                    <span className="tabular rounded-full bg-[var(--color-accent-subtle)] px-2.5 py-1 text-xs font-bold text-[var(--color-accent)]">
+                    <span className="tabular rounded-full bg-[#e5f2e3] px-2.5 py-1 text-xs font-bold text-[var(--brand-green)]">
                       {formatPrice(p.earnedInPaise)}
                     </span>
                     <div
@@ -98,7 +98,7 @@ export default async function TopPerformersPage() {
                         "flex w-full items-start justify-center rounded-t-[var(--radius-control)] pt-2",
                         HEIGHT[slot],
                       )}
-                      style={{ background: "var(--brand-fill)" }}
+                      style={{ background: "linear-gradient(145deg,#1b3fa0,#101a47)" }}
                     >
                       <span className="tabular text-2xl font-bold text-white/90">
                         {idx + 1}
@@ -143,7 +143,7 @@ export default async function TopPerformersPage() {
                           </span>
                         )}
                       </span>
-                      <span className="tabular shrink-0 text-sm font-bold text-[var(--color-accent)]">
+                      <span className="tabular shrink-0 text-sm font-bold text-[var(--brand-green)]">
                         {formatPrice(p.earnedInPaise)}
                       </span>
                     </li>

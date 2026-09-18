@@ -43,10 +43,10 @@ export function PlanCard({
   return (
     <article
       className={cn(
-        "relative flex flex-col gap-5 rounded-[var(--radius-card)] border bg-[var(--color-card)] p-6",
+        "relative flex flex-col gap-5 rounded-[24px] bg-[var(--color-card)] p-6 sm:p-7",
         plan.isFeatured
-          ? "border-[var(--color-primary)] shadow-[var(--shadow-raised)]"
-          : "border-[var(--color-border)] shadow-[var(--shadow-card)]",
+          ? "ring-2 ring-[var(--brand-blue)] shadow-[0_28px_60px_-32px_rgb(27_63_160/0.5)]"
+          : "ring-1 ring-[rgb(16_26_71/0.08)] shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)]",
       )}
     >
       {plan.isFeatured && (
@@ -59,7 +59,7 @@ export function PlanCard({
       )}
 
       <header className="flex flex-col gap-1.5">
-        <h3 className="text-lg font-bold tracking-tight">{plan.name}</h3>
+        <h3 className="text-[21px] font-semibold tracking-[-0.4px] text-[var(--brand-ink)]">{plan.name}</h3>
         {plan.tagline && (
           <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
             {plan.tagline}
@@ -84,8 +84,8 @@ export function PlanCard({
       </div>
 
       {plan.commissionRateBps > 0 && (
-        // Amber: this is earnings, and earnings is the one thing amber marks.
-        <div className="rounded-[var(--radius-control)] bg-[var(--color-accent-subtle)] px-3 py-2 text-sm font-semibold text-[var(--color-accent)]">
+        // Green: earnings, matching how money is shown across the site.
+        <div className="rounded-[var(--radius-control)] bg-[#e5f2e3] px-3 py-2 text-sm font-semibold text-[var(--brand-green)]">
           Earn {plan.commissionRateBps / 100}% commission on referrals
         </div>
       )}

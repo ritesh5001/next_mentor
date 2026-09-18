@@ -40,7 +40,7 @@ export default async function CertificatesPage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <Award
-                    className="size-6 shrink-0 text-[var(--color-accent)]"
+                    className="size-6 shrink-0 text-[var(--brand-green)]"
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />

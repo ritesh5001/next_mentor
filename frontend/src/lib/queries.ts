@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { forbidden, unauthorized } from "next/navigation";
 import type { CatalogCourse, CourseDetail, KycDocumentUrls, LessonResource } from "@nextmentor/shared";
@@ -154,7 +155,8 @@ export const getMyCoupons = () =>
     }>
   >("/api/my/coupons");
 
-export const getProfile = () =>
+/** Cached per request: the dashboard shell and its pages both read it. */
+export const getProfile = cache(() =>
   api<{
     name: string | null;
     email: string;
@@ -166,7 +168,8 @@ export const getProfile = () =>
     hasPassword: boolean;
     avatarUrl: string | null;
     subscription: { planName: string } | null;
-  }>("/api/profile");
+  }>("/api/profile"),
+);
 
 /* ------------------------------------------------------------------ learn */
 

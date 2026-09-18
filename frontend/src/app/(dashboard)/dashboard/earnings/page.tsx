@@ -128,7 +128,7 @@ export default async function EarningsPage() {
                           </div>
                         </Cell>
                         <Cell align="right" className="tabular">{c.rateBps / 100}%</Cell>
-                        <Cell align="right" className="tabular font-bold text-[var(--color-accent)]">
+                        <Cell align="right" className="tabular font-bold text-[var(--brand-green)]">
                           {formatPrice(c.amountInPaise)}
                         </Cell>
                         <Cell>

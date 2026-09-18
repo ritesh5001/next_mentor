@@ -8,10 +8,10 @@ import { cn } from "@/lib/cn";
  * shown as boxed label/value pairs, coloured metric tiles, and dense data
  * tables with a dark header row.
  *
- * The layout and information hierarchy are copied deliberately. The palette is
- * not: everything below draws on NextMentor's own tokens, and amber stays
- * reserved for money, so a metric tile showing a rupee figure looks different
- * from one counting leads on purpose.
+ * The layout and information hierarchy are copied deliberately. The look is
+ * the marketing site's: white rounded cards on the wash, navy and green
+ * gradients for emphasis, and green for money — so moving from the homepage
+ * into the dashboard does not feel like changing products.
  */
 
 /* ------------------------------------------------------------------ panel */
@@ -33,20 +33,20 @@ export function Panel({
   return (
     <section
       className={cn(
-        "overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] shadow-[var(--shadow-card)]",
+        "overflow-hidden rounded-[22px] bg-[var(--color-card)] shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] ring-1 ring-[rgb(16_26_71/0.07)]",
         className,
       )}
     >
       {title && (
-        <header
-          className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-white sm:px-5"
-          style={{ background: "var(--brand-fill)" }}
-        >
-          <h2 className="text-sm font-bold tracking-wide">{title}</h2>
+        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgb(16_26_71/0.07)] px-5 py-4 sm:px-6">
+          <h2 className="flex items-center gap-2.5 text-[15.5px] font-semibold tracking-[-0.2px] text-[var(--brand-ink)]">
+            <span aria-hidden="true" className="h-4 w-1 rounded-full bg-[linear-gradient(180deg,#3ddc72,#12a150)]" />
+            {title}
+          </h2>
           {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
         </header>
       )}
-      <div className={cn("p-4 sm:p-5", bodyClassName)}>{children}</div>
+      <div className={cn("p-5 sm:p-6", bodyClassName)}>{children}</div>
     </section>
   );
 }
@@ -72,7 +72,7 @@ export function DetailField({
   return (
     <div
       className={cn(
-        "flex min-h-[4.25rem] flex-col justify-center gap-1 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-background)] px-4 py-3",
+        "flex min-h-[4.25rem] flex-col justify-center gap-1 rounded-[14px] bg-[var(--brand-hero-wash)] px-4 py-3 ring-1 ring-[rgb(16_26_71/0.05)]",
         className,
       )}
     >
@@ -103,23 +103,21 @@ export function DetailGrid({
 
 export type StatTone = "primary" | "success" | "info" | "warning" | "danger" | "neutral" | "money";
 
-const TONE: Record<StatTone, { bg: string; fg: string; sub: string }> = {
-  // Money is amber wherever it appears, and nothing else is.
-  money: { bg: "var(--color-accent)", fg: "var(--color-on-accent)", sub: "rgb(255 255 255 / 0.75)" },
-  primary: { bg: "var(--brand-blue)", fg: "#ffffff", sub: "rgb(255 255 255 / 0.75)" },
-  success: { bg: "var(--brand-green-deep)", fg: "#ffffff", sub: "rgb(255 255 255 / 0.8)" },
-  info: { bg: "var(--brand-blue-bright)", fg: "#ffffff", sub: "rgb(255 255 255 / 0.8)" },
-  warning: { bg: "#b45309", fg: "#ffffff", sub: "rgb(255 255 255 / 0.8)" },
-  danger: { bg: "var(--color-destructive)", fg: "#ffffff", sub: "rgb(255 255 255 / 0.8)" },
-  neutral: { bg: "var(--brand-ink)", fg: "#ffffff", sub: "rgb(255 255 255 / 0.7)" },
+/** Icon-tile gradient per tone. Money is green, as it is on the homepage. */
+const TONE: Record<StatTone, string> = {
+  money: "linear-gradient(145deg,#12a150,#0b4a34)",
+  success: "linear-gradient(145deg,#3ddc72,#12a150)",
+  primary: "linear-gradient(145deg,#2e6fd4,#1b3fa0)",
+  info: "linear-gradient(145deg,#2e6fd4,#101a47)",
+  neutral: "linear-gradient(145deg,#1b3fa0,#101a47)",
+  warning: "linear-gradient(145deg,#f59e0b,#b45309)",
+  danger: "linear-gradient(145deg,#ef4444,#b91c1c)",
 };
 
 /**
- * A metric tile.
- *
- * `tone` is meaning, not decoration: `money` is the amber reserved for rupee
- * figures, so a row of tiles tells you which numbers are cash before you read
- * a single label.
+ * A metric tile: white card, figure first, with the tone carried by a
+ * gradient icon tile rather than a painted background — a row of these reads
+ * as one family instead of a rainbow.
  */
 export function StatTile({
   label,
@@ -134,34 +132,34 @@ export function StatTile({
   icon?: React.ReactNode;
   tone?: StatTone;
 }) {
-  const t = TONE[tone];
   return (
-    <div
-      className="flex items-start justify-between gap-3 rounded-[var(--radius-card)] p-4 shadow-[var(--shadow-card)]"
-      style={{ background: t.bg, color: t.fg }}
-    >
-      <div className="flex min-w-0 flex-col gap-1">
-        <span
-          className="text-[10px] font-bold uppercase tracking-[0.12em]"
-          style={{ color: t.sub }}
-        >
+    <div className="flex items-start justify-between gap-3 rounded-[20px] bg-[var(--color-card)] p-5 shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] ring-1 ring-[rgb(16_26_71/0.07)]">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
           {label}
         </span>
-        <span className="tabular text-2xl font-bold leading-tight">{value}</span>
-        {hint && (
-          <span className="text-[11px] leading-snug" style={{ color: t.sub }}>
-            {hint}
-          </span>
-        )}
+        <span className="tabular text-[26px] font-semibold leading-tight tracking-[-0.6px] text-[var(--brand-ink)]">
+          {value}
+        </span>
+        {hint && <span className="text-[12px] leading-snug text-[var(--color-muted-foreground)]">{hint}</span>}
       </div>
-      {icon && <span className="shrink-0 opacity-40">{icon}</span>}
+      {icon && (
+        <span
+          className="flex size-11 shrink-0 items-center justify-center rounded-[14px] text-white shadow-[0_10px_20px_-10px_rgb(16_26_71/0.6)] [&>svg]:size-5"
+          style={{ background: TONE[tone] }}
+        >
+          {icon}
+        </span>
+      )}
     </div>
   );
 }
 
 export function StatRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 xl:grid-cols-6">{children}</div>
+    // Four across at most: a tile narrower than ~240px squeezes its figure
+    // against the icon tile.
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{children}</div>
   );
 }
 
@@ -187,24 +185,24 @@ export function DataTable({
 }) {
   if (empty) {
     return (
-      <p className="rounded-[var(--radius-control)] border border-dashed border-[var(--color-border)] px-6 py-12 text-center text-sm text-[var(--color-muted-foreground)]">
+      <p className="rounded-[16px] border border-dashed border-[rgb(16_26_71/0.14)] bg-[var(--brand-hero-wash)] px-6 py-12 text-center text-sm text-[var(--color-muted-foreground)]">
         {empty}
       </p>
     );
   }
 
   return (
-    <div className="-mx-4 overflow-x-auto sm:-mx-5">
-      <div className="inline-block min-w-full px-4 align-middle sm:px-5">
+    <div className="-mx-5 overflow-x-auto sm:-mx-6">
+      <div className="inline-block min-w-full px-5 align-middle sm:px-6">
         <table className="w-full text-sm" style={{ minWidth }}>
           <thead>
-            <tr style={{ background: "var(--brand-ink)" }}>
+            <tr className="bg-[var(--brand-hero-wash)]">
               {head.map((h, i) => (
                 <th
                   key={i}
                   scope="col"
                   className={cn(
-                    "whitespace-nowrap px-3 py-2.5 text-left text-[11px] font-bold uppercase tracking-wide text-white",
+                    "whitespace-nowrap px-3 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-ink)]/60",
                     i === 0 && "rounded-l-[var(--radius-control)]",
                     i === head.length - 1 && "rounded-r-[var(--radius-control)]",
                   )}
@@ -224,7 +222,14 @@ export function DataTable({
 /** Zebra striping, which is what makes a wide row readable across. */
 export function Row({ children, i }: { children: React.ReactNode; i: number }) {
   return (
-    <tr className={cn("align-middle", i % 2 === 1 && "bg-[var(--color-muted)]/50")}>{children}</tr>
+    <tr
+      className={cn(
+        "align-middle border-b border-[rgb(16_26_71/0.05)] transition-colors hover:bg-[var(--brand-hero-wash)]/70",
+        i % 2 === 1 && "bg-[var(--brand-hero-wash)]/40",
+      )}
+    >
+      {children}
+    </tr>
   );
 }
 
@@ -240,7 +245,7 @@ export function Cell({
   return (
     <td
       className={cn(
-        "px-3 py-2.5",
+        "px-3 py-3",
         align === "right" && "text-right",
         align === "center" && "text-center",
         className,
@@ -264,13 +269,13 @@ export function PageHeader({
   aside?: React.ReactNode;
 }) {
   return (
-    <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-4">
-      <div className="flex min-w-0 flex-col gap-1">
-        <h1 className="text-xl font-bold tracking-tight text-[var(--color-foreground)] sm:text-2xl">
+    <header className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <h1 className="text-[26px] font-bold leading-tight tracking-[-0.8px] text-[var(--brand-ink)] sm:text-[30px]">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-sm text-[var(--color-muted-foreground)]">{subtitle}</p>
+          <p className="text-[15px] text-[var(--color-muted-foreground)]">{subtitle}</p>
         )}
       </div>
       {aside && <div className="shrink-0">{aside}</div>}
@@ -317,7 +322,7 @@ export function Avatar({
         width: size,
         height: size,
         fontSize: Math.max(10, size * 0.36),
-        background: "var(--brand-fill)",
+        background: "linear-gradient(145deg,#1b3fa0,#101a47)",
       }}
     >
       {initials}

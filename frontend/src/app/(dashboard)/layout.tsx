@@ -1,76 +1,102 @@
 import Link from "next/link";
-// Only the icons this file actually renders. The sidebar resolves its own
-// icons from the `icon` name on each NavItem.
-import { BadgeCheck } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { DashboardNav, type NavItem } from "@/components/dashboard/dashboard-nav";
+import { DashboardNav, type NavGroup } from "@/components/dashboard/dashboard-nav";
+import { Avatar } from "@/components/dashboard/panels";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
-import { requireUser } from "@/lib/queries";
+import { getProfile, requireUser } from "@/lib/queries";
 
 /**
- * Sidebar mirrors the feature list from the reference dashboard. Items not yet
- * built are rendered as disabled with a "Soon" chip rather than as dead links —
- * a nav item that silently does nothing is worse than one that says why.
+ * Sidebar sections. Grouped by what the member is doing — learning, earning,
+ * or managing the account — because a flat list of seventeen links gives no
+ * hint where anything is. Items not yet built render disabled with a "Soon"
+ * chip rather than as dead links.
  */
-const NAV: NavItem[] = [
-  { href: "/dashboard/overview", label: "Dashboard", icon: "LayoutDashboard", ready: true },
-  { href: "/dashboard", label: "My Courses", icon: "BookOpen", ready: true },
-  { href: "/dashboard/profile", label: "Profile", icon: "UserCircle", ready: true },
-  { href: "/dashboard/kyc", label: "KYC", icon: "ShieldCheck", ready: true },
-  { href: "/dashboard/earnings", label: "Associates & Earnings", icon: "Coins", ready: true },
-  { href: "/dashboard/top-performers", label: "Top Performers", icon: "Trophy", ready: true },
-  { href: "/dashboard/affiliate", label: "Affiliate link", icon: "Gift", ready: true },
-  { href: "/dashboard/plan", label: "Upgrade Your Plan", icon: "Sparkles", ready: true },
-  { href: "/dashboard/training", label: "Affiliate Training", icon: "GraduationCap", ready: true },
-  { href: "/dashboard/leads", label: "Leads Dashboard", icon: "TrendingUp", ready: true },
-  { href: "/dashboard/mentorship", label: "Premium Mentorship", icon: "Handshake", ready: true },
-  { href: "/dashboard/promo", label: "Promotional Material", icon: "Megaphone", ready: true },
-  { href: "/dashboard/coupons", label: "Exclusive Coupons", icon: "Ticket", ready: true },
-  { href: "/dashboard/community", label: "Community Hub", icon: "Users", ready: true },
-  { href: "/dashboard/achievements", label: "My Achievements", icon: "Award", ready: true },
-  { href: "/dashboard/certificates", label: "Get Certificate", icon: "FileBadge", ready: true },
-  { href: "/dashboard/plan", label: "Qualification Criteria", icon: "Target", ready: true },
-  { href: "/dashboard/industrial", label: "Industrial Earn", icon: "Briefcase", ready: false },
+const NAV: NavGroup[] = [
+  {
+    label: "Learn",
+    items: [
+      { href: "/dashboard", label: "My Courses", icon: "BookOpen", ready: true },
+      { href: "/dashboard/certificates", label: "Certificates", icon: "FileBadge", ready: true },
+      { href: "/dashboard/achievements", label: "Achievements", icon: "Award", ready: true },
+      { href: "/dashboard/mentorship", label: "Premium Mentorship", icon: "Handshake", ready: true },
+      { href: "/dashboard/community", label: "Community Hub", icon: "Users", ready: true },
+    ],
+  },
+  {
+    label: "Earn",
+    items: [
+      { href: "/dashboard/overview", label: "Earnings Overview", icon: "LayoutDashboard", ready: true },
+      { href: "/dashboard/earnings", label: "Associates & Earnings", icon: "Coins", ready: true },
+      { href: "/dashboard/affiliate", label: "Affiliate Link", icon: "Gift", ready: true },
+      { href: "/dashboard/leads", label: "Leads Dashboard", icon: "TrendingUp", ready: true },
+      { href: "/dashboard/top-performers", label: "Top Performers", icon: "Trophy", ready: true },
+      { href: "/dashboard/training", label: "Affiliate Training", icon: "GraduationCap", ready: true },
+      { href: "/dashboard/promo", label: "Promotional Material", icon: "Megaphone", ready: true },
+      { href: "/dashboard/coupons", label: "Exclusive Coupons", icon: "Ticket", ready: true },
+      { href: "/dashboard/industrial", label: "Industrial Earn", icon: "Briefcase", ready: false },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { href: "/dashboard/profile", label: "Profile", icon: "UserCircle", ready: true },
+      { href: "/dashboard/kyc", label: "KYC", icon: "ShieldCheck", ready: true },
+      { href: "/dashboard/plan", label: "Plan & Qualification", icon: "Sparkles", ready: true },
+    ],
+  },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireUser();
+  await requireUser();
+  // The session token carries no name or photo; the profile does.
+  const profile = await getProfile();
+  const displayName = profile.name ?? profile.email;
+  const subscription = profile.subscription;
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--color-background)]">
-      <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-background)]/85 surface-blur">
-        <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between gap-4 px-4 sm:px-6">
-          {/* The real mark, matching the admin panel and the public site. A
-              stand-in icon here was the only place the brand was redrawn. */}
+    <div className="flex min-h-dvh flex-col bg-[var(--brand-hero-wash)]">
+      <header className="sticky top-0 z-40 border-b border-[rgb(16_26_71/0.07)] bg-white/85 surface-blur">
+        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-4 sm:px-6">
+          {/* The real mark, matching the admin panel and the public site. */}
           <Link href="/dashboard" aria-label="Dashboard">
             <Logo className="h-8 w-auto" />
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               href="/courses"
-              className="hidden rounded-[var(--radius-control)] px-3 py-2 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)] sm:block"
+              className="hidden min-h-11 items-center rounded-full px-4 text-sm font-medium text-[var(--color-muted-foreground)] transition-colors hover:bg-[var(--brand-hero-wash)] hover:text-[var(--brand-ink)] sm:flex"
             >
               Browse courses
             </Link>
 
-            {/* Hidden on phones. The logo, this pill and the sign-out button
-                together overflowed a 375px viewport and made the whole page
-                scroll sideways; the identity is the one of the three a visitor
-                can do without on a small screen. */}
-            <div className="hidden items-center gap-2 rounded-full bg-[var(--color-primary)] px-3 py-1.5 text-sm font-semibold text-[var(--color-on-primary)] sm:flex">
-              <BadgeCheck className="size-4" strokeWidth={1.5} aria-hidden="true" />
-              <span className="max-w-[10rem] truncate">{user.name ?? user.email}</span>
-            </div>
+            {/* Hidden on phones: logo, identity and sign-out together overflow
+                a 375px viewport, and identity is the one to spare. */}
+            <Link
+              href="/dashboard/profile"
+              className="hidden min-h-11 items-center gap-2.5 rounded-full py-1 pl-1 pr-4 ring-1 ring-[rgb(16_26_71/0.1)] transition-colors hover:bg-[var(--brand-hero-wash)] sm:flex"
+            >
+              <Avatar name={displayName} size={34} src={profile.avatarUrl} />
+              <span className="flex flex-col leading-tight">
+                <span className="max-w-[10rem] truncate text-[13.5px] font-semibold text-[var(--brand-ink)]">
+                  {displayName}
+                </span>
+                {subscription && (
+                  <span className="text-[11.5px] font-medium text-[var(--brand-green)]">
+                    {subscription.planName} member
+                  </span>
+                )}
+              </span>
+            </Link>
 
             <SignOutButton />
           </div>
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-[1400px] flex-1 gap-6 px-4 py-6 sm:px-6">
-        <DashboardNav items={NAV} />
+      <div className="mx-auto flex w-full max-w-[1440px] flex-1 gap-6 px-4 py-6 sm:px-6 lg:gap-8 lg:py-8">
+        <DashboardNav groups={NAV} planName={subscription?.planName ?? null} />
         <main id="main" className="min-w-0 flex-1">
           {children}
         </main>
