@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, GraduationCap, Search } from "lucide-react";
+import { ArrowRight, GraduationCap, Search, ShieldCheck, Shuffle, Users } from "lucide-react";
 import { CtaButton } from "./cta-button";
 import type { CatalogCourse } from "@nextmentor/shared";
 import { cn } from "@/lib/cn";
@@ -276,6 +276,74 @@ function HeroDecor() {
         <path d="M6 52c8-8 14-20 20-30 3-5 7-4 7 2 0 8-2 16 1 20 3 4 9-2 13-8 8-12 18-24 36-30" />
       </svg>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------- trust bar */
+
+const TRUST_POINTS = [
+  { Icon: Users, lines: ["Backed by a 14,000+", "Community"] },
+  { Icon: GraduationCap, lines: ["Mentorship", "& Support"] },
+  { Icon: ShieldCheck, lines: ["Transparent Pricing", "& Commission"] },
+  { Icon: Shuffle, lines: ["Freedom to Pick", "Your Skills"] },
+];
+
+/**
+ * Four promises on a deep-green bar directly under the hero. Each is something
+ * the product actually does — the founder's community, mentorship and support
+ * in the plans, commission on what the buyer really paid, and the choice of a
+ * single course or a whole plan — not a rating or learner count.
+ */
+export function TrustBar() {
+  return (
+    <section className="relative bg-[var(--brand-hero-wash)] px-5 pb-4 pt-14 sm:px-8 sm:pt-16">
+      <svg
+        aria-hidden="true"
+        className="absolute left-[4%] top-4 hidden w-24 text-[var(--brand-green)] sm:block"
+        viewBox="0 0 96 64"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3.2"
+        strokeLinecap="round"
+      >
+        {Array.from({ length: 12 }).map((_, i) => {
+          const x = (i % 4) * 20 + (Math.floor(i / 4) % 2) * 8 + 6;
+          const y = Math.floor(i / 4) * 18 + 8;
+          return <line key={i} x1={x} y1={y + 8} x2={x + 6} y2={y} opacity={0.55 + (i % 3) * 0.15} />;
+        })}
+      </svg>
+      <svg aria-hidden="true" className="absolute right-[18%] top-4 hidden w-12 sm:block" viewBox="0 0 48 48">
+        {Array.from({ length: 16 }).map((_, i) => (
+          <circle key={i} cx={(i % 4) * 12 + 6} cy={Math.floor(i / 4) * 12 + 6} r="1.8" fill="#f07b5a" opacity="0.8" />
+        ))}
+      </svg>
+
+      <ul className="relative mx-auto grid max-w-7xl overflow-hidden rounded-[22px] bg-[#0b4a34] shadow-[0_28px_60px_-30px_rgb(11_74_52/0.7)] sm:grid-cols-2 xl:grid-cols-4">
+        {TRUST_POINTS.map(({ Icon, lines }, i) => (
+          <li
+            key={lines[0]}
+            className={cn(
+              "flex items-center gap-4 px-6 py-5 sm:px-7 sm:py-6 xl:px-6 min-[1400px]:gap-5 min-[1400px]:px-7",
+              // Dividers only between items: a rule under each on one column,
+              // a 2×2 grid on tablets, a single row of four on desktop.
+              i > 0 && "border-t border-white/10 sm:border-t-0",
+              i >= 2 && "sm:border-t xl:border-t-0",
+              i % 2 === 1 && "sm:border-l sm:border-white/10",
+              i === 2 && "xl:border-l xl:border-white/10",
+            )}
+          >
+            <span className="relative flex size-14 shrink-0 items-center justify-center rounded-full bg-[#12a150] shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_8px_18px_-8px_rgb(0_0_0/0.55)] ring-[5px] ring-white/[0.07] sm:size-16">
+              <Icon className="size-6 text-white sm:size-7" strokeWidth={1.6} aria-hidden="true" />
+            </span>
+            <span className="text-[15px] font-semibold leading-[1.35] text-white sm:text-base min-[1400px]:text-[17px]">
+              {lines[0]}
+              <br />
+              {lines[1]}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
