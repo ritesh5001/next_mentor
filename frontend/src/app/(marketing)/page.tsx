@@ -60,7 +60,7 @@ export default async function HomePage() {
           The dark EarnBand sits in the middle to break a long light scroll. */}
       <Hero courses={courses} />
       <TrustBar />
-      <SkillsCarousel courses={courses} />
+      <SkillsCarousel />
       <WhyNextMentor />
       <FeaturedCourses courses={courses} />
       <HowItWorks />
