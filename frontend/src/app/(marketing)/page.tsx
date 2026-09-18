@@ -19,6 +19,7 @@ import {
   Faq,
 } from "@/components/marketing/home-sections-2";
 import { SkillsCarousel } from "@/components/marketing/skills-carousel";
+import { PackShowcase } from "@/components/marketing/pack-showcase";
 
 export const metadata: Metadata = {
   title: "Learn the skill, freelance with confidence | NextMentor",
@@ -61,6 +62,7 @@ export default async function HomePage() {
       <Hero courses={courses} />
       <TrustBar />
       <SkillsCarousel />
+      <PackShowcase prices={Object.fromEntries(plans.map((p) => [p.slug, p.priceInPaise]))} />
       <WhyNextMentor />
       <FeaturedCourses courses={courses} />
       <HowItWorks />
