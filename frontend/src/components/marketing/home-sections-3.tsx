@@ -11,6 +11,7 @@ import {
   Hash,
   Headset,
   Landmark,
+  LayoutDashboard,
   Link2,
   ListChecks,
   MonitorPlay,
@@ -692,6 +693,183 @@ export function StudentFeedback() {
               ))}
             </ul>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------- partner programme */
+
+const EARN_RULES = [
+  {
+    icon: Wallet,
+    label: "Earned on",
+    value: "What they actually paid",
+    body: "Calculated on the amount charged, so a discount never quietly comes out of your cut.",
+  },
+  {
+    icon: CalendarClock,
+    label: "Clears in",
+    value: "7 days",
+    body: "Each commission matures for a week before it can be withdrawn.",
+  },
+  {
+    icon: Landmark,
+    label: "Paid to",
+    value: "Your bank account",
+    body: "Withdraw straight to your bank once your KYC is approved.",
+  },
+  {
+    icon: LayoutDashboard,
+    label: "Tracked in",
+    value: "Your dashboard",
+    body: "Every click, referral and payout, recorded where you can see it.",
+  },
+];
+
+/**
+ * The referral programme on the navy stage: the pitch and a card showing the
+ * real commission rate each plan earns (read from the plans, never typed in),
+ * then the rules as icon cards.
+ */
+export function EarnBand({ rates }: { rates: { name: string; rateBps: number }[] }) {
+  const top = Math.max(0, ...rates.map((r) => r.rateBps));
+
+  return (
+    <section
+      id="partner-programme"
+      className="relative scroll-mt-24 overflow-hidden bg-[var(--brand-surface-dark)]"
+    >
+      <span
+        aria-hidden="true"
+        className="absolute -left-40 top-10 size-[520px] rounded-full bg-[radial-gradient(circle,rgb(61_220_114/0.14),transparent_65%)]"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute -right-40 bottom-0 size-[520px] rounded-full bg-[radial-gradient(circle,rgb(46_111_212/0.2),transparent_65%)]"
+      />
+
+      <div className="relative mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
+          <div className="flex flex-col items-start">
+            <SectionHead
+              tone="dark"
+              eyebrow="Partner programme"
+              title={
+                <>
+                  Study once.
+                  <br />
+                  Keep earning after.
+                </>
+              }
+              lede="Every member gets a referral link. Share it, and when someone joins through it you earn a share of what they pay — long after you have finished your own course."
+            />
+            <CtaButton href="/register" size="lg" className="btn-liquid--light mt-9">
+              Get your referral link
+            </CtaButton>
+          </div>
+
+          {rates.length > 0 && (
+            <div className="reveal relative mx-auto w-full max-w-md rounded-[26px] bg-white/[0.06] p-6 ring-1 ring-white/12 backdrop-blur-sm sm:p-8">
+              <div className="flex items-center justify-between">
+                <p className="text-[13px] font-medium uppercase tracking-[0.16em] text-white/55">
+                  Your commission rate
+                </p>
+                <span className="flex size-10 items-center justify-center rounded-[12px] bg-[var(--brand-green-bright)]/15 text-[var(--brand-green-bright)]">
+                  <Wallet className="size-5" strokeWidth={2} aria-hidden="true" />
+                </span>
+              </div>
+              <p className="mt-3 text-[40px] font-semibold leading-none tracking-[-1px] text-white sm:text-[48px]">
+                Up to {top / 100}%
+              </p>
+              <p className="mt-2 text-[14px] text-white/60">Your plan sets how much you earn per referral.</p>
+
+              <ul className="mt-7 flex flex-col gap-4">
+                {rates.map((r) => (
+                  <li key={r.name}>
+                    <div className="flex items-baseline justify-between text-[14.5px]">
+                      <span className="font-medium text-white/85">{r.name}</span>
+                      <span className="tabular font-semibold text-[var(--brand-green-bright)]">
+                        {r.rateBps / 100}%
+                      </span>
+                    </div>
+                    <div className="mt-2 h-2 rounded-full bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-[linear-gradient(90deg,#12a150,#3ddc72)]"
+                        style={{ width: `${top ? Math.max(8, (r.rateBps / top) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
+          {EARN_RULES.map((rule) => (
+            <li
+              key={rule.label}
+              className="reveal rounded-[22px] bg-white/[0.05] p-6 ring-1 ring-white/10 transition-colors duration-200 hover:bg-white/[0.08]"
+            >
+              <span className="flex size-12 items-center justify-center rounded-[14px] bg-[linear-gradient(145deg,#12a150,#0b4a34)] text-white shadow-[0_12px_24px_-12px_rgb(18_161_80/0.7)]">
+                <rule.icon className="size-6" strokeWidth={1.8} aria-hidden="true" />
+              </span>
+              <p className="mt-5 text-[11.5px] font-medium uppercase tracking-[0.16em] text-white/50">
+                {rule.label}
+              </p>
+              <p className="mt-1.5 text-[19px] font-semibold tracking-[-0.3px] text-white">{rule.value}</p>
+              <p className="mt-2 text-[14px] leading-[1.55] text-white/60">{rule.body}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------- closing cta */
+
+/** The last ask, as one gradient banner rather than loose text on the page. */
+export function ClosingCta() {
+  return (
+    <section className="bg-white">
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
+        <div className="reveal relative overflow-hidden rounded-[32px] bg-[linear-gradient(135deg,#101a47_0%,#132a6b_55%,#0b4a34_100%)] px-6 py-14 text-center sm:px-12 sm:py-16 lg:px-20 lg:py-20">
+          <span
+            aria-hidden="true"
+            className="absolute -right-24 -top-24 size-80 rounded-full bg-[radial-gradient(circle,rgb(61_220_114/0.28),transparent_65%)]"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute -bottom-10 left-8 h-28 w-40 bg-[radial-gradient(circle,rgb(255_255_255/0.22)_1.5px,transparent_1.6px)] [background-size:14px_14px]"
+          />
+
+          <div className="relative mx-auto flex max-w-2xl flex-col items-center">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.2em] text-[var(--brand-green-bright)]">
+              Start today
+            </p>
+            <h2 className="mt-4 text-balance text-[34px] font-bold leading-[1.05] tracking-[-1px] text-white sm:text-[48px] sm:tracking-[-1.5px]">
+              Your skills. Your freedom.
+              <br className="hidden sm:block" /> Your income.
+            </h2>
+            <p className="mt-5 max-w-[520px] text-pretty text-[15px] leading-[1.6] text-white/75 sm:text-[17px]">
+              Create your account, choose a plan, and start learning in minutes — with your own
+              referral link from the day you join.
+            </p>
+            <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <CtaButton href="/register" size="lg" className="btn-liquid--light justify-center">
+                Get started
+              </CtaButton>
+              <Link
+                href="/#packs-heading"
+                className="inline-flex min-h-12 items-center justify-center rounded-full px-7 text-[15px] font-semibold text-white ring-[1.5px] ring-white/60 transition-colors hover:bg-white/10"
+              >
+                Compare packs
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -6,7 +6,8 @@ import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
 import { PACKS, type Pack } from "@/lib/packages";
 
-type Tone = "green" | "white" | "lime";
+/** `green` is the dark featured card; the others are light. */
+type Tone = "green" | "white" | "mint";
 
 /**
  * The card's actions: a one-click Buy Now straight into Razorpay, and a
@@ -51,13 +52,14 @@ function Meta({ price, count, tone }: { price: number; count: number; tone: Tone
   );
 }
 
-const WIDE_TONES: Record<"green" | "white", string> = {
-  green: "bg-[#0b4a34] text-white",
+const WIDE_TONES: Record<"white" | "mint", string> = {
   white: "bg-white text-[var(--brand-ink)]",
+  // The same mint as the "Learn without limits" card, so the page shares one palette.
+  mint: "bg-[#e5f2e3] text-[var(--brand-ink)]",
 };
 
 /** Landscape card: copy on the left, box on the right. */
-function WideCard({ pack, price, tone }: { pack: Pack; price: number; tone: "green" | "white" }) {
+function WideCard({ pack, price, tone }: { pack: Pack; price: number; tone: "white" | "mint" }) {
   return (
     <article
       className={cn(
@@ -70,7 +72,7 @@ function WideCard({ pack, price, tone }: { pack: Pack; price: number; tone: "gre
         <p
           className={cn(
             "max-w-[34ch] text-[14px] leading-[1.55] sm:text-[15px]",
-            tone === "green" ? "text-white/85" : "text-[var(--brand-ink)]/75",
+            "text-[var(--brand-ink)]/75",
           )}
         >
           {pack.tagline}
@@ -97,17 +99,17 @@ function WideCard({ pack, price, tone }: { pack: Pack; price: number; tone: "gre
 /** Portrait card for the top pack, lit up so it reads as the one to pick. */
 function TallCard({ pack, price }: { pack: Pack; price: number }) {
   return (
-    <article className="reveal relative flex flex-col items-center gap-6 rounded-[26px] bg-[#b3dd62] px-6 py-8 text-center text-[var(--brand-ink)] shadow-[0_0_0_1.5px_rgb(214_255_150/0.9),0_0_36px_-4px_rgb(179_221_98/0.55)] sm:px-8 sm:py-10">
-      <span className="pill absolute right-4 top-4 bg-[var(--brand-ink)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white">
+    <article className="reveal relative flex flex-col items-center gap-6 rounded-[26px] bg-[linear-gradient(165deg,#12a150_0%,#0e5a40_45%,#0b3a2e_100%)] px-6 py-8 text-center text-white shadow-[0_0_0_1.5px_rgb(61_220_114/0.55),0_0_48px_-6px_rgb(61_220_114/0.5)] sm:px-8 sm:py-10">
+      <span className="pill absolute right-4 top-4 bg-[var(--brand-green-bright)] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--brand-ink)]">
         Best value
       </span>
       <h3 className="text-[28px] font-semibold tracking-[-0.5px] sm:text-[30px]">{pack.name}</h3>
       <PackBox label={pack.boxLabel} band={pack.boxBand} width={150} className="my-2" />
-      <p className="max-w-[30ch] text-[15px] font-medium leading-[1.55] text-[var(--brand-ink)]/85">
+      <p className="max-w-[30ch] text-[15px] font-medium leading-[1.55] text-white/85">
         {pack.tagline}
       </p>
-      <Meta price={price} count={pack.courses.length} tone="lime" />
-      <BuyNow slug={pack.slug} name={pack.name} tone="lime" />
+      <Meta price={price} count={pack.courses.length} tone="green" />
+      <BuyNow slug={pack.slug} name={pack.name} tone="green" />
     </article>
   );
 }
@@ -142,8 +144,8 @@ export function PackShowcase({ prices }: { prices: Record<string, number> }) {
 
         <div className="mx-auto mt-12 grid max-w-6xl gap-5 sm:mt-14 lg:grid-cols-[1.7fr_1fr]">
           <div className="flex flex-col gap-5">
-            <WideCard pack={first} price={priceOf(first)} tone="green" />
-            <WideCard pack={second} price={priceOf(second)} tone="white" />
+            <WideCard pack={first} price={priceOf(first)} tone="white" />
+            <WideCard pack={second} price={priceOf(second)} tone="mint" />
           </div>
           <TallCard pack={top} price={priceOf(top)} />
         </div>

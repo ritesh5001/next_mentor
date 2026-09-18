@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import { envUrl } from "@nextmentor/shared";
 
 import { getActivePlans, getCatalog } from "@/lib/queries";
-import {
-  Hero,
-  TrustBar,
-  WhatYouGet,
-  EarnBand,
-  ClosingCta,
-} from "@/components/marketing/home-sections";
+import { Hero, TrustBar } from "@/components/marketing/home-sections";
 import {
   HowItWorks,
   WhyChooseUs,
@@ -16,11 +10,10 @@ import {
   Founder,
   Trainers,
   StudentFeedback,
+  EarnBand,
+  ClosingCta,
 } from "@/components/marketing/home-sections-3";
-import {
-  Packages,
-  Faq,
-} from "@/components/marketing/home-sections-2";
+import { Faq } from "@/components/marketing/faq";
 import { SkillsCarousel } from "@/components/marketing/skills-carousel";
 import { PackShowcase } from "@/components/marketing/pack-showcase";
 
@@ -61,7 +54,7 @@ export default async function HomePage() {
 
       {/* Section order is a funnel, not a list: what this is, how it works,
           what it costs, who runs it, whether to believe them, then the ask.
-          The dark EarnBand sits in the middle to break a long light scroll. */}
+          Backgrounds alternate navy / green / white / wash from one palette. */}
       <Hero courses={courses} />
       <TrustBar />
       <SkillsCarousel />
@@ -72,19 +65,11 @@ export default async function HomePage() {
       <Founder />
       <Trainers />
       <StudentFeedback />
-      <EarnBand />
-      <WhatYouGet />
-      <Packages
-        plans={plans.map((p) => ({
-          slug: p.slug,
-          name: p.name,
-          tagline: p.tagline,
-          priceInPaise: p.priceInPaise,
-          mrpInPaise: p.mrpInPaise,
-          durationDays: p.durationDays,
-          features: p.features,
-          isFeatured: p.isFeatured,
-        }))}
+      <EarnBand
+        rates={plans
+          .filter((p) => p.commissionRateBps > 0)
+          .sort((x, y) => x.commissionRateBps - y.commissionRateBps)
+          .map((p) => ({ name: p.name, rateBps: p.commissionRateBps }))}
       />
       <Faq />
       <ClosingCta />
