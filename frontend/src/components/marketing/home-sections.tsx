@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight, GraduationCap, Search } from "lucide-react";
 import { CtaButton } from "./cta-button";
 import type { CatalogCourse } from "@nextmentor/shared";
-import { assetUrl, formatDuration } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 /**
@@ -83,103 +83,199 @@ export function SectionHead({
 /* -------------------------------------------------------------------- hero */
 
 /**
- * Hero.
+ * Hero: dark navy stage, centred headline, a working course search, and a
+ * student cut-out rising out of a circle at the bottom edge.
  *
- * Copy left, a real person right. The visual is the founder's own photograph
- * with one real course pinned over its corner, so the fold answers "who
- * teaches this" and "what do I actually get" before anyone scrolls. Every
- * figure in the overlay comes from the catalogue: no invented ratings or
- * learner counts.
+ * The two floating cards carry only facts the product can back up — the live
+ * course count and the founder's community — rather than a star rating or a
+ * learner count, neither of which exists in the data.
  */
 export function Hero({ courses }: { courses: CatalogCourse[] }) {
-  const featured = courses.find((c) => c.thumbnailKey) ?? courses[0];
-  const thumb = featured ? assetUrl(featured.thumbnailKey, { width: 240 }) : null;
+  const quickLinks = courses.filter((c) => c.thumbnailKey).slice(0, 2);
 
   return (
-    <section className="overflow-hidden bg-[var(--brand-hero-wash)]">
-      <div className="mx-auto grid max-w-7xl items-center gap-9 px-5 pb-16 pt-8 sm:px-8 sm:pb-20 sm:pt-14 lg:min-h-[640px] lg:grid-cols-[1fr_0.92fr] lg:gap-10 lg:pb-20 lg:pt-16 xl:min-h-[680px] xl:grid-cols-[0.94fr_1.06fr] xl:gap-12 xl:pt-[72px]">
-        <div className="flex flex-col items-start">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--brand-blue)]">
-            Practical digital skills
+    <section className="relative overflow-hidden bg-[var(--brand-surface-dark)] text-white">
+      <HeroDecor />
+
+      <div className="relative mx-auto flex max-w-7xl flex-col items-center px-5 pt-10 text-center sm:px-8 sm:pt-12 lg:pt-10">
+        <span className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[13px] font-medium text-white/85">
+          <GraduationCap className="size-4 text-[var(--brand-green-bright)]" strokeWidth={1.8} aria-hidden="true" />
+          Learn from someone who does the work
+        </span>
+
+        <h1 className="mt-6 max-w-4xl text-[38px] font-bold leading-[1.08] tracking-[-1px] sm:text-[56px] sm:tracking-[-1.6px] lg:text-[64px] lg:leading-[1.06] lg:tracking-[-2px]">
+          Learn the Skill,{" "}
+          <span className="text-[var(--brand-green-bright)]">Freelance</span>
+          <span className="mt-1 block font-medium tracking-[-0.5px] text-white/95">
+            with Confidence
           </span>
+        </h1>
 
-          {/* Line breaks are set, not left to wrapping: at desktop widths the
-              headline reads as three deliberate lines. */}
-          <h1 className="mt-5 text-[42px] font-bold leading-[1.02] tracking-[-0.8px] text-[var(--brand-ink)] sm:text-[56px] sm:tracking-[-1.5px] lg:text-[50px] lg:leading-[1.04] xl:text-[64px] xl:tracking-[-2px]">
-            <span className="block">Learn the skill.</span>
-            <span className="block font-semibold text-[var(--brand-blue)]">
-              Freelance with <br className="hidden xl:block" />
-              confidence.
-            </span>
-          </h1>
+        <p className="mt-5 max-w-[34rem] text-pretty text-base leading-[1.65] text-white/70 sm:text-[17px]">
+          Practical, project-based courses that help you build in-demand skills,
+          create real work, and start your freelancing journey.
+        </p>
 
-          <p className="mt-6 max-w-[32.5rem] text-pretty text-[17px] leading-[1.65] text-[var(--color-muted-foreground)] [hyphens:manual] sm:text-lg">
-            Practical, project-based courses that help you build in-demand
-            skills, create real work, and start your freelancing journey.
+        {/* A real search: a plain GET to /courses?q=…, so it works before any
+            JavaScript loads and the results page is shareable. */}
+        <form
+          action="/courses"
+          method="get"
+          role="search"
+          className="mt-8 flex w-full max-w-[36rem] items-center gap-2 rounded-full bg-white p-1.5 pl-5 shadow-[0_20px_50px_-20px_rgb(0_0_0/0.5)] focus-within:ring-2 focus-within:ring-[var(--brand-green-bright)]/70"
+        >
+          <Search className="size-5 shrink-0 text-[var(--color-muted-foreground)]" strokeWidth={1.8} aria-hidden="true" />
+          <label htmlFor="hero-search" className="sr-only">
+            Search courses
+          </label>
+          <input
+            id="hero-search"
+            name="q"
+            type="search"
+            placeholder="Search your course…"
+            autoComplete="off"
+            className="min-w-0 flex-1 bg-transparent py-3 text-[15px] text-[var(--brand-ink)] outline-none placeholder:text-[var(--color-muted-foreground)] sm:text-base"
+          />
+          <button
+            type="submit"
+            aria-label="Search"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--brand-green-bright)] text-[var(--brand-surface-dark)] transition-transform duration-200 hover:scale-105 focus-visible:outline-none sm:size-12"
+          >
+            <ArrowRight className="size-5" strokeWidth={2.2} aria-hidden="true" />
+          </button>
+        </form>
+
+        {quickLinks.length > 0 && (
+          <p className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[13px] text-white/55">
+            <span>Popular:</span>
+            {quickLinks.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/courses/${c.slug}`}
+                className="text-white/80 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+              >
+                {c.title}
+              </Link>
+            ))}
           </p>
+        )}
 
-          <div className="mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <CtaButton href="/courses" size="lg" className="justify-center whitespace-nowrap">
-              Explore courses
-            </CtaButton>
-            <CtaButton href="/register" variant="outline" size="lg" className="justify-center whitespace-nowrap">
-              Create an account
-            </CtaButton>
-          </div>
-
-          <p className="mt-6 flex items-center gap-2.5 text-sm text-[var(--color-muted-foreground)]">
-            <span className="size-1.5 shrink-0 rounded-full bg-[var(--brand-green-deep)]" aria-hidden="true" />
-            Free preview lessons, so you can watch before you buy.
-          </p>
-        </div>
-
-        <div className="relative w-full pb-5 sm:mx-auto sm:max-w-[27.5rem] lg:mr-0 lg:pb-0">
-          <div className="relative overflow-hidden rounded-[18px] bg-[var(--brand-surface-dark)]">
+        {/* The stage: circles + cut-out, with the two cards pinned to it. */}
+        <div className="relative mt-8 w-full max-w-5xl lg:mt-4">
+          <div className="relative mx-auto h-[330px] w-full max-w-[34rem] sm:h-[420px] lg:h-[430px]">
+            <span
+              aria-hidden="true"
+              className="absolute bottom-[-46%] left-1/2 aspect-square w-[118%] -translate-x-1/2 rounded-full bg-white/[0.05] sm:w-[112%]"
+            />
+            <span
+              aria-hidden="true"
+              className="absolute bottom-[-40%] left-1/2 aspect-square w-[86%] -translate-x-1/2 rounded-full bg-[var(--brand-blue-bright)]"
+            />
             <Image
-              src="/images/founder-saurabh.jpg"
-              alt="Saurabh Namdev, founder of NextMentor, at his desk"
-              width={941}
-              height={1672}
-              // `priority` is deprecated in Next 16; this is the LCP image.
+              src="/images/hero-student.webp"
+              alt="A smiling student holding a tablet"
+              width={1122}
+              height={1402}
               loading="eager"
               fetchPriority="high"
-              sizes="(max-width: 640px) calc(100vw - 40px), 440px"
-              className="aspect-[4/5] w-full object-cover object-[50%_36%]"
+              sizes="(max-width: 640px) 80vw, 420px"
+              className="absolute bottom-0 left-1/2 h-full w-auto max-w-none -translate-x-1/2 object-contain object-bottom"
             />
-
-            {/* Plain type on the dark curtain rather than a chip: the
-                photograph carries the authority, the caption just names it. */}
-            <p className="absolute right-5 top-5 text-right leading-tight text-white [text-shadow:0_1px_8px_rgb(0_0_0/0.35)]">
-              <span className="block text-sm font-semibold">Saurabh Namdev</span>
-              <span className="block text-xs text-white/80">Founder &amp; instructor</span>
-            </p>
           </div>
 
-          {featured && (
-            <Link
-              href={`/courses/${featured.slug}`}
-              className="absolute -bottom-5 left-4 right-4 flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] p-2.5 shadow-[0_12px_32px_-12px_rgb(16_26_71/0.22)] transition-transform duration-300 hover:-translate-y-0.5 sm:right-auto sm:max-w-[21.25rem] lg:-bottom-7 lg:-left-7 lg:w-[18.5rem]"
-            >
-              <span className="relative aspect-[4/3] w-[66px] shrink-0 overflow-hidden rounded-[10px] bg-[var(--color-muted)] lg:w-[78px]">
-                {thumb && <Image src={thumb} alt="" fill sizes="78px" className="object-cover" />}
+          <HeroCard className="left-0 top-[26%] hidden md:flex lg:top-[34%]">
+            <span className="tabular text-[34px] font-bold leading-none tracking-[-1px] text-[var(--brand-ink)]">
+              {courses.length}
+            </span>
+            <span className="mt-2 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--brand-green)]">
+              <span className="size-1.5 rounded-full bg-[var(--brand-green)]" aria-hidden="true" />
+              Courses open now
+            </span>
+            <span className="mt-2 text-[13px] leading-[1.5] text-[var(--color-muted-foreground)]">
+              Screen-recorded, step by step — follow along in your own account.
+            </span>
+          </HeroCard>
+
+          <HeroCard className="right-0 top-[6%] hidden md:flex lg:top-[8%]">
+            <span className="flex items-center gap-2.5">
+              <span className="relative size-10 overflow-hidden rounded-full ring-2 ring-white">
+                <Image
+                  src="/images/founder-saurabh-portrait.jpg"
+                  alt=""
+                  fill
+                  sizes="40px"
+                  className="scale-[1.5] object-cover object-[55%_22%]"
+                />
               </span>
-              <span className="flex min-w-0 flex-col gap-0.5">
-                <span className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">
-                  Now enrolling
-                </span>
-                <span className="line-clamp-2 text-[14.5px] font-semibold leading-snug text-[var(--brand-ink)]">
-                  {featured.title}
-                </span>
-                <span className="text-[13px] text-[var(--color-muted-foreground)]">
-                  {featured.lessonCount} {featured.lessonCount === 1 ? "lesson" : "lessons"} ·{" "}
-                  {formatDuration(featured.durationSeconds)}
-                </span>
+              <span className="flex flex-col text-left leading-tight">
+                <span className="text-[13px] font-semibold text-[var(--brand-ink)]">Saurabh Namdev</span>
+                <span className="text-xs text-[var(--color-muted-foreground)]">Founder &amp; instructor</span>
               </span>
-            </Link>
-          )}
+            </span>
+            <span className="mt-4 tabular text-[34px] font-bold leading-none tracking-[-1px] text-[var(--brand-ink)]">
+              14,000+
+            </span>
+            <span className="mt-2 text-[13px] leading-[1.5] text-[var(--color-muted-foreground)]">
+              People in the community Saurabh has built and led.
+            </span>
+          </HeroCard>
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroCard({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(
+        "absolute w-[15.5rem] flex-col rounded-2xl bg-white p-5 text-left shadow-[0_24px_60px_-24px_rgb(0_0_0/0.55)] lg:w-[17rem]",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** Background marks: soft circles, a dot grid, and two hand-drawn strokes. */
+function HeroDecor() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+      <span className="absolute -left-40 top-[42%] size-[26rem] rounded-full bg-white/[0.035]" />
+      <span className="absolute -right-32 top-[30%] size-[22rem] rounded-full bg-white/[0.035]" />
+
+      <svg className="absolute left-[9%] top-[30%] hidden lg:block" width="84" height="84" viewBox="0 0 84 84">
+        {Array.from({ length: 16 }).map((_, i) => (
+          <circle key={i} cx={(i % 4) * 22 + 9} cy={Math.floor(i / 4) * 22 + 9} r="2.2" fill="white" opacity="0.28" />
+        ))}
+      </svg>
+
+      <svg
+        className="absolute left-[3%] top-[11%] hidden w-20 lg:block xl:left-[7%] xl:w-24 2xl:left-[13%] 2xl:w-28"
+        viewBox="0 0 120 110"
+        fill="none"
+        stroke="var(--brand-green-bright)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M10 98c18-8 34-20 44-36 7-11 9-24 3-30-5-5-14-1-15 7-2 12 12 20 25 18 17-3 30-18 35-35" />
+        <path d="M94 16l8 7-10 4" />
+      </svg>
+
+      <svg
+        className="absolute right-[14%] top-[44%] hidden w-20 lg:block"
+        viewBox="0 0 90 60"
+        fill="none"
+        stroke="#f5d547"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M6 52c8-8 14-20 20-30 3-5 7-4 7 2 0 8-2 16 1 20 3 4 9-2 13-8 8-12 18-24 36-30" />
+      </svg>
+    </div>
   );
 }
 

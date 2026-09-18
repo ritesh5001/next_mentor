@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -29,6 +30,9 @@ const LINKS = [
 export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // On the homepage the hero is dark navy, so until the page scrolls the
+  // header takes the same navy and inverts; everywhere else it stays light.
+  const dark = usePathname() === "/" && !scrolled && !open;
 
   // A hairline appears once the page moves under the header, not before: at
   // the very top it would draw a line across the hero for no reason.
@@ -43,9 +47,11 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
     <header
       className={cn(
         "sticky top-0 z-50 border-b surface-blur transition-colors duration-200",
-        scrolled
-          ? "border-[var(--color-border)] bg-[var(--color-background)]/95"
-          : "border-transparent bg-[var(--brand-hero-wash)]",
+        dark
+          ? "border-transparent bg-[var(--brand-surface-dark)]"
+          : scrolled
+            ? "border-[var(--color-border)] bg-[var(--color-background)]/95"
+            : "border-transparent bg-[var(--brand-hero-wash)]",
       )}
     >
       <nav
@@ -58,7 +64,7 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
           className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0"
           onClick={() => setOpen(false)}
         >
-          <Logo className="h-[34px] w-auto" />
+          <Logo className="h-[34px] w-auto" inverted={dark} />
         </Link>
 
         <ul className="hidden items-center gap-2 lg:flex">
@@ -66,7 +72,12 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
             <li key={l.href}>
               <Link
                 href={l.href}
-                className="rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-muted-foreground)] transition-colors hover:text-[var(--brand-ink)]"
+                className={cn(
+                  "rounded-full px-3 py-2 text-[15px] font-medium transition-colors",
+                  dark
+                    ? "text-white/75 hover:text-white"
+                    : "text-[var(--color-muted-foreground)] hover:text-[var(--brand-ink)]",
+                )}
               >
                 {l.label}
               </Link>
@@ -78,7 +89,10 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
           {isSignedIn ? (
             <Link
               href="/dashboard"
-              className="btn-liquid hidden min-h-11 items-center px-5 text-[15px] font-semibold lg:inline-flex"
+              className={cn(
+                "btn-liquid hidden min-h-11 items-center px-5 text-[15px] font-semibold lg:inline-flex",
+                dark && "btn-liquid--light",
+              )}
             >
               Dashboard
             </Link>
@@ -86,13 +100,19 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
             <>
               <Link
                 href="/login"
-                className="hidden rounded-full px-4 py-2 text-[15px] font-medium text-[var(--brand-ink)] transition-colors hover:text-[var(--brand-blue)] lg:inline-flex"
+                className={cn(
+                  "hidden rounded-full px-4 py-2 text-[15px] font-medium transition-colors lg:inline-flex",
+                  dark ? "text-white hover:text-white/75" : "text-[var(--brand-ink)] hover:text-[var(--brand-blue)]",
+                )}
               >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="btn-liquid hidden min-h-11 items-center px-5 text-[15px] font-semibold lg:inline-flex"
+                className={cn(
+                  "btn-liquid hidden min-h-11 items-center px-5 text-[15px] font-semibold lg:inline-flex",
+                  dark && "btn-liquid--light",
+                )}
               >
                 Get started
               </Link>
@@ -105,7 +125,10 @@ export function MarketingNav({ isSignedIn }: { isSignedIn: boolean }) {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="-mr-2 flex size-11 items-center justify-center rounded-full text-[var(--brand-ink)] lg:hidden"
+            className={cn(
+              "-mr-2 flex size-11 items-center justify-center rounded-full lg:hidden",
+              dark ? "text-white" : "text-[var(--brand-ink)]",
+            )}
           >
             {open ? (
               <X className="size-5" strokeWidth={1.75} aria-hidden="true" />

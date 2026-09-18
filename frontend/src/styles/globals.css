@@ -79,6 +79,8 @@
   /* Solid navy fill. Replaces the old blue-to-green gradient; kept as a token
      so every filled brand surface changes in one place. */
   --brand-fill: #1b3fa0;
+  /* The logo arrow's green, bright enough to read as an accent on navy. */
+  --brand-green-bright: #3ddc72;
   --brand-hero-wash: #f6f8fc;
 
   color-scheme: light;
