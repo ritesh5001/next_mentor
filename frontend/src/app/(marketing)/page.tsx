@@ -18,6 +18,7 @@ import {
   Testimonials,
   Faq,
 } from "@/components/marketing/home-sections-2";
+import { SkillsCarousel } from "@/components/marketing/skills-carousel";
 
 export const metadata: Metadata = {
   title: "Learn the skill, freelance with confidence | NextMentor",
@@ -59,6 +60,7 @@ export default async function HomePage() {
           The dark EarnBand sits in the middle to break a long light scroll. */}
       <Hero courses={courses} />
       <TrustBar />
+      <SkillsCarousel courses={courses} />
       <WhyNextMentor />
       <FeaturedCourses courses={courses} />
       <HowItWorks />
