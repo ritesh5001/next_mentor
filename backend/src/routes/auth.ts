@@ -15,7 +15,7 @@ import { users } from "@/db/schema";
 import { login, register, refreshSession, BCRYPT_ROUNDS } from "@/lib/auth";
 import { issueOtp, verifyOtp, MAX_OTP_ATTEMPTS } from "@/lib/otp";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/email";
-import { requireUser, currentUser } from "@/middleware/auth";
+import { requireAccount, requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 
 /**
@@ -239,14 +239,14 @@ authRoutes.post("/reset-password", async (c) => {
  * JWT claims are frozen at signing time — a user promoted to admin keeps a
  * stale token until it is refreshed or expires.
  */
-authRoutes.post("/refresh", requireUser, async (c) => {
+authRoutes.post("/refresh", requireAccount, async (c) => {
   const session = await refreshSession(currentUser(c).id);
   if (!session) return fail(c, "This account is no longer active.", "unauthorized");
   return ok(c, session);
 });
 
 /** The caller's own record, for the frontend to render the session. */
-authRoutes.get("/me", requireUser, async (c) => {
+authRoutes.get("/me", requireAccount, async (c) => {
   const session = await refreshSession(currentUser(c).id);
   if (!session) return fail(c, "This account is no longer active.", "unauthorized");
   return ok(c, session.user);

@@ -2,6 +2,7 @@ import type { Context, MiddlewareHandler } from "hono";
 import type { Role } from "@nextmentor/shared";
 
 import { verifySessionToken } from "@/lib/auth";
+import { getActiveSubscription } from "@/services/plans";
 
 /**
  * Authentication and authorisation for the API.
@@ -51,8 +52,14 @@ export const optionalAuth: MiddlewareHandler = async (c, next) => {
   await next();
 };
 
-/** 401 unless a valid token is present. */
-export const requireUser: MiddlewareHandler = async (c, next) => {
+/**
+ * 401 unless a valid token is present — and nothing more.
+ *
+ * Only for the handful of routes a student must reach *before* they have a
+ * plan: their own session, buying a plan, and polling for that payment.
+ * Everything else uses `requireUser`, which also demands an active plan.
+ */
+export const requireAccount: MiddlewareHandler = async (c, next) => {
   const token = bearer(c);
   const claims = token ? await verifySessionToken(token) : null;
 
@@ -66,6 +73,28 @@ export const requireUser: MiddlewareHandler = async (c, next) => {
     role: claims.role,
     referralCode: claims.referralCode,
   });
+
+  await next();
+};
+
+/**
+ * 401 without a valid token; 402 for a student with no active plan.
+ *
+ * Signing up is not enough to use the platform: an account only becomes a
+ * member once a plan is paid for. Admins are exempt. The 402 carries its own
+ * code so the frontend can route to plan selection instead of the login page.
+ */
+export const requireUser: MiddlewareHandler = async (c, next) => {
+  const denied = await requireAccount(c, async () => {});
+  if (denied) return denied;
+
+  const user = c.get("user")!;
+  if (user.role !== "admin" && !(await getActiveSubscription(user.id))) {
+    return c.json(
+      { ok: false, error: "Choose a plan to continue.", code: "plan_required" },
+      402,
+    );
+  }
 
   await next();
 };

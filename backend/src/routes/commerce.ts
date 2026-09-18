@@ -9,7 +9,7 @@ import { validateCoupon, listVisibleCoupons } from "@/services/coupons";
 import { getActiveSubscription } from "@/services/plans";
 import { getUserOrders } from "@/services/orders";
 import { isEnrolled } from "@/lib/permissions";
-import { requireUser, currentUser } from "@/middleware/auth";
+import { requireAccount, requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 
 export const commerceRoutes = new Hono();
@@ -47,7 +47,7 @@ async function resolveItem(type: "course" | "plan", slug: string) {
   return { id: plan.id, title: plan.name, priceInPaise: plan.priceInPaise };
 }
 
-commerceRoutes.post("/coupons/preview", requireUser, async (c) => {
+commerceRoutes.post("/coupons/preview", requireAccount, async (c) => {
   const body = await parseBody(c, previewCouponSchema);
   if (!body.ok) return body.response;
 
@@ -79,7 +79,7 @@ commerceRoutes.post("/coupons/preview", requireUser, async (c) => {
  * Grants nothing — the webhook does that, after Razorpay confirms the money
  * moved. The browser is never trusted to report its own payment.
  */
-commerceRoutes.post("/checkout", requireUser, async (c) => {
+commerceRoutes.post("/checkout", requireAccount, async (c) => {
   const body = await parseBody(c, createCheckoutSchema);
   if (!body.ok) return body.response;
 
@@ -227,7 +227,7 @@ commerceRoutes.post("/checkout", requireUser, async (c) => {
 });
 
 /** Polled by the buy button while it waits for the webhook to land. */
-commerceRoutes.get("/ownership", requireUser, async (c) => {
+commerceRoutes.get("/ownership", requireAccount, async (c) => {
   const user = currentUser(c);
   const itemType = c.req.query("itemType");
   const slug = c.req.query("slug");
@@ -252,7 +252,7 @@ commerceRoutes.get("/ownership", requireUser, async (c) => {
   return ok(c, { owned: await isEnrolled(user.id, course.id) });
 });
 
-commerceRoutes.get("/my/orders", requireUser, async (c) =>
+commerceRoutes.get("/my/orders", requireAccount, async (c) =>
   ok(c, await getUserOrders(currentUser(c).id)),
 );
 
@@ -260,6 +260,6 @@ commerceRoutes.get("/my/coupons", requireUser, async (c) =>
   ok(c, await listVisibleCoupons(currentUser(c).id)),
 );
 
-commerceRoutes.get("/my/subscription", requireUser, async (c) =>
+commerceRoutes.get("/my/subscription", requireAccount, async (c) =>
   ok(c, await getActiveSubscription(currentUser(c).id)),
 );
