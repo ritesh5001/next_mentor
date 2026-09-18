@@ -3,15 +3,18 @@ import { envUrl } from "@nextmentor/shared";
 
 import { getActivePlans, getCatalog } from "@/lib/queries";
 import {
-  WhyNextMentor,
   Hero,
   TrustBar,
-  HowItWorks,
   WhatYouGet,
   EarnBand,
-  Founder,
   ClosingCta,
 } from "@/components/marketing/home-sections";
+import {
+  HowItWorks,
+  WhyChooseUs,
+  Roadmap,
+  Founder,
+} from "@/components/marketing/home-sections-3";
 import {
   FeaturedCourses,
   Packages,
@@ -63,9 +66,11 @@ export default async function HomePage() {
       <TrustBar />
       <SkillsCarousel />
       <PackShowcase prices={Object.fromEntries(plans.map((p) => [p.slug, p.priceInPaise]))} />
-      <WhyNextMentor />
-      <FeaturedCourses courses={courses} />
       <HowItWorks />
+      <WhyChooseUs />
+      <Roadmap />
+      <Founder />
+      <FeaturedCourses courses={courses} />
       <EarnBand />
       <WhatYouGet />
       <Packages
@@ -80,7 +85,6 @@ export default async function HomePage() {
           isFeatured: p.isFeatured,
         }))}
       />
-      <Founder />
       <Testimonials />
       <Faq />
       <ClosingCta />
