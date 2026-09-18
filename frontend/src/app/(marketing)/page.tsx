@@ -18,7 +18,6 @@ import {
   StudentFeedback,
 } from "@/components/marketing/home-sections-3";
 import {
-  FeaturedCourses,
   Packages,
   Faq,
 } from "@/components/marketing/home-sections-2";
@@ -73,7 +72,6 @@ export default async function HomePage() {
       <Founder />
       <Trainers />
       <StudentFeedback />
-      <FeaturedCourses courses={courses} />
       <EarnBand />
       <WhatYouGet />
       <Packages
