@@ -433,3 +433,30 @@ input[type="range"]::-moz-range-thumb {
 .nm-seek:focus-visible {
   height: 0.5rem;
 }
+
+/* Right-to-left ticker. The track holds the list twice, so sliding it by half
+   its width lands exactly where it started and the loop is seamless. */
+.marquee-track {
+  animation: marquee var(--marquee-duration, 60s) linear infinite;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No auto-scroll: let people swipe through the cards themselves. */
+  .marquee-track {
+    animation: none !important;
+  }
+  .marquee {
+    overflow-x: auto;
+  }
+}

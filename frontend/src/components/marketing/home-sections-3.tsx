@@ -16,6 +16,7 @@ import {
   MonitorPlay,
   MonitorSmartphone,
   Play,
+  Quote,
   Share2,
   ShieldCheck,
   User,
@@ -27,6 +28,7 @@ import {
 import { CtaButton } from "./cta-button";
 import { SectionHead } from "./home-sections";
 import { cn } from "@/lib/cn";
+import { TESTIMONIALS, type Testimonial } from "@/lib/testimonials";
 
 /* ------------------------------------------------------------ how it works */
 
@@ -559,6 +561,137 @@ export function Founder() {
               <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true" />
             </Link>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------------- trainers */
+
+const TRAINERS = [
+  { name: "Saurabh Namdev", role: "Founder & Business Coach", photo: "saurabh-namdev" },
+  { name: "Pooja Singh", role: "NextMentor Trainer", photo: "pooja-singh" },
+  { name: "Mohit Namdev", role: "NextMentor Trainer", photo: "mohit-namdev" },
+  { name: "Riya", role: "NextMentor Trainer", photo: "riya" },
+  { name: "Rashmi Sonar", role: "NextMentor Trainer", photo: "rashmi-sonar" },
+  { name: "Prabhat Prajapati", role: "NextMentor Trainer", photo: "prabhat-prajapati" },
+  { name: "Nidhi Soni", role: "NextMentor Trainer", photo: "nidhi-soni" },
+  { name: "Sachin Thakur", role: "NextMentor Trainer", photo: "sachin-thakur" },
+];
+
+/**
+ * The training team: framed portraits on green-to-navy cards. Four across on
+ * desktop, two on phones, so eight trainers always fill whole rows.
+ */
+export function Trainers() {
+  return (
+    <section id="trainers" className="scroll-mt-24 bg-white">
+      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+        <SectionHead
+          align="center"
+          eyebrow="Our trainers"
+          title="Learn from the best."
+          lede="Meet the people behind every lesson, live session and doubt-clearing call."
+        />
+
+        <ul className="mt-12 grid grid-cols-2 gap-3.5 sm:mt-14 sm:gap-5 md:grid-cols-4">
+          {TRAINERS.map((t) => (
+            <li
+              key={t.photo}
+              className="reveal group rounded-[20px] bg-[linear-gradient(180deg,#0e5a40_0%,#0f3a4a_48%,#101a47_100%)] p-2 shadow-[0_22px_40px_-26px_rgb(16_26_71/0.7)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:rounded-[24px] sm:p-3"
+            >
+              <div className="rounded-[15px] bg-[#132b45] p-1.5 ring-1 ring-[var(--brand-green-bright)]/45 sm:rounded-[18px] sm:p-2.5">
+                <div className="overflow-hidden rounded-[11px] bg-black sm:rounded-[13px]">
+                  <Image
+                    src={`/images/trainers/${t.photo}.webp`}
+                    alt={`${t.name}, ${t.role}`}
+                    width={640}
+                    height={800}
+                    sizes="(max-width: 768px) 45vw, 280px"
+                    className="aspect-[4/5] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                  />
+                </div>
+              </div>
+              <div className="px-1 pb-2 pt-3.5 text-center sm:pb-3 sm:pt-4">
+                <p className="text-[14.5px] font-semibold text-white sm:text-[17px]">{t.name}</p>
+                <p className="mt-0.5 text-[12px] text-white/65 sm:text-[13.5px]">{t.role}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
+/* --------------------------------------------------------- student feedback */
+
+function FeedbackCard({ t }: { t: Testimonial }) {
+  return (
+    <figure className="flex w-[300px] shrink-0 flex-col rounded-[22px] border border-[rgb(16_26_71/0.08)] bg-white p-6 shadow-[0_18px_36px_-28px_rgb(16_26_71/0.4)] sm:w-[360px] sm:p-7">
+      <Quote className="size-7 text-[var(--brand-green)]/40" strokeWidth={1.6} aria-hidden="true" />
+      <blockquote className="mt-4 flex-1 text-[15px] leading-[1.65] text-[var(--brand-ink)]/85 sm:text-[15.5px]">
+        {t.body}
+      </blockquote>
+      <figcaption className="mt-6 border-t border-[rgb(16_26_71/0.07)] pt-4">
+        <span className="flex items-center gap-1.5 text-[15px] font-semibold text-[var(--brand-ink)]">
+          {t.name}
+          <BadgeCheck
+            className="size-[18px] fill-[#1d9bf0] text-white"
+            strokeWidth={2.2}
+            aria-label="Verified student"
+          />
+        </span>
+        <span className="mt-0.5 block text-[13px] text-[var(--color-muted-foreground)]">
+          {t.who ? `${t.who} · ` : ""}
+          {t.course}
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
+/**
+ * Feedback as a continuous right-to-left ticker. Short lists are repeated
+ * until one pass is wider than the screen, then the whole pass is doubled
+ * so the CSS loop joins up seamlessly. Only the first pass is exposed to
+ * screen readers; the copies are decoration.
+ */
+export function StudentFeedback() {
+  if (TESTIMONIALS.length === 0) return null;
+
+  const pass = Array.from({ length: Math.ceil(8 / TESTIMONIALS.length) }, () => TESTIMONIALS).flat();
+
+  return (
+    <section className="overflow-hidden bg-[var(--brand-hero-wash)]">
+      <div className="mx-auto max-w-7xl px-5 pt-16 sm:px-8 sm:pt-20 lg:pt-24">
+        <SectionHead
+          align="center"
+          eyebrow="Student feedback"
+          title="What our students say."
+          lede="Real feedback from people who learned with NextMentor, in their own words."
+        />
+      </div>
+
+      <div
+        className="marquee mt-12 pb-16 [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)] sm:mt-14 sm:pb-20 lg:pb-24"
+        style={{ ["--marquee-duration" as string]: `${pass.length * 7}s` }}
+      >
+        <div className="marquee-track flex w-max">
+          {[0, 1].map((copy) => (
+            <ul
+              key={copy}
+              className="flex gap-5 pr-5"
+              aria-hidden={copy === 1 ? true : undefined}
+            >
+              {pass.map((t, i) => (
+                <li key={`${t.name}-${i}`} className="flex" aria-hidden={copy === 0 && i >= TESTIMONIALS.length ? true : undefined}>
+                  <FeedbackCard t={t} />
+                </li>
+              ))}
+            </ul>
+          ))}
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Check, Quote } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 import { SectionHead } from "./home-sections";
 import { CtaButton } from "./cta-button";
@@ -301,60 +301,3 @@ export function Packages({ plans }: { plans: PackageCard[] }) {
   );
 }
 
-/* ------------------------------------------------------------- testimonials */
-
-/**
- * Two of the four quotes that shipped with the site were dropped: they credited
- * SEO and Google Ads courses NextMentor does not sell, and a testimonial for a
- * course that does not exist is a claim the business cannot stand behind.
- */
-const TESTIMONIALS = [
-  {
-    name: "Neeraj Malviya",
-    context: "Meta Ads",
-    body: "I built a real income from the skills I learned here, and the referral program paid for the course several times over.",
-  },
-  {
-    name: "Priti Priyedarshni",
-    context: "Digital marketing",
-    body: "Structured training, Q&A sessions and mentorship that actually answered my questions. I went from nothing to running campaigns.",
-  },
-];
-
-/** Large quotes set as type, no stars and no rating — there is no rating data. */
-export function Testimonials() {
-  return (
-    <section className="bg-[var(--brand-hero-wash)]">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24 lg:py-28">
-        <SectionHead eyebrow="Students" title="What people said afterwards." />
-
-        <div className="mt-12 grid gap-12 sm:mt-16 md:grid-cols-2 md:gap-16 lg:gap-20">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name} className="reveal flex flex-col border-t border-[rgb(16_26_71/0.12)] pt-8">
-              <Quote
-                className="size-7 text-[var(--brand-blue)]/30"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-              <blockquote className="mt-5 text-pretty text-[21px] font-medium leading-[1.45] tracking-[-0.3px] text-[var(--brand-ink)] sm:text-2xl">
-                {t.body}
-              </blockquote>
-              <figcaption className="mt-7 flex items-center gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-card)] text-[13px] font-semibold text-[var(--brand-ink)] ring-1 ring-[rgb(16_26_71/0.1)]"
-                >
-                  {t.name.split(" ").map((n) => n[0]).join("")}
-                </span>
-                <span className="flex flex-col leading-tight">
-                  <span className="text-[15px] font-semibold text-[var(--brand-ink)]">{t.name}</span>
-                  <span className="text-[13px] text-[var(--color-muted-foreground)]">{t.context}</span>
-                </span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}

@@ -14,11 +14,12 @@ import {
   WhyChooseUs,
   Roadmap,
   Founder,
+  Trainers,
+  StudentFeedback,
 } from "@/components/marketing/home-sections-3";
 import {
   FeaturedCourses,
   Packages,
-  Testimonials,
   Faq,
 } from "@/components/marketing/home-sections-2";
 import { SkillsCarousel } from "@/components/marketing/skills-carousel";
@@ -70,6 +71,8 @@ export default async function HomePage() {
       <WhyChooseUs />
       <Roadmap />
       <Founder />
+      <Trainers />
+      <StudentFeedback />
       <FeaturedCourses courses={courses} />
       <EarnBand />
       <WhatYouGet />
@@ -85,7 +88,6 @@ export default async function HomePage() {
           isFeatured: p.isFeatured,
         }))}
       />
-      <Testimonials />
       <Faq />
       <ClosingCta />
     </>
