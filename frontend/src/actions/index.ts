@@ -56,6 +56,30 @@ export async function createCheckoutAction(input: {
   }
 }
 
+/**
+ * Checkout for one-click buy buttons. Same order creation as
+ * `createCheckoutAction`, but a missing or expired session comes back as
+ * `signin` so the button can route to login instead of showing an error.
+ */
+export async function startCheckoutAction(input: {
+  itemType: ItemType;
+  slug: string;
+  couponCode?: string;
+}): Promise<CheckoutResult | { status: "signin" }> {
+  const jar = await cookies();
+  if (!jar.get(SESSION_COOKIE)?.value) return { status: "signin" };
+
+  try {
+    return (await api("/api/checkout", { method: "POST", body: input })) as CheckoutResult;
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) return { status: "signin" };
+    return {
+      status: "error",
+      message: err instanceof ApiError ? err.message : "Could not start checkout.",
+    };
+  }
+}
+
 export async function previewCouponAction(input: {
   code: string;
   itemType: ItemType;

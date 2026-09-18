@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 
 import { PackBox } from "@/components/marketing/pack-box";
+import { QuickBuyButton } from "@/components/marketing/quick-buy-button";
 import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
 import { PACKS, type Pack } from "@/lib/packages";
@@ -9,32 +9,24 @@ import { PACKS, type Pack } from "@/lib/packages";
 type Tone = "green" | "white" | "lime";
 
 /**
- * Pill "Buy Now" with the arrow in its own circle. Links to the pack page
- * rather than straight to checkout — the pack page is where the buyer sees
- * which courses they are paying for.
+ * The card's actions: a one-click Buy Now straight into Razorpay, and a
+ * quieter link to the pack page for anyone who wants the course list first.
  */
 function BuyNow({ slug, name, tone }: { slug: string; name: string; tone: Tone }) {
   const onDark = tone === "green";
   return (
-    <Link
-      href={`/packages/${slug}`}
-      aria-label={`Buy Now — see what's in the ${name} pack`}
-      className={cn(
-        "group inline-flex min-h-12 items-center gap-3 rounded-full py-1.5 pl-1.5 pr-5 text-[15px] font-semibold transition-colors",
-        onDark
-          ? "text-white ring-[1.5px] ring-white/80 hover:bg-white/10"
-          : "bg-[#0b4a34] text-white hover:bg-[#0e5a40]",
-      )}
-    >
-      <span className="flex size-9 items-center justify-center rounded-full bg-white text-[#0b4a34]">
-        <ArrowUpRight
-          className="size-4 transition-transform duration-200 ease-out group-hover:-translate-y-px group-hover:translate-x-px"
-          strokeWidth={2.2}
-          aria-hidden="true"
-        />
-      </span>
-      Buy Now
-    </Link>
+    <div className="flex flex-wrap items-start gap-x-5 gap-y-2">
+      <QuickBuyButton slug={slug} name={name} onDark={onDark} />
+      <Link
+        href={`/packages/${slug}`}
+        className={cn(
+          "inline-flex min-h-12 items-center text-[14px] font-semibold underline-offset-4 hover:underline",
+          onDark ? "text-white/85" : "text-[#0b4a34]",
+        )}
+      >
+        What&apos;s inside
+      </Link>
+    </div>
   );
 }
 

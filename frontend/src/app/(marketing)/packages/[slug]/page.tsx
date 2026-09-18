@@ -13,6 +13,7 @@ import { getActivePlans, getActiveSubscription, getSessionUser } from "@/lib/que
 import { createCheckoutAction, pollOwnershipAction, previewCouponAction } from "@/actions";
 
 type Params = { params: Promise<{ slug: string }> };
+type PageProps = Params & { searchParams: Promise<{ buy?: string }> };
 
 // Spelled out so Tailwind sees every class; one course reads best narrower.
 const GRID: Record<number, string> = {
@@ -39,8 +40,8 @@ function term(durationDays: number | null): string {
   return `One payment, ${durationDays} days of access`;
 }
 
-export default async function PackPage({ params }: Params) {
-  const { slug } = await params;
+export default async function PackPage({ params, searchParams }: PageProps) {
+  const [{ slug }, { buy }] = await Promise.all([params, searchParams]);
   const pack = getPack(slug);
   if (!pack) notFound();
 
@@ -138,6 +139,9 @@ export default async function PackPage({ params }: Params) {
                     priceInPaise={plan.priceInPaise}
                     razorpayKeyId={process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? ""}
                     successPath="/dashboard"
+                    // Set when a signed-out visitor pressed Buy Now and has just
+                    // signed in: pick up where they left off.
+                    autoStart={buy === "1"}
                     createCheckout={createCheckoutAction}
                     previewCoupon={previewCouponAction}
                     pollOwnership={pollOwnershipAction}
@@ -146,7 +150,7 @@ export default async function PackPage({ params }: Params) {
               ) : (
                 <div className="flex flex-col gap-3">
                   <Link
-                    href={`/login?callbackUrl=${encodeURIComponent(`/packages/${pack.slug}`)}`}
+                    href={`/login?callbackUrl=${encodeURIComponent(`/packages/${pack.slug}?buy=1`)}`}
                     className="group inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[var(--brand-green-bright)] py-1.5 pl-1.5 pr-6 text-[15px] font-semibold text-[var(--brand-ink)] transition-colors hover:bg-[#5ce68b]"
                   >
                     <span className="flex size-10 items-center justify-center rounded-full bg-[var(--brand-ink)] text-white">
