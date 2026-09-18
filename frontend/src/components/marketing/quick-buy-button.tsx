@@ -9,8 +9,9 @@ import { useRazorpayCheckout } from "@/lib/use-razorpay-checkout";
 
 /**
  * "Buy Now" that goes straight to payment. Signed in: the Razorpay window
- * opens on this page. Signed out: sign in first, then land on the pack page,
- * which opens the same window automatically (`?buy=1`).
+ * opens on this page. Signed out: create an account (membership is paid, so
+ * signup leads to plan selection), with this pack preselected so its checkout
+ * opens as soon as the email is verified.
  */
 export function QuickBuyButton({
   slug,
@@ -36,7 +37,7 @@ export function QuickBuyButton({
     if (busy) return;
     const outcome = await start();
     if (outcome === "signin") {
-      router.push(`/login?callbackUrl=${encodeURIComponent(`/packages/${slug}?buy=1`)}`);
+      router.push(`/register?plan=${slug}`);
     }
   };
 

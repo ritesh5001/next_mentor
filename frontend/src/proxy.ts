@@ -20,7 +20,8 @@ export function proxy(request: NextRequest) {
   const isGated =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/admin") ||
-    pathname.startsWith("/learn");
+    pathname.startsWith("/learn") ||
+    pathname.startsWith("/choose-plan");
   const hasSessionCookie =
     // The session cookie is set by /api/session after the API returns a JWT.
     // Auth.js and its "authjs.session-token" cookie were removed when the
@@ -34,7 +35,8 @@ export function proxy(request: NextRequest) {
   if (isGated && !hasSessionCookie) {
     const login = new URL("/login", request.url);
     // Preserve where they were headed so sign-in can return them there.
-    login.searchParams.set("callbackUrl", pathname);
+    // Query included: `/choose-plan?plan=pro` must come back with its plan.
+    login.searchParams.set("callbackUrl", pathname + request.nextUrl.search);
     response = NextResponse.redirect(login);
   } else {
     response = NextResponse.next();

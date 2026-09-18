@@ -12,7 +12,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ plan?: string }>;
+}) {
+  const { plan } = await searchParams;
+
   // Show who invited them. Seeing a real name here measurably lifts completion
   // versus an anonymous "you were referred" line, and it lets the visitor catch
   // a wrong link before they sign up under the wrong affiliate.
@@ -27,7 +33,8 @@ export default async function RegisterPage() {
       <header className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
-          Start learning today. No card needed to sign up.
+          Step 1 of 3 — create your account, verify your email, then choose
+          your plan.
         </p>
       </header>
 
@@ -44,7 +51,7 @@ export default async function RegisterPage() {
         </div>
       )}
 
-      <RegisterForm />
+      <RegisterForm plan={plan} />
 
       <div className="flex items-center gap-3">
         <span className="h-px flex-1 bg-[var(--color-border)]" />
@@ -56,7 +63,9 @@ export default async function RegisterPage() {
 
       <p className="text-center text-sm text-[var(--color-muted-foreground)]">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-[var(--color-primary)] hover:underline">
+        <Link
+          href={`/login?callbackUrl=${encodeURIComponent(plan ? `/choose-plan?plan=${plan}` : "/choose-plan")}`}
+          className="font-semibold text-[var(--color-primary)] hover:underline">
           Sign in
         </Link>
       </p>

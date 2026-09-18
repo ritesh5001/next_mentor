@@ -10,6 +10,17 @@ import { SESSION_COOKIE, sessionCookieOptions } from "@/lib/session";
 
 export type { ActionState };
 
+/** A plan slug carried through signup, e.g. from a homepage "Buy Now". */
+function planParam(formData: FormData): string {
+  const plan = String(formData.get("plan") ?? "");
+  return /^[a-z0-9-]{1,40}$/.test(plan) ? plan : "";
+}
+
+/** Where an account without a plan goes next: plan selection. */
+function choosePlanPath(plan: string): string {
+  return plan ? `/choose-plan?plan=${plan}` : "/choose-plan";
+}
+
 /**
  * Auth actions.
  *
@@ -85,7 +96,8 @@ export async function registerAction(_prev: ActionState, formData: FormData): Pr
 
   // Attribution is now recorded against the user row; the cookie has done its job.
   store.delete(REFERRAL_COOKIE);
-  redirect(`/verify?email=${encodeURIComponent(email)}`);
+  const plan = planParam(formData);
+  redirect(`/verify?email=${encodeURIComponent(email)}${plan ? `&plan=${plan}` : ""}`);
 }
 
 export async function verifyEmailAction(
@@ -93,9 +105,11 @@ export async function verifyEmailAction(
   formData: FormData,
 ): Promise<ActionState> {
   const email = String(formData.get("email") ?? "");
+  const next = choosePlanPath(planParam(formData));
 
+  let result: { verified: boolean; session?: AuthSession };
   try {
-    await api("/api/auth/verify-email", {
+    result = await api<{ verified: boolean; session?: AuthSession }>("/api/auth/verify-email", {
       method: "POST",
       anonymous: true,
       body: { email, code: String(formData.get("code") ?? "") },
@@ -106,7 +120,19 @@ export async function verifyEmailAction(
     return { error: err instanceof ApiError ? err.message : "That code is not valid." };
   }
 
-  redirect("/login?verified=1");
+  // The API signs a freshly verified account straight in, so the next screen
+  // is choosing a plan rather than a second password prompt.
+  if (result.session) {
+    (await cookies()).set(
+      SESSION_COOKIE,
+      result.session.token,
+      sessionCookieOptions(result.session.expiresIn),
+    );
+    redirect(next);
+  }
+
+  // Already verified (no session issued): sign in, then continue to plans.
+  redirect(`/login?verified=1&callbackUrl=${encodeURIComponent(next)}`);
 }
 
 /**

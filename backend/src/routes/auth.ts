@@ -15,7 +15,7 @@ import { users } from "@/db/schema";
 import { login, register, refreshSession, BCRYPT_ROUNDS } from "@/lib/auth";
 import { issueOtp, verifyOtp, MAX_OTP_ATTEMPTS } from "@/lib/otp";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/email";
-import { requireAccount, requireUser, currentUser } from "@/middleware/auth";
+import { requireAccount, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 
 /**
@@ -132,7 +132,13 @@ authRoutes.post("/verify-email", async (c) => {
     .set({ emailVerified: new Date(), updatedAt: new Date() })
     .where(and(eq(users.id, user.id), isNull(users.emailVerified)));
 
-  return ok(c, { verified: true });
+  // A correct code proves control of the inbox, so sign the new account in
+  // straight away: the next step is choosing and paying for a plan, and
+  // making them type their password again in between only loses buyers.
+  // Deliberately only here — never on the `alreadyVerified` path above, which
+  // is reachable without a code.
+  const session = await refreshSession(user.id);
+  return ok(c, { verified: true, session });
 });
 
 /**

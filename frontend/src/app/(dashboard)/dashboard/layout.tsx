@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import { requireUser } from "@/lib/queries";
+import { requireMember } from "@/lib/queries";
 
 /**
  * Keeps admins out of the student dashboard.
@@ -19,7 +19,8 @@ export default async function StudentDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await requireUser();
+  // Also sends students without an active plan to plan selection.
+  const user = await requireMember();
   if (user.role === "admin") redirect("/admin");
 
   return <>{children}</>;

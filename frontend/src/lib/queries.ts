@@ -22,6 +22,20 @@ export async function requireUser(): Promise<SessionUser> {
   return user;
 }
 
+/**
+ * A signed-in student with a live plan — or an admin.
+ *
+ * Membership is paid: an account without an active plan is sent to plan
+ * selection instead of the page it asked for. The API enforces the same rule
+ * (402 `plan_required`); this is the redirect that makes it a flow, not an error.
+ */
+export async function requireMember(): Promise<SessionUser> {
+  const user = await requireUser();
+  if (user.role === "admin") return user;
+  if (!(await getActiveSubscription())) redirect("/choose-plan");
+  return user;
+}
+
 export async function requireAdmin(): Promise<SessionUser> {
   const user = await requireUser();
   // Rendering guard only. The API re-checks the role on every call it serves,

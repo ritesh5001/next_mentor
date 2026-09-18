@@ -21,9 +21,9 @@ export const metadata: Metadata = {
 export default async function VerifyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string }>;
+  searchParams: Promise<{ email?: string; plan?: string }>;
 }) {
-  const { email } = await searchParams;
+  const { email, plan } = await searchParams;
 
   return (
     <div className="flex flex-col items-center gap-6 text-center">
@@ -48,7 +48,7 @@ export default async function VerifyPage({
         </p>
       </div>
 
-      <VerifyForm email={email} />
+      <VerifyForm email={email} plan={plan} />
 
       <Link
         href="/login"

@@ -28,7 +28,7 @@ function ResendButton() {
   );
 }
 
-export function VerifyForm({ email: initialEmail }: { email?: string }) {
+export function VerifyForm({ email: initialEmail, plan }: { email?: string; plan?: string }) {
   const [state, formAction] = useActionState<ActionState, FormData>(verifyEmailAction, null);
   const [resendState, resendAction] = useActionState<ActionState, FormData>(
     resendOtpAction,
@@ -60,6 +60,7 @@ export function VerifyForm({ email: initialEmail }: { email?: string }) {
           />
         )}
         {initialEmail && <input type="hidden" name="email" value={initialEmail} />}
+        {plan && <input type="hidden" name="plan" value={plan} />}
 
         <div className="flex flex-col gap-2">
           <span className="text-sm font-medium">Verification code</span>

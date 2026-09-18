@@ -86,6 +86,12 @@ commerceRoutes.post("/checkout", requireAccount, async (c) => {
   const user = currentUser(c);
   const { itemType, slug, couponCode } = body.data;
 
+  // Membership comes first: without an active plan the only thing a student
+  // can buy is a plan. Single courses are an add-on for members.
+  if (itemType === "course" && user.role !== "admin" && !(await getActiveSubscription(user.id))) {
+    return fail(c, "Choose a plan first. Single courses are available to members.", "forbidden");
+  }
+
   const item = await resolveItem(itemType, slug);
   if (!item) return fail(c, "That item is not available.", "not_found");
 

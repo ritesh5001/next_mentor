@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { requireUser } from "@/lib/queries";
+import { requireMember } from "@/lib/queries";
 
 /**
  * The player shell.
@@ -17,7 +17,7 @@ import { requireUser } from "@/lib/queries";
  * back, and nothing else.
  */
 export default async function LearnLayout({ children }: { children: React.ReactNode }) {
-  await requireUser();
+  await requireMember();
 
   return (
     <div className="flex min-h-dvh flex-col bg-[var(--color-background)]">

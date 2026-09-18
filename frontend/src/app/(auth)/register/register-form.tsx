@@ -19,12 +19,13 @@ function SubmitButton() {
   );
 }
 
-export function RegisterForm() {
+export function RegisterForm({ plan }: { plan?: string }) {
   const [state, formAction] = useActionState<ActionState, FormData>(registerAction, null);
 
   return (
     <form action={formAction} className="flex flex-col gap-4" noValidate>
       {state?.error && <Alert tone="error">{state.error}</Alert>}
+      {plan && <input type="hidden" name="plan" value={plan} />}
 
       <Field
         label="Full name"

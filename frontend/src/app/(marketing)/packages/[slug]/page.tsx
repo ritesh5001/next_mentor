@@ -150,18 +150,21 @@ export default async function PackPage({ params, searchParams }: PageProps) {
               ) : (
                 <div className="flex flex-col gap-3">
                   <Link
-                    href={`/login?callbackUrl=${encodeURIComponent(`/packages/${pack.slug}?buy=1`)}`}
+                    href={`/register?plan=${pack.slug}`}
                     className="group inline-flex min-h-13 items-center justify-center gap-3 rounded-full bg-[var(--brand-green-bright)] py-1.5 pl-1.5 pr-6 text-[15px] font-semibold text-[var(--brand-ink)] transition-colors hover:bg-[#5ce68b]"
                   >
                     <span className="flex size-10 items-center justify-center rounded-full bg-[var(--brand-ink)] text-white">
                       <ArrowUpRight className="size-4" strokeWidth={2.2} aria-hidden="true" />
                     </span>
-                    Sign in to buy
+                    Get started
                   </Link>
                   <p className="text-center text-[13px] text-white/60">
-                    New here?{" "}
-                    <Link href="/register" className="font-semibold text-white underline-offset-4 hover:underline">
-                      Create an account
+                    Already have an account?{" "}
+                    <Link
+                      href={`/login?callbackUrl=${encodeURIComponent(`/packages/${pack.slug}?buy=1`)}`}
+                      className="font-semibold text-white underline-offset-4 hover:underline"
+                    >
+                      Sign in
                     </Link>
                   </p>
                 </div>
