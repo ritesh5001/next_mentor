@@ -43,6 +43,27 @@ export function CouponForm({ action }: { action: FormAction }) {
         maxLength={200}
       />
 
+      {/* When the code can be used — separate from how much it takes off. */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="usage" className="text-sm font-medium">
+          Use for
+        </label>
+        <select
+          id="usage"
+          name="usage"
+          defaultValue="any"
+          className="min-h-11 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-card)] px-3 text-[16px]"
+        >
+          <option value="any">New IDs and package upgrades</option>
+          <option value="signup">New IDs only</option>
+          <option value="upgrade">Package upgrades only</option>
+        </select>
+        <p className="text-xs text-[var(--color-muted-foreground)]">
+          An upgrade code applies to what the member pays to move up — just the difference within
+          72 hours of joining.
+        </p>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="discountType" className="text-sm font-medium">

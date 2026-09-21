@@ -82,6 +82,11 @@ export default async function AdminCouponsPage() {
                       ) : (
                         <span className="text-[13px] text-[var(--color-muted-foreground)]">Everyone</span>
                       )}
+                      {c.usage !== "any" && (
+                        <Badge tone="primary" className="mt-1">
+                          {c.usage === "upgrade" ? "Upgrades only" : "New IDs only"}
+                        </Badge>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">
                       {c.validUntil ? formatDate(c.validUntil) : "No expiry"}

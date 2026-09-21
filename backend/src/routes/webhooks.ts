@@ -172,7 +172,6 @@ async function notifyCommissionEarned(orderId: string, amountInPaise: number) {
       // First name only — an affiliate does not need a contact list emailed to
       // them.
       buyerName: buyer?.name?.split(" ")[0] ?? "Someone",
-      clearsOn: commission.maturesAt,
     });
   } catch (err) {
     console.error("[razorpay-webhook] Commission notification failed", orderId, err);

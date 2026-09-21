@@ -393,6 +393,8 @@ const couponSchema = z.object({
   assignTo: z.string().trim().max(120).optional().or(z.literal("")),
   /** Whether that member sees it in their coupons list. */
   visibleToAssignee: z.boolean().default(true),
+  /** New IDs only, package upgrades only, or either. */
+  usage: z.enum(["any", "signup", "upgrade"]).default("any"),
 });
 
 adminRoutes.post("/coupons", requireAdmin, async (c) => {

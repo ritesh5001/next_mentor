@@ -488,6 +488,8 @@ type CouponInput = {
   validUntil?: string;
   assignTo?: string;
   visibleToAssignee?: boolean;
+  /** New IDs only, upgrades only, or either. */
+  usage?: "any" | "signup" | "upgrade";
 };
 
 export async function createCoupon(d: CouponInput, adminId: string): Promise<Result> {
@@ -531,6 +533,7 @@ export async function createCoupon(d: CouponInput, adminId: string): Promise<Res
       perUserLimit: d.perUserLimit,
       validUntil: d.validUntil ? new Date(d.validUntil) : null,
       scope: "all",
+      usage: d.usage ?? "any",
       assignedUserId,
       isVisibleToAssignee: d.visibleToAssignee ?? true,
       createdById: adminId,

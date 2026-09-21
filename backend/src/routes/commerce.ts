@@ -58,6 +58,40 @@ async function resolveItem(type: "course" | "plan", slug: string) {
   return { id: plan.id, title: plan.name, priceInPaise: plan.priceInPaise, tier: plan.tier };
 }
 
+/**
+ * What this member would pay before any coupon, and what kind of purchase it
+ * is. Shared by the coupon preview and checkout so the two can never disagree:
+ * the preview used to price a coupon against the full package even when the
+ * member was upgrading and would only pay the difference.
+ */
+async function priceFor(
+  userId: string,
+  itemType: "course" | "plan",
+  item: NonNullable<Awaited<ReturnType<typeof resolveItem>>>,
+): Promise<
+  | { ok: true; listPriceInPaise: number; purchase: "signup" | "upgrade" | "other" }
+  | { ok: false; reason: string }
+> {
+  if (itemType !== "plan") return { ok: true, listPriceInPaise: item.priceInPaise, purchase: "other" };
+
+  const quote = await quoteForPlan(userId, {
+    id: item.id,
+    tier: item.tier ?? 1,
+    priceInPaise: item.priceInPaise,
+    name: item.title,
+  });
+  if (quote.kind === "blocked") return { ok: false, reason: quote.reason };
+
+  // Someone who already holds a package is upgrading, whether or not they
+  // are still inside the 72-hour difference-only window.
+  const upgrading = quote.kind === "upgrade" || Boolean(await getActiveSubscription(userId));
+  return {
+    ok: true,
+    listPriceInPaise: quote.amountInPaise,
+    purchase: upgrading ? "upgrade" : "signup",
+  };
+}
+
 commerceRoutes.post("/coupons/preview", requireAccount, async (c) => {
   const body = await parseBody(c, previewCouponSchema);
   if (!body.ok) return body.response;
@@ -66,12 +100,16 @@ commerceRoutes.post("/coupons/preview", requireAccount, async (c) => {
   const item = await resolveItem(body.data.itemType, body.data.slug);
   if (!item) return fail(c, "That item is not available.", "not_found");
 
+  const price = await priceFor(user.id, body.data.itemType, item);
+  if (!price.ok) return ok(c, { valid: false as const, reason: price.reason });
+
   const check = await validateCoupon({
     code: body.data.code,
     userId: user.id,
-    amountInPaise: item.priceInPaise,
+    amountInPaise: price.listPriceInPaise,
     scope: body.data.itemType,
     targetId: item.id,
+    purchase: price.purchase,
   });
 
   if (!check.valid) return ok(c, { valid: false as const, reason: check.reason });
@@ -112,17 +150,9 @@ commerceRoutes.post("/checkout", requireAccount, async (c) => {
 
   // A member moving up a pack pays the upgrade price, which within the
   // 72-hour window is only the difference (services/plans#quoteForPlan).
-  let listPriceInPaise = item.priceInPaise;
-  if (itemType === "plan") {
-    const quote = await quoteForPlan(user.id, {
-      id: item.id,
-      tier: item.tier ?? 1,
-      priceInPaise: item.priceInPaise,
-      name: item.title,
-    });
-    if (quote.kind === "blocked") return fail(c, quote.reason, "validation");
-    listPriceInPaise = quote.amountInPaise;
-  }
+  const price = await priceFor(user.id, itemType, item);
+  if (!price.ok) return fail(c, price.reason, "validation");
+  const listPriceInPaise = price.listPriceInPaise;
 
   let discountInPaise = 0;
   let couponId: string | null = null;
@@ -135,6 +165,7 @@ commerceRoutes.post("/checkout", requireAccount, async (c) => {
       amountInPaise: listPriceInPaise,
       scope: itemType,
       targetId: item.id,
+      purchase: price.purchase,
     });
     if (!check.valid) return fail(c, check.reason, "validation");
     discountInPaise = check.discountInPaise;

@@ -18,6 +18,8 @@ type Props = {
   /** Where to send the buyer once ownership is confirmed. */
   successPath: string;
   allowCoupon?: boolean;
+  /** The verb on the button — "Upgrade now" reads better than "Enrol" there. */
+  actionLabel?: string;
   /** Open the payment window as soon as the button mounts (e.g. right after sign-in). */
   autoStart?: boolean;
   createCheckout: (input: {
@@ -40,6 +42,7 @@ export function BuyButton({
   razorpayKeyId,
   successPath,
   allowCoupon = true,
+  actionLabel = "Enrol now",
   autoStart = false,
   createCheckout,
   previewCoupon,
@@ -125,7 +128,7 @@ export function BuyButton({
       )}
 
       <Button size="lg" className="w-full" loading={phase !== "idle"} onClick={handleClick}>
-        {phase === "confirming" ? "Confirming payment…" : `Enrol now — ${formatPrice(payable)}`}
+        {phase === "confirming" ? "Confirming payment…" : `${actionLabel} — ${formatPrice(payable)}`}
       </Button>
 
       {allowCoupon && !applied && (

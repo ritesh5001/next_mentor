@@ -22,6 +22,12 @@ import { users } from "./auth";
 
 export const discountTypeEnum = pgEnum("discount_type", ["percent", "flat"]);
 export const couponScopeEnum = pgEnum("coupon_scope", ["all", "course", "plan"]);
+/**
+ * Which kind of purchase a code is for. Scope says *what* it discounts; this
+ * says *when*: a joining offer for new IDs should not also cut the price of
+ * an upgrade, and an upgrade offer should not be spent on a first signup.
+ */
+export const couponUsageEnum = pgEnum("coupon_usage", ["any", "signup", "upgrade"]);
 
 export const coupons = pgTable(
   "coupons",
@@ -43,6 +49,7 @@ export const coupons = pgTable(
     minOrderInPaise: integer("min_order_in_paise").notNull().default(0),
 
     scope: couponScopeEnum("scope").notNull().default("all"),
+    usage: couponUsageEnum("usage").notNull().default("any"),
     /** Course id or plan id when scope is not "all". */
     targetId: text("target_id"),
 

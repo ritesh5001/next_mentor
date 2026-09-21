@@ -246,23 +246,31 @@ export function sendPayoutRejectedEmail(
   });
 }
 
+/**
+ * Sent to the sponsor the moment a sale lands.
+ *
+ * Deliberately says nothing about when the money can be withdrawn. It used to
+ * print the date the refund window closes, and promoters forward these emails
+ * — a fixed date in writing reads as a payout promise, and payouts actually go
+ * out on the Monday run after that, not on the date shown. The dashboard is
+ * where the live balance and its status belong.
+ */
 export function sendCommissionEarnedEmail(params: {
   to: string;
   amountFormatted: string;
   buyerName: string;
-  clearsOn: Date;
 }) {
   return send({
     to: params.to,
     subject: `You earned ${params.amountFormatted} — NextMentor`,
     html: layout(
       "You just earned commission",
-      `<p style="margin:0"><strong>${params.buyerName}</strong> made a purchase through your
+      `<p style="margin:0"><strong>${esc(params.buyerName)}</strong> made a purchase through your
        affiliate link, and you earned <strong>${params.amountFormatted}</strong>.</p>
-       <p style="margin:12px 0 0;color:#64748b">It clears for withdrawal on
-       ${params.clearsOn.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })},
-       once the refund window closes.</p>`,
-      { label: "View earnings", url: `${appUrl()}/dashboard/earnings` },
+       <p style="margin:12px 0 0;color:#64748b">It has been added to your earnings. Keep
+       sharing your link — every purchase through it adds to your income, and you can follow it
+       all live on your dashboard.</p>`,
+      { label: "View my earnings", url: `${appUrl()}/dashboard/overview` },
     ),
   });
 }

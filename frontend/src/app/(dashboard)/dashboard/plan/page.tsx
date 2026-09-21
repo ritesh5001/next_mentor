@@ -153,7 +153,9 @@ export default async function PlanPage() {
                     priceInPaise={payable}
                     razorpayKeyId={process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? ""}
                     successPath="/dashboard"
-                    allowCoupon={false}
+                    actionLabel={current ? "Upgrade now" : "Buy now"}
+                    // Priced by the API against the upgrade amount, so an
+                    // upgrade code takes its cut from what is actually paid.
                     createCheckout={createCheckoutAction}
                     previewCoupon={previewCouponAction}
                     pollOwnership={pollOwnershipAction}

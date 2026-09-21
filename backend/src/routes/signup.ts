@@ -199,6 +199,7 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
       amountInPaise: plan.priceInPaise,
       scope: "plan",
       targetId: plan.id,
+      purchase: "signup",
     });
     if (!check.valid) {
       return fail(c, check.reason, "validation", { couponCode: check.reason });
@@ -298,6 +299,7 @@ signupRoutes.post("/signup/coupon-preview", async (c) => {
     amountInPaise: plan.priceInPaise,
     scope: "plan",
     targetId: plan.id,
+    purchase: "signup",
   });
 
   return check.valid

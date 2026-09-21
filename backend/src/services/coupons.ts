@@ -46,6 +46,12 @@ export async function validateCoupon(params: {
   amountInPaise: number;
   scope: "course" | "plan";
   targetId: string;
+  /**
+   * What kind of purchase this is: a new ID, an upgrade of an existing
+   * package, or anything else (a single course). Checked against the code's
+   * own `usage`, so a joining offer cannot be spent on an upgrade.
+   */
+  purchase: "signup" | "upgrade" | "other";
 }): Promise<CouponCheck> {
   const code = normalizeCouponCode(params.code);
   if (!code) return { valid: false, reason: "Enter a coupon code." };
@@ -73,6 +79,16 @@ export async function validateCoupon(params: {
 
   if (coupon.maxRedemptions !== null && coupon.usedCount >= coupon.maxRedemptions) {
     return { valid: false, reason: "That code has been fully redeemed." };
+  }
+
+  if (coupon.usage !== "any" && coupon.usage !== params.purchase) {
+    return {
+      valid: false,
+      reason:
+        coupon.usage === "upgrade"
+          ? "That code is only for package upgrades."
+          : "That code is only for new IDs.",
+    };
   }
 
   if (coupon.scope !== "all") {
@@ -179,6 +195,7 @@ export async function listCouponsForAdmin() {
       discountType: coupons.discountType,
       value: coupons.value,
       scope: coupons.scope,
+      usage: coupons.usage,
       usedCount: coupons.usedCount,
       maxRedemptions: coupons.maxRedemptions,
       validUntil: coupons.validUntil,

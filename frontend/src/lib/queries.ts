@@ -800,6 +800,7 @@ export const listCouponsForAdmin = () =>
       assignedToEmail: string | null;
       assignedToCode: string | null;
       isVisibleToAssignee: boolean;
+      usage: "any" | "signup" | "upgrade";
     }>
   >("/api/admin/coupons");
 
