@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { IndianRupee } from "lucide-react";
 
 import { Logo } from "@/components/brand/logo";
-import { DashboardNav, type NavGroup } from "@/components/dashboard/dashboard-nav";
+import { DashboardNav, MobileMenu, type NavGroup } from "@/components/dashboard/dashboard-nav";
 import { Avatar } from "@/components/dashboard/panels";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
 import { getProfile, requireUser } from "@/lib/queries";
@@ -26,6 +27,7 @@ const NAV: NavGroup[] = [
   {
     label: "Earn",
     items: [
+      { href: "/dashboard/create-account", label: "Create Account", icon: "UserPlus", ready: true },
       { href: "/dashboard/overview", label: "Earnings Overview", icon: "LayoutDashboard", ready: true },
       { href: "/dashboard/earnings", label: "Associates & Earnings", icon: "Coins", ready: true },
       { href: "/dashboard/affiliate", label: "Affiliate Link", icon: "Gift", ready: true },
@@ -51,7 +53,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   await requireUser();
   // The session token carries no name or photo; the profile does.
   const profile = await getProfile();
-  const displayName = profile.name ?? profile.email;
+  // Always a name to greet by: the part before the @ when none is on file.
+  const displayName = profile.name?.trim() || profile.email.split("@")[0];
   const subscription = profile.subscription;
 
   return (
@@ -90,7 +93,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </span>
             </Link>
 
-            <SignOutButton />
+            {/* One tap to the live income dashboard, on every screen size. */}
+            <Link
+              href="/dashboard/overview"
+              aria-label="Live income dashboard"
+              title="Live income dashboard"
+              className="relative flex size-11 items-center justify-center rounded-full bg-[linear-gradient(145deg,#12a150,#0b4a34)] text-white shadow-[0_10px_22px_-10px_rgb(18_161_80/0.8)] transition-transform duration-200 hover:scale-105"
+            >
+              <IndianRupee className="size-5" strokeWidth={2.2} aria-hidden="true" />
+              <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 flex size-3.5">
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--brand-green-bright)] opacity-70" />
+                <span className="relative inline-flex size-3.5 rounded-full bg-[var(--brand-green-bright)] ring-2 ring-white" />
+              </span>
+            </Link>
+
+            {/* Desktop signs out here; on smaller screens it sits in the menu. */}
+            <div className="hidden lg:block">
+              <SignOutButton />
+            </div>
+
+            <MobileMenu groups={NAV} planName={subscription?.planName ?? null} />
           </div>
         </div>
       </header>

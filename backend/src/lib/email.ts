@@ -266,3 +266,47 @@ export function sendCommissionEarnedEmail(params: {
     ),
   });
 }
+
+/* ---------------------------------------------------------------- welcome */
+
+/** User-typed values go into HTML here, so they are escaped. */
+function esc(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/**
+ * Sent once, when a paid signup is activated: the new member's ID and the
+ * credentials they chose, so they (or the member who signed them up) have
+ * everything needed to log in.
+ */
+export function sendWelcomeCredentialsEmail(params: {
+  to: string;
+  name: string | null;
+  memberId: string;
+  password: string;
+  planName: string;
+}) {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:8px 0;color:#64748b">${label}</td><td align="right" style="padding:8px 0;font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;word-break:break-all">${value}</td></tr>`;
+
+  return send({
+    to: params.to,
+    subject: "Congratulations! Your NextMentor ID is ready",
+    html: layout(
+      `Congratulations${params.name ? `, ${esc(params.name.split(" ")[0])}` : ""}! 🎉`,
+      `<p style="margin:0">Your <strong>${esc(params.planName)}</strong> membership is active. Here are your login details:</p>
+       <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;font-size:14px;background:#f1f5f9;border-radius:12px;padding:8px 16px">
+         ${row("Member ID", esc(params.memberId))}
+         ${row("Login email", esc(params.to))}
+         ${row("Password", esc(params.password))}
+       </table>
+       <p style="margin:20px 0 0;font-size:13px;color:#64748b">For your security, change this password after you log in (Dashboard → Profile) and never share it with anyone.</p>`,
+      { label: "Log in to your dashboard", url: `${appUrl()}/login` },
+    ),
+  });
+}

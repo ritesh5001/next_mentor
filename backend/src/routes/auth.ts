@@ -3,7 +3,6 @@ import { and, eq, isNull } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import {
   loginSchema,
-  registerSchema,
   requestResetSchema,
   resetPasswordSchema,
   verifyEmailOtpSchema,
@@ -12,7 +11,7 @@ import {
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { login, register, refreshSession, BCRYPT_ROUNDS } from "@/lib/auth";
+import { login, refreshSession, BCRYPT_ROUNDS } from "@/lib/auth";
 import { issueOtp, verifyOtp, MAX_OTP_ATTEMPTS } from "@/lib/otp";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/email";
 import { requireAccount, currentUser } from "@/middleware/auth";
@@ -36,7 +35,13 @@ authRoutes.post("/login", async (c) => {
     case "ok":
       return ok(c, result.session);
     case "email_not_verified":
-      return fail(c, "Confirm your email first. Check your inbox for the link.", "forbidden");
+      // With paid signup, an unverified account is one whose payment never
+      // completed — there is no inbox link to wait for.
+      return fail(
+        c,
+        "This account is not active yet. Complete your package payment to activate it.",
+        "forbidden",
+      );
     case "blocked":
       return fail(c, "This account has been suspended. Contact support.", "forbidden");
     case "invalid_credentials":
@@ -45,25 +50,14 @@ authRoutes.post("/login", async (c) => {
   }
 });
 
-authRoutes.post("/register", async (c) => {
-  const body = await parseBody(c, registerSchema);
-  if (!body.ok) return body.response;
-
-  const result = await register({
-    name: body.data.name,
-    email: body.data.email,
-    password: body.data.password,
-    referralCode: body.data.referralCode,
-  });
-
-  if (result.status === "email_taken") {
-    // Deliberately vague: confirming an address is registered turns this
-    // endpoint into an account-enumeration oracle.
-    return fail(c, "That email cannot be used. Try signing in instead.", "conflict");
-  }
-
-  return ok(c, { sent: true }, 201);
-});
+/**
+ * Retired. Accounts are created only through paid signup
+ * (POST /api/signup/checkout), so an ID never exists without a package —
+ * this endpoint used to create free, OTP-verified accounts.
+ */
+authRoutes.post("/register", (c) =>
+  fail(c, "Sign up by choosing a package on the registration page.", "forbidden"),
+);
 
 /**
  * Looks up a user by email for an OTP flow.

@@ -46,6 +46,14 @@ export const users = pgTable(
     referredAt: timestamp("referred_at", { withTimezone: true }),
 
     phone: text("phone"),
+    // Indian state or union territory, captured at signup.
+    state: text("state"),
+
+    // The password a new member chose, encrypted (AES-256-GCM, see
+    // lib/crypto) only until their first payment is confirmed — the welcome
+    // email quotes it — then wiped. Null for every activated account.
+    pendingPasswordEnc: text("pending_password_enc"),
+
     isBlocked: boolean("is_blocked").notNull().default(false),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

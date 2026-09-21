@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="grid min-h-dvh lg:grid-cols-2">
       {/* Form column. On mobile this is the whole page — the marketing panel
           is decorative and should never push the form below the fold. */}
-      <div className="flex flex-col px-6 py-8 sm:px-10">
+      <div className="flex min-w-0 flex-col px-6 py-8 sm:px-10">
         <Link href="/" className="w-fit" aria-label="NextMentor home">
           <Logo className="h-8 w-auto" />
         </Link>

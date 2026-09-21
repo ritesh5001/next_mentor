@@ -147,3 +147,15 @@ export const PACKS: Pack[] = [
 ];
 
 export const getPack = (slug: string) => PACKS.find((p) => p.slug === slug);
+
+/** Live plans shaped for the signup form, with each pack's course names. */
+export function toSignupPlans(
+  plans: { slug: string; name: string; priceInPaise: number }[],
+): { slug: string; name: string; priceInPaise: number; courses: string[] }[] {
+  return plans.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    priceInPaise: p.priceInPaise,
+    courses: getPack(p.slug)?.courses.map((c) => c.title) ?? [],
+  }));
+}

@@ -14,7 +14,7 @@ declare global {
   }
 }
 
-function loadCheckoutScript(): Promise<boolean> {
+export function loadCheckoutScript(): Promise<boolean> {
   if (typeof window === "undefined") return Promise.resolve(false);
   if (window.Razorpay) return Promise.resolve(true);
 

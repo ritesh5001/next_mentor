@@ -1,71 +1,55 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { Gift } from "lucide-react";
 
-import { REFERRAL_COOKIE } from "@nextmentor/shared";
-import { RegisterForm } from "./register-form";
-import { normalizeReferralCode } from "@nextmentor/shared";
+import { REFERRAL_COOKIE, normalizeReferralCode } from "@nextmentor/shared";
+import { SignupForm } from "@/components/auth/signup-form";
+import { toSignupPlans } from "@/lib/packages";
+import { getActivePlans } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Create your account",
   robots: { index: false, follow: false },
 };
 
+/**
+ * Paid signup. No OTP and no free account: the details and the package are
+ * taken together, and the ID only exists once Razorpay confirms the payment.
+ * `?plan=` preselects a package and `?ref=` (captured into a cookie by the
+ * proxy) credits the member who shared the link.
+ */
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ plan?: string }>;
+  searchParams: Promise<{ plan?: string; ref?: string }>;
 }) {
-  const { plan } = await searchParams;
-
-  // Show who invited them. Seeing a real name here measurably lifts completion
-  // versus an anonymous "you were referred" line, and it lets the visitor catch
-  // a wrong link before they sign up under the wrong affiliate.
-  const refCode = (await cookies()).get(REFERRAL_COOKIE)?.value;
-  // The referrer's name is a nicety, not a gate. Rather than add an endpoint
-  // just to look it up, the page shows the code and the API resolves it at
-  // signup — where it actually matters.
-  const referrerName: string | null = null;
+  const [{ plan, ref }, plans, jar] = await Promise.all([searchParams, getActivePlans(), cookies()]);
+  // First-touch attribution: the cookie wins; the link's own ?ref covers a
+  // browser that blocked the cookie.
+  const raw = jar.get(REFERRAL_COOKIE)?.value ?? ref;
+  const referralCode = raw ? normalizeReferralCode(raw) : undefined;
 
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--brand-ink)]">Create your account</h1>
         <p className="text-sm text-[var(--color-muted-foreground)]">
-          Step 1 of 3 — create your account, verify your email, then choose
-          your plan.
+          Fill in your details, choose a package and pay — your ID and password are emailed to you
+          as soon as the payment goes through.
         </p>
       </header>
 
-      {referrerName && (
-        <div className="flex items-center gap-2.5 rounded-[var(--radius-control)] border border-[var(--color-primary)]/25 bg-[var(--color-primary-subtle)] px-3.5 py-3 text-sm">
-          <Gift
-            className="size-4 shrink-0 text-[var(--color-primary)]"
-            strokeWidth={1.5}
-            aria-hidden="true"
-          />
-          <span className="text-[var(--color-foreground)]">
-            Invited by <strong className="font-semibold">{referrerName}</strong>
-          </span>
-        </div>
+      {plans.length === 0 ? (
+        <p className="rounded-[14px] bg-[var(--brand-hero-wash)] px-4 py-3 text-sm text-[var(--color-muted-foreground)]">
+          Packages are unavailable right now. Please try again shortly.
+        </p>
+      ) : (
+        <SignupForm plans={toSignupPlans(plans)} initialPlan={plan} referralCode={referralCode} />
       )}
-
-      <RegisterForm plan={plan} />
-
-      <div className="flex items-center gap-3">
-        <span className="h-px flex-1 bg-[var(--color-border)]" />
-        <span className="text-xs font-medium uppercase tracking-wide text-[var(--color-muted-foreground)]">
-          or
-        </span>
-        <span className="h-px flex-1 bg-[var(--color-border)]" />
-      </div>
 
       <p className="text-center text-sm text-[var(--color-muted-foreground)]">
         Already have an account?{" "}
-        <Link
-          href={`/login?callbackUrl=${encodeURIComponent(plan ? `/choose-plan?plan=${plan}` : "/choose-plan")}`}
-          className="font-semibold text-[var(--color-primary)] hover:underline">
+        <Link href="/login" className="font-semibold text-[var(--brand-blue)] hover:underline">
           Sign in
         </Link>
       </p>

@@ -12,6 +12,7 @@ import {
   getOrderReceiptData,
 } from "@/services/orders";
 import { sendPurchaseReceiptEmail, sendCommissionEarnedEmail } from "@/lib/email";
+import { activatePendingSignup } from "@/services/signup";
 import { invalidateTag } from "@/lib/cache";
 import { CATALOG_TAG } from "@/services/courses";
 
@@ -68,6 +69,10 @@ webhookRoutes.post("/razorpay", async (c) => {
         });
 
         if (result.status === "granted") {
+          // A paid signup becomes a real account here; for an existing
+          // member this is a no-op.
+          await activatePendingSignup(result.orderId);
+
           // After the transaction commits — a rollback must not still deliver
           // a receipt for a purchase that never happened.
           const receipt = await getOrderReceiptData(result.orderId);

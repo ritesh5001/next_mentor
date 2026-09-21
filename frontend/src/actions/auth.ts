@@ -69,37 +69,6 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
   redirect(isExplicit ? callbackUrl : home);
 }
 
-export async function registerAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  const store = await cookies();
-  const referralCode = store.get(REFERRAL_COOKIE)?.value;
-  const email = String(formData.get("email") ?? "");
-
-  try {
-    await api("/api/auth/register", {
-      method: "POST",
-      anonymous: true,
-      body: {
-        name: String(formData.get("name") ?? ""),
-        email,
-        password: String(formData.get("password") ?? ""),
-        confirmPassword: String(formData.get("confirmPassword") ?? ""),
-        // An unticked checkbox is absent from FormData entirely, so this is
-        // false rather than undefined and fails the schema with a real message.
-        acceptedTerms: formData.get("acceptedTerms") === "on",
-        referralCode,
-      },
-    });
-  } catch (err) {
-    if (err instanceof ApiError) return { error: err.message };
-    return { error: "Could not create that account. Please try again." };
-  }
-
-  // Attribution is now recorded against the user row; the cookie has done its job.
-  store.delete(REFERRAL_COOKIE);
-  const plan = planParam(formData);
-  redirect(`/verify?email=${encodeURIComponent(email)}${plan ? `&plan=${plan}` : ""}`);
-}
-
 export async function verifyEmailAction(
   _prev: ActionState,
   formData: FormData,
@@ -212,4 +181,62 @@ export async function resetPasswordAction(
 export async function signOutAction(): Promise<void> {
   (await cookies()).set(SESSION_COOKIE, "", sessionCookieOptions(0));
   redirect("/");
+}
+
+/* ------------------------------------------------------------ paid signup */
+
+export type SignupInput = {
+  name: string;
+  phone: string;
+  email: string;
+  state: string;
+  password: string;
+  confirmPassword: string;
+  acceptedTerms: boolean;
+  planSlug: string;
+  referralCode?: string;
+};
+
+export type SignupCheckout = {
+  orderId: string;
+  razorpayOrderId: string;
+  amountInPaise: number;
+  currency: string;
+  itemTitle: string;
+  prefill: { name: string; email: string; contact: string };
+};
+
+/**
+ * Starts a paid signup: the API stores a pending account and returns a
+ * Razorpay order for the chosen package. The session cookie is sent when
+ * present, which is how a signed-in member becomes the sponsor of an account
+ * they create for someone else.
+ */
+export async function signupCheckoutAction(
+  input: SignupInput,
+): Promise<{ ok: true; data: SignupCheckout } | { ok: false; error: string; fields?: Record<string, string> }> {
+  const referralCode =
+    input.referralCode?.trim() || (await cookies()).get(REFERRAL_COOKIE)?.value || undefined;
+
+  try {
+    const data = await api<SignupCheckout>("/api/signup/checkout", {
+      method: "POST",
+      body: { ...input, referralCode },
+    });
+    return { ok: true, data };
+  } catch (err) {
+    if (err instanceof ApiError) return { ok: false, error: err.message, fields: err.fields };
+    return { ok: false, error: "Could not start payment. Please try again." };
+  }
+}
+
+/** Whether the signup's order has been paid (and so the account activated). */
+export async function signupStatusAction(orderId: string): Promise<{ paid: boolean }> {
+  try {
+    return await api<{ paid: boolean }>(`/api/signup/status?orderId=${encodeURIComponent(orderId)}`, {
+      anonymous: true,
+    });
+  } catch {
+    return { paid: false };
+  }
 }

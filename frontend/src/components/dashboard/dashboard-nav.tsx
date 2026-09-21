@@ -6,7 +6,7 @@ import { useState } from "react";
 import {
   ArrowUpRight, Award, BookOpen, Briefcase, Coins, FileBadge, Gift, GraduationCap, Handshake,
   LayoutDashboard, Megaphone, Menu, ShieldCheck, Sparkles, Target, Ticket,
-  TrendingUp, Trophy, UserCircle, Users, X, type LucideIcon,
+  TrendingUp, Trophy, UserCircle, UserPlus, Users, X, type LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/cn";
@@ -15,7 +15,7 @@ import { SignOutButton } from "@/components/dashboard/sign-out-button";
 const ICONS: Record<string, LucideIcon> = {
   LayoutDashboard, BookOpen, UserCircle, ShieldCheck, Coins, Trophy, Gift, Sparkles,
   GraduationCap, TrendingUp, Handshake, Megaphone, Ticket, Users, Award,
-  FileBadge, Target, Briefcase,
+  FileBadge, Target, Briefcase, UserPlus,
 };
 
 export type NavItem = {
@@ -118,32 +118,40 @@ function PlanCard({ planName, onNavigate }: { planName: string | null; onNavigat
 
 const PANEL_BG = "linear-gradient(180deg,#101a47 0%,#0d1640 100%)";
 
+/** Desktop sidebar, per the adaptive-navigation rule for viewports ≥1024px. */
 export function DashboardNav({ groups, planName }: { groups: NavGroup[]; planName: string | null }) {
+  return (
+    <nav aria-label="Dashboard" className="hidden w-64 shrink-0 lg:block">
+      <div
+        className="sticky top-24 flex max-h-[calc(100dvh-7rem)] flex-col gap-4 overflow-y-auto rounded-[24px] p-3 shadow-[0_24px_48px_-30px_rgb(16_26_71/0.7)] [scrollbar-width:thin]"
+        style={{ background: PANEL_BG }}
+      >
+        <div className="pt-2">
+          <NavList groups={groups} />
+        </div>
+        <PlanCard planName={planName} />
+      </div>
+    </nav>
+  );
+}
+
+/**
+ * Phones and tablets: the menu button lives in the header's top-right corner,
+ * where people look for it, and opens the same grouped navigation as a
+ * slide-over. Seventeen items is far too many for a bottom bar, which caps
+ * at five.
+ */
+export function MobileMenu({ groups, planName }: { groups: NavGroup[]; planName: string | null }) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      {/* Desktop: a persistent sidebar, per the adaptive-navigation rule for
-          viewports ≥1024px. */}
-      <nav aria-label="Dashboard" className="hidden w-64 shrink-0 lg:block">
-        <div
-          className="sticky top-24 flex max-h-[calc(100dvh-7rem)] flex-col gap-4 overflow-y-auto rounded-[24px] p-3 shadow-[0_24px_48px_-30px_rgb(16_26_71/0.7)] [scrollbar-width:thin]"
-          style={{ background: PANEL_BG }}
-        >
-          <div className="pt-2">
-            <NavList groups={groups} />
-          </div>
-          <PlanCard planName={planName} />
-        </div>
-      </nav>
-
-      {/* Mobile: a trigger plus a slide-over. Seventeen items is far too many
-          for a bottom bar, which caps at five. */}
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-40 flex size-14 items-center justify-center rounded-full bg-[var(--brand-ink)] text-white shadow-[0_18px_36px_-12px_rgb(16_26_71/0.7)] ring-2 ring-white lg:hidden"
         aria-label="Open dashboard menu"
+        aria-expanded={open}
+        className="flex size-11 items-center justify-center rounded-full bg-[var(--brand-ink)] text-white transition-colors hover:bg-[#1b2a66] lg:hidden"
       >
         <Menu className="size-5" strokeWidth={1.8} aria-hidden="true" />
       </button>
@@ -160,7 +168,7 @@ export function DashboardNav({ groups, planName }: { groups: NavGroup[]; planNam
 
           <nav
             aria-label="Dashboard"
-            className="absolute inset-y-0 right-0 flex w-[85vw] max-w-xs flex-col shadow-[var(--shadow-overlay)]"
+            className="absolute inset-y-0 left-0 flex w-[85vw] max-w-xs flex-col shadow-[var(--shadow-overlay)]"
             style={{ background: PANEL_BG }}
           >
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">

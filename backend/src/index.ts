@@ -16,6 +16,7 @@ import { certificateRoutes } from "@/routes/certificates";
 import { adminRoutes } from "@/routes/admin";
 import { webhookRoutes } from "@/routes/webhooks";
 import { cronRoutes } from "@/routes/cron";
+import { signupRoutes } from "@/routes/signup";
 import { startSelfPing } from "@/lib/self-ping";
 
 /**
@@ -54,6 +55,7 @@ app.get("/health", (c) =>
 app.route("/api/auth", authRoutes);
 app.route("/api", catalogRoutes);
 app.route("/api", commerceRoutes);
+app.route("/api", signupRoutes);
 app.route("/api", learnRoutes);
 app.route("/api", affiliateRoutes);
 app.route("/api", profileRoutes);

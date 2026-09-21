@@ -4,10 +4,33 @@ import { useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/cn";
+import { formatPrice } from "@/lib/format";
 
-/** Copyable affiliate link, with a native share sheet on mobile. */
-export function AffiliateLink({ url, code }: { url: string; code: string }) {
+type LinkPackage = { slug: string; name: string; priceInPaise: number };
+
+/**
+ * Copyable affiliate link, with a native share sheet on mobile.
+ *
+ * The member picks what the link sells: the general homepage link, or one of
+ * the packages — which lands the new person on signup with that package
+ * preselected. Every variant carries the member's referral ID.
+ */
+export function AffiliateLink({
+  baseUrl,
+  code,
+  packages,
+}: {
+  baseUrl: string;
+  code: string;
+  packages: LinkPackage[];
+}) {
   const [copied, setCopied] = useState(false);
+  const [target, setTarget] = useState<string>(packages[0]?.slug ?? "");
+  const url = target
+    ? `${baseUrl}/register?ref=${code}&plan=${target}`
+    : `${baseUrl}/?ref=${code}`;
+  const selected = packages.find((p) => p.slug === target);
 
   async function copy() {
     try {
@@ -25,7 +48,9 @@ export function AffiliateLink({ url, code }: { url: string; code: string }) {
     try {
       await navigator.share({
         title: "Learn digital skills that pay",
-        text: "I'm learning on NextMentor — join me:",
+        text: selected
+          ? `Join NextMentor with the ${selected.name} package:`
+          : "I'm learning on NextMentor — join me:",
         url,
       });
     } catch {
@@ -34,10 +59,43 @@ export function AffiliateLink({ url, code }: { url: string; code: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
+      <fieldset className="min-w-0">
+        <legend className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--color-muted-foreground)]">
+          Link for
+        </legend>
+        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[...packages.map((p) => ({ slug: p.slug, label: p.name, price: formatPrice(p.priceInPaise) })), { slug: "", label: "Homepage", price: "Any package" }].map((opt) => {
+            const active = opt.slug === target;
+            return (
+              <button
+                key={opt.slug || "home"}
+                type="button"
+                onClick={() => {
+                  setTarget(opt.slug);
+                  setCopied(false);
+                }}
+                aria-pressed={active}
+                className={cn(
+                  "flex min-h-14 flex-col items-start justify-center rounded-[14px] px-3.5 py-2 text-left ring-1 transition-colors",
+                  active
+                    ? "bg-[var(--brand-ink)] text-white ring-[var(--brand-ink)]"
+                    : "bg-white text-[var(--brand-ink)] ring-[rgb(16_26_71/0.12)] hover:ring-[rgb(16_26_71/0.25)]",
+                )}
+              >
+                <span className="text-[14px] font-semibold">{opt.label}</span>
+                <span className={cn("tabular text-[12px]", active ? "text-white/70" : "text-[var(--color-muted-foreground)]")}>
+                  {opt.price}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
       <div className="flex flex-col gap-2 sm:flex-row">
-        <div className="flex min-w-0 flex-1 items-center rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-muted)] px-3 py-2.5">
-          <span className="truncate font-mono text-sm">{url}</span>
+        <div className="flex min-h-11 min-w-0 flex-1 items-center rounded-[12px] bg-[var(--brand-hero-wash)] px-3 py-2.5 ring-1 ring-[rgb(16_26_71/0.08)]">
+          <span className="truncate font-mono text-[13px] text-[var(--brand-ink)]">{url}</span>
         </div>
 
         <div className="flex gap-2">
@@ -72,9 +130,13 @@ export function AffiliateLink({ url, code }: { url: string; code: string }) {
         {copied ? "Link copied to clipboard" : ""}
       </span>
 
-      <p className="text-xs text-[var(--color-muted-foreground)]">
-        Your code is <span className="font-mono font-bold">{code}</span>. Anyone who signs up
-        through this link is credited to you for 30 days after their first visit.
+      <p className="text-xs leading-relaxed text-[var(--color-muted-foreground)]">
+        Your referral ID <span className="font-mono font-bold text-[var(--brand-ink)]">{code}</span> is in
+        the link.{" "}
+        {selected
+          ? `It opens signup with the ${selected.name} package already selected.`
+          : "It opens the homepage, where they can pick any package."}{" "}
+        Anyone who signs up through it is credited to you for 30 days after their first visit.
       </p>
     </div>
   );

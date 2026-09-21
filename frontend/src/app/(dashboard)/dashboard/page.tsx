@@ -21,7 +21,8 @@ export default async function DashboardPage() {
     getActiveSubscription(),
   ]);
 
-  const firstName = profile.name ? profile.name.split(" ")[0] : null;
+  // Greet by first name, or by the part before the @ when no name is on file.
+  const firstName = profile.name?.trim().split(" ")[0] || profile.email.split("@")[0];
   const withPct = courses.map((c) => ({
     ...c,
     pct: c.lessonCount > 0 ? Math.round((c.completedCount / c.lessonCount) * 100) : 0,
@@ -46,7 +47,7 @@ export default async function DashboardPage() {
               {subscription ? `${subscription.planName} member` : "My courses"}
             </p>
             <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-[-0.8px] sm:text-[34px]">
-              Welcome back{firstName ? `, ${firstName}` : ""}
+              Welcome back, <span className="text-[var(--brand-green-bright)]">{firstName}</span>
             </h1>
             <p className="mt-2 max-w-md text-[15px] text-white/70">
               {resume

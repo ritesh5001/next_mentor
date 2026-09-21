@@ -6,7 +6,7 @@ import { AffiliateLink } from "@/components/dashboard/affiliate-link";
 import { Alert } from "@/components/ui/alert";
 import { formatPrice, formatDate, appUrl } from "@/lib/format";
 
-import { getActiveSubscription, getAffiliateSummary, requireUser } from "@/lib/queries";
+import { getActivePlans, getActiveSubscription, getAffiliateSummary, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Affiliate link",
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
 
 export default async function AffiliatePage() {
   const user = await requireUser();
-  const [summary, plan] = await Promise.all([
+  const [summary, plan, plans] = await Promise.all([
     getAffiliateSummary(),
     getActiveSubscription(),
+    getActivePlans(),
   ]);
   const { stats, associates } = summary;
 
-  const url = `${appUrl()}/?ref=${user.referralCode}`;
 
   const tiles = [
     { label: "Clicks", value: stats.clicks, sub: `${stats.clicksLast30} in 30 days`, icon: MousePointerClick },
@@ -56,7 +56,11 @@ export default async function AffiliatePage() {
       )}
 
       <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
-        <AffiliateLink url={url} code={user.referralCode} />
+        <AffiliateLink
+          baseUrl={appUrl()}
+          code={user.referralCode}
+          packages={plans.map((p) => ({ slug: p.slug, name: p.name, priceInPaise: p.priceInPaise }))}
+        />
       </section>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
