@@ -20,3 +20,23 @@ export const TESTIMONIALS: Testimonial[] = [
     body: "Structured training, Q&A sessions and mentorship that actually answered my questions. I went from nothing to running campaigns.",
   },
 ];
+
+/* ------------------------------------------------------------- templates */
+
+/**
+ * Blank entries to fill in as real feedback arrives.
+ *
+ * Deliberately NOT rendered: quotes shown to buyers with a verified tick have
+ * to come from real students. Copy an entry into TESTIMONIALS above, replace
+ * every field with what the person actually wrote, and it appears on the
+ * homepage — at three or more the section becomes the sliding carousel.
+ *
+ * `who` is how they describe themselves: Student, Housewife, Working
+ * professional, Freelancer, Business owner.
+ */
+export const FEEDBACK_TEMPLATE: Testimonial[] = Array.from({ length: 18 }, () => ({
+  name: "",
+  who: "",
+  course: "",
+  body: "",
+}));
