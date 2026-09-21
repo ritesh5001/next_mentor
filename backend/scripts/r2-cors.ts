@@ -89,6 +89,10 @@ async function main() {
 
 main().catch((e) => {
   console.error("\n  Failed:", e instanceof Error ? e.message : e);
-  console.error("  Check R2_* in .env, and that the token has Object Read & Write on this bucket.");
+  // Object Read & Write is enough to upload, but NOT to read or change bucket
+  // CORS — that needs an Admin Read & Write token, or the dashboard:
+  // R2 → bucket → Settings → CORS Policy.
+  console.error("  Check R2_* in .env. Changing CORS needs an R2 token with Admin Read & Write;");
+  console.error("  an Object Read & Write token is refused with Access Denied.");
   process.exit(1);
 });
