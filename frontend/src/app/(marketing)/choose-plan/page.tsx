@@ -46,6 +46,16 @@ export default async function ChoosePlanPage({
   return (
     <div className="bg-[var(--brand-hero-wash)]">
       <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+        {/* Who is signed in, and the way out — visible without scrolling, so
+            nobody is stuck on this page with no way to leave. */}
+        <div className="mb-10 flex flex-wrap items-center justify-between gap-3 rounded-[16px] bg-white px-4 py-3 ring-1 ring-[rgb(16_26_71/0.08)]">
+          <p className="min-w-0 text-[13.5px] text-[var(--color-muted-foreground)]">
+            Signed in as{" "}
+            <strong className="font-semibold text-[var(--brand-ink)]">{user.email}</strong>
+          </p>
+          <SignOutButton variant="inline" />
+        </div>
+
         {/* Progress */}
         <ol className="mx-auto flex max-w-xl items-center justify-center gap-2 sm:gap-3" aria-label="Signup progress">
           {STEPS.map((label, i) => {
@@ -178,12 +188,9 @@ export default async function ChoosePlanPage({
           })}
         </div>
 
-        <div className="mt-10 flex flex-col items-center gap-2 text-center text-[13.5px] text-[var(--color-muted-foreground)]">
-          <p>
-            Signed in as <strong className="font-semibold text-[var(--brand-ink)]">{user.email}</strong>
-          </p>
-          <SignOutButton />
-        </div>
+        <p className="mt-10 text-center text-[13.5px] text-[var(--color-muted-foreground)]">
+          Paid already and this page keeps showing? Refresh in a moment, or contact support.
+        </p>
       </div>
     </div>
   );

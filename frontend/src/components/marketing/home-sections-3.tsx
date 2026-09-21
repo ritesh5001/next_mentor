@@ -579,48 +579,68 @@ const TRAINERS = [
   { name: "Prabhat Prajapati", role: "NextMentor Trainer", photo: "prabhat-prajapati" },
   { name: "Nidhi Soni", role: "NextMentor Trainer", photo: "nidhi-soni" },
   { name: "Sachin Thakur", role: "NextMentor Trainer", photo: "sachin-thakur" },
+  { name: "Shiva Bundela", role: "NextMentor Trainer", photo: "shiva-bundela" },
 ];
 
 /**
- * The training team: framed portraits on green-to-navy cards. Four across on
- * desktop, two on phones, so eight trainers always fill whole rows.
+ * The training team, as a continuous right-to-left carousel.
+ *
+ * Four cards at a time on desktop, two on a phone, looping for ever: the
+ * track holds the list twice and slides by half its width, so the join is
+ * invisible. Hovering pauses it, and the global reduced-motion rule stops it
+ * and lets people swipe instead.
  */
 export function Trainers() {
+  const pass = [...TRAINERS, ...TRAINERS].slice(0, Math.max(8, TRAINERS.length));
+
   return (
-    <section id="trainers" className="scroll-mt-24 bg-white">
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+    <section id="trainers" className="scroll-mt-24 overflow-hidden bg-white">
+      <div className="mx-auto max-w-7xl px-5 pt-16 sm:px-8 sm:pt-20 lg:pt-24">
         <SectionHead
           align="center"
           eyebrow="Our trainers"
           title="Learn from the best."
           lede="Meet the people behind every lesson, live session and doubt-clearing call."
         />
+      </div>
 
-        <ul className="mt-12 grid grid-cols-2 gap-3.5 sm:mt-14 sm:gap-5 md:grid-cols-4">
-          {TRAINERS.map((t) => (
-            <li
-              key={t.photo}
-              className="reveal group rounded-[20px] bg-[linear-gradient(180deg,#0e5a40_0%,#0f3a4a_48%,#101a47_100%)] p-2 shadow-[0_22px_40px_-26px_rgb(16_26_71/0.7)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:rounded-[24px] sm:p-3"
-            >
-              <div className="rounded-[15px] bg-[#132b45] p-1.5 ring-1 ring-[var(--brand-green-bright)]/45 sm:rounded-[18px] sm:p-2.5">
-                <div className="overflow-hidden rounded-[11px] bg-black sm:rounded-[13px]">
-                  <Image
-                    src={`/images/trainers/${t.photo}.webp`}
-                    alt={`${t.name}, ${t.role}`}
-                    width={640}
-                    height={800}
-                    sizes="(max-width: 768px) 45vw, 280px"
-                    className="aspect-[4/5] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
-                  />
-                </div>
-              </div>
-              <div className="px-1 pb-2 pt-3.5 text-center sm:pb-3 sm:pt-4">
-                <p className="text-[14.5px] font-semibold text-white sm:text-[17px]">{t.name}</p>
-                <p className="mt-0.5 text-[12px] text-white/65 sm:text-[13.5px]">{t.role}</p>
-              </div>
-            </li>
+      {/* Held to the page container so four cards sit across a desktop
+          screen, rather than running edge to edge. */}
+      <div
+        className="marquee mx-auto mt-12 max-w-7xl overflow-hidden px-5 pb-16 [mask-image:linear-gradient(90deg,transparent,#000_4%,#000_96%,transparent)] sm:mt-14 sm:px-8 sm:pb-20 lg:pb-24"
+        style={{ ["--marquee-duration" as string]: `${pass.length * 6}s` }}
+      >
+        <div className="marquee-track flex w-max">
+          {[0, 1].map((copy) => (
+            <ul key={copy} className="flex gap-3.5 pr-3.5 sm:gap-5 sm:pr-5" aria-hidden={copy === 1 ? true : undefined}>
+              {pass.map((t, i) => (
+                <li
+                  key={`${t.photo}-${copy}-${i}`}
+                  // Fixed widths: inside a sliding track a percentage width
+                  // would be measured against the whole track, not the screen.
+                  className="group w-[180px] shrink-0 rounded-[20px] bg-[linear-gradient(180deg,#0e5a40_0%,#0f3a4a_48%,#101a47_100%)] p-2 shadow-[0_22px_40px_-26px_rgb(16_26_71/0.7)] sm:w-[240px] sm:rounded-[24px] sm:p-3 lg:w-[292px]"
+                >
+                  <div className="rounded-[15px] bg-[#132b45] p-1.5 ring-1 ring-[var(--brand-green-bright)]/45 sm:rounded-[18px] sm:p-2.5">
+                    <div className="overflow-hidden rounded-[11px] bg-black sm:rounded-[13px]">
+                      <Image
+                        src={`/images/trainers/${t.photo}.webp`}
+                        alt={`${t.name}, ${t.role}`}
+                        width={640}
+                        height={800}
+                        sizes="(max-width: 640px) 180px, 280px"
+                        className="aspect-[4/5] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+                      />
+                    </div>
+                  </div>
+                  <div className="px-1 pb-2 pt-3.5 text-center sm:pb-3 sm:pt-4">
+                    <p className="text-[14.5px] font-semibold text-white sm:text-[17px]">{t.name}</p>
+                    <p className="mt-0.5 text-[12px] text-white/65 sm:text-[13.5px]">{t.role}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

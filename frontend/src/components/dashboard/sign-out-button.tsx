@@ -18,7 +18,12 @@ export function SignOutButton({
   variant = "header",
   onSignOut,
 }: {
-  variant?: "header" | "panel";
+  /**
+   * `header` is the compact top-bar control (label hidden on phones),
+   * `panel` the full-width row in the mobile drawer, and `inline` a bordered
+   * button that always shows its label — for pages with no dashboard chrome.
+   */
+  variant?: "header" | "panel" | "inline";
   onSignOut?: () => void;
 }) {
   const [pending, startTransition] = useTransition();
@@ -36,7 +41,9 @@ export function SignOutButton({
       }}
       className={cn(
         "flex min-h-11 items-center gap-1.5 rounded-[var(--radius-control)] px-3 text-sm font-medium transition-colors disabled:opacity-60",
-        variant === "header"
+        variant === "inline"
+          ? "rounded-full px-4 text-[var(--brand-ink)] ring-1 ring-[rgb(16_26_71/0.15)] hover:bg-[var(--brand-hero-wash)]"
+          : variant === "header"
           ? "text-[var(--color-muted-foreground)] hover:bg-[var(--color-muted)] hover:text-[var(--color-foreground)]"
           // The panel variant lives in the nav drawer, which is painted with
           // the brand gradient, so it is light-on-dark rather than the

@@ -452,11 +452,13 @@ input[type="range"]::-moz-range-thumb {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* No auto-scroll: let people swipe through the cards themselves. */
+  /* No auto-scroll: let people swipe through the cards themselves.
+     !important because a utility class on the element would otherwise win. */
   .marquee-track {
     animation: none !important;
   }
   .marquee {
-    overflow-x: auto;
+    overflow-x: auto !important;
+    mask-image: none !important;
   }
 }
