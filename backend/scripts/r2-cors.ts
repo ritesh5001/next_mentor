@@ -37,8 +37,66 @@ function origins(): string[] {
   return list;
 }
 
+/**
+ * Applies the policy through Cloudflare's REST API.
+ *
+ * The S3 keys the app uploads with are usually scoped to objects, and
+ * Cloudflare refuses them for bucket settings. An API token with
+ * "Workers R2 Storage: Edit" can do it, so when CLOUDFLARE_R2_ADMIN_TOKEN is
+ * set this path is used instead.
+ */
+async function applyViaRestApi(accountId: string, bucket: string, token: string) {
+  const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/r2/buckets/${bucket}/cors`;
+  const headers = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+
+  if (!process.argv.includes("--show")) {
+    const allowed = origins();
+    console.log(`  bucket:  ${bucket}`);
+    console.log(`  origins: ${allowed.join(", ")}`);
+    const put = await fetch(url, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({
+        rules: [
+          {
+            allowed: {
+              origins: allowed,
+              methods: ["PUT", "GET", "HEAD"],
+              headers: ["Content-Type", "Range"],
+            },
+            exposeHeaders: ["ETag", "Content-Length", "Content-Range"],
+            maxAgeSeconds: 3600,
+          },
+        ],
+      }),
+    });
+    const body = (await put.json()) as { success: boolean; errors?: { message: string }[] };
+    if (!body.success) {
+      throw new Error(body.errors?.map((e) => e.message).join("; ") || `HTTP ${put.status}`);
+    }
+    console.log("  applied.");
+  }
+
+  const get = await fetch(url, { headers });
+  const current = (await get.json()) as {
+    result?: { rules?: { allowed?: { origins?: string[]; methods?: string[] } }[] };
+  };
+  console.log("\n  current policy:");
+  for (const rule of current.result?.rules ?? []) {
+    console.log(`    origins: ${rule.allowed?.origins?.join(", ")}`);
+    console.log(`    methods: ${rule.allowed?.methods?.join(", ")}`);
+  }
+}
+
 async function main() {
   const cfg = env("r2");
+
+  const adminToken = process.env.CLOUDFLARE_R2_ADMIN_TOKEN;
+  if (adminToken) {
+    await applyViaRestApi(cfg.R2_ACCOUNT_ID, cfg.R2_BUCKET, adminToken);
+    return;
+  }
+
   const s3 = new S3Client({
     region: "auto",
     endpoint: `https://${cfg.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
