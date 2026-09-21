@@ -12,6 +12,7 @@ import { generateUniqueReferralCode, normalizeReferralCode } from "@/lib/referra
 import { optionalAuth } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 import { getActiveSubscription, getPlanBySlug } from "@/services/plans";
+import { validateCoupon } from "@/services/coupons";
 
 /**
  * Paid signup: an account exists only once its first plan is paid for.
@@ -51,6 +52,7 @@ const signupSchema = z
     acceptedTerms: z.literal(true, { message: "Accept the terms to continue." }),
     planSlug: z.string().min(1, "Choose a package."),
     referralCode: z.string().trim().max(20).optional(),
+    couponCode: z.string().trim().max(32).optional(),
   })
   .refine((d) => d.password === d.confirmPassword, {
     path: ["confirmPassword"],
@@ -152,6 +154,28 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
     }
   }
 
+  // Coupon, checked against the pending account so per-user limits apply.
+  let discountInPaise = 0;
+  let couponId: string | null = null;
+  if (input.couponCode) {
+    const check = await validateCoupon({
+      code: input.couponCode,
+      userId,
+      amountInPaise: plan.priceInPaise,
+      scope: "plan",
+      targetId: plan.id,
+    });
+    if (!check.valid) {
+      return fail(c, check.reason, "validation", { couponCode: check.reason });
+    }
+    discountInPaise = check.discountInPaise;
+    couponId = check.couponId;
+  }
+
+  // Never zero: Razorpay rejects a zero-value order, and access is granted by
+  // a captured payment.
+  const amountInPaise = Math.max(100, plan.priceInPaise - discountInPaise);
+
   // Reuse an open order for the same plan and amount, as normal checkout does.
   const [pending] = await db
     .select({ id: orders.id, razorpayOrderId: orders.razorpayOrderId, amount: orders.amountInPaise })
@@ -163,13 +187,13 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
     ok(c, {
       orderId,
       razorpayOrderId,
-      amountInPaise: plan.priceInPaise,
+      amountInPaise,
       currency: "INR",
       itemTitle: `${plan.name} package`,
       prefill: { name: input.name, email: input.email, contact: input.phone },
     });
 
-  if (pending && pending.amount === plan.priceInPaise && !pending.razorpayOrderId.startsWith("pending_")) {
+  if (pending && pending.amount === amountInPaise && !pending.razorpayOrderId.startsWith("pending_")) {
     return respond(pending.id, pending.razorpayOrderId);
   }
 
@@ -180,8 +204,9 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
       itemType: "plan",
       planId: plan.id,
       listPriceInPaise: plan.priceInPaise,
-      discountInPaise: 0,
-      amountInPaise: plan.priceInPaise,
+      discountInPaise,
+      couponId,
+      amountInPaise,
       currency: "INR",
       razorpayOrderId: `pending_${crypto.randomUUID()}`,
       status: "created",
@@ -190,7 +215,7 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
 
   try {
     const rzp = await createRazorpayOrder({
-      amountInPaise: plan.priceInPaise,
+      amountInPaise,
       receipt: orderRow.id,
       notes: { orderId: orderRow.id, userId, itemType: "plan", signup: "1" },
     });

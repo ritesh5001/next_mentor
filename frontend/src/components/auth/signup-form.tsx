@@ -70,6 +70,7 @@ export function SignupForm({
       password: String(f.get("password") ?? ""),
       confirmPassword: String(f.get("confirmPassword") ?? ""),
       acceptedTerms: f.get("acceptedTerms") === "on",
+      couponCode: String(f.get("couponCode") ?? "").trim() || undefined,
       planSlug: plan,
       referralCode: sponsor ? undefined : referralCode || String(f.get("referralCode") ?? ""),
     };
@@ -278,6 +279,18 @@ export function SignupForm({
         autoComplete="new-password"
         placeholder="••••••••"
         error={fields.confirmPassword}
+      />
+
+      {/* Checked by the API when the order is created, so the discount here
+          can never be more than the code really gives. */}
+      <Field
+        label="Coupon code (optional)"
+        name="couponCode"
+        autoComplete="off"
+        placeholder="e.g. LAUNCH20"
+        hint="Have a code? Enter it and the discount applies at payment."
+        className="uppercase"
+        error={fields.couponCode}
       />
 
       <label className="flex cursor-pointer items-start gap-3 text-[13px] leading-relaxed text-[var(--color-muted-foreground)]">

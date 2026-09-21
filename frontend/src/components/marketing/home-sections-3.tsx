@@ -682,6 +682,30 @@ function FeedbackCard({ t }: { t: Testimonial }) {
 export function StudentFeedback() {
   if (TESTIMONIALS.length === 0) return null;
 
+  // Below three, a moving strip would just repeat the same card over and
+  // over, so they sit still in a row instead.
+  if (TESTIMONIALS.length < 3) {
+    return (
+      <section className="bg-[var(--brand-hero-wash)]">
+        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
+          <SectionHead
+            align="center"
+            eyebrow="Student feedback"
+            title="What our students say."
+            lede="Real feedback from people who learned with NextMentor, in their own words."
+          />
+          <ul className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-5">
+            {TESTIMONIALS.map((t) => (
+              <li key={t.name} className="flex">
+                <FeedbackCard t={t} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    );
+  }
+
   const pass = Array.from({ length: Math.ceil(8 / TESTIMONIALS.length) }, () => TESTIMONIALS).flat();
 
   return (

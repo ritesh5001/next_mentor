@@ -15,11 +15,6 @@ export type Testimonial = {
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    name: "Neeraj Malviya",
-    course: "Meta Ads",
-    body: "I built a real income from the skills I learned here, and the referral program paid for the course several times over.",
-  },
-  {
     name: "Priti Priyedarshni",
     course: "Digital marketing",
     body: "Structured training, Q&A sessions and mentorship that actually answered my questions. I went from nothing to running campaigns.",

@@ -195,6 +195,7 @@ export type SignupInput = {
   acceptedTerms: boolean;
   planSlug: string;
   referralCode?: string;
+  couponCode?: string;
 };
 
 export type SignupCheckout = {
