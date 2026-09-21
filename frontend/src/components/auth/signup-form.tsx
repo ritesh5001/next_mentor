@@ -180,8 +180,12 @@ export function SignupForm({
   }
 
   const selected = plans.find((p) => p.slug === plan);
-  const couponValid =
-    couponState && couponState !== "checking" && couponState.valid ? couponState : false;
+  // Three distinct states, kept apart: nothing tried yet, a code that worked,
+  // and a code that was refused. Collapsing "not tried" into "invalid" painted
+  // the empty field red before anyone had typed in it.
+  const couponResult = couponState && couponState !== "checking" ? couponState : null;
+  const couponValid = couponResult?.valid ? couponResult : null;
+  const couponError = couponResult && !couponResult.valid ? couponResult.reason : null;
   // What the button promises, and what Razorpay will ask for.
   const payable = couponValid ? couponValid.finalAmountInPaise : selected?.priceInPaise ?? 0;
 
@@ -409,7 +413,7 @@ export function SignupForm({
             aria-invalid={fields.couponCode ? true : undefined}
             className={cn(
               "min-h-11 min-w-0 flex-1 rounded-[var(--radius-control)] border bg-[var(--color-card)] px-3 py-2 text-[16px] uppercase text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)]",
-              fields.couponCode || couponValid === false
+              fields.couponCode || couponError
                 ? "border-[var(--color-destructive)]"
                 : "border-[var(--color-border)] focus:border-[var(--color-primary)]",
             )}
@@ -449,9 +453,9 @@ export function SignupForm({
             {formatPrice(couponValid.discountInPaise)} off applied — you pay{" "}
             <strong className="font-bold">{formatPrice(couponValid.finalAmountInPaise)}</strong>
           </p>
-        ) : couponValid === false && couponState !== "checking" && couponState !== null ? (
+        ) : couponError ? (
           <p className="text-xs font-medium text-[var(--color-destructive)]" aria-live="polite">
-            {(couponState as { reason: string }).reason}
+            {couponError}
           </p>
         ) : (
           <p className="text-xs text-[var(--color-muted-foreground)]">
