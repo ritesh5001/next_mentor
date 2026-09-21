@@ -4,11 +4,16 @@ import { asc, eq, max } from "drizzle-orm";
 import { courseFormSchema, requestUploadSchema } from "@nextmentor/shared";
 
 import { db } from "@/db";
-import { lessonResources, lessons, modules, plans } from "@/db/schema";
+import { lessonResources, lessons, modules, plans, users } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
 import { createFreeMember } from "@/services/signup";
 import * as feedback from "@/services/testimonials";
+import {
+  issueManualCertificate,
+  listCertificatesForAdmin,
+  setCertificateRevoked,
+} from "@/services/certificates";
 import {
   ALLOWED_RESOURCE_TYPES,
   MAX_RESOURCE_BYTES,
@@ -30,6 +35,7 @@ import {
 import { requireAdmin, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 import * as write from "@/services/admin-write";
+import { normalizeReferralCode } from "@/lib/referral-code";
 
 export const adminRoutes = new Hono();
 
@@ -689,5 +695,65 @@ adminRoutes.patch("/testimonials/:id", requireAdmin, async (c) => {
 
 adminRoutes.delete("/testimonials/:id", requireAdmin, async (c) => {
   await feedback.deleteTestimonial(c.req.param("id"));
+  return ok(c, { ok: true });
+});
+
+/* --------------------------------------------------------- certificates */
+
+const manualCertificateSchema = z.object({
+  recipientName: z.string().trim().min(2, "Enter the recipient's name.").max(80),
+  courseTitle: z.string().trim().min(2, "Enter the course name.").max(120),
+  /** Optional: email or member ID, to tie it to an account. */
+  memberRef: z.string().trim().max(120).optional().or(z.literal("")),
+  courseId: z.string().trim().max(64).optional().or(z.literal("")),
+  issuedOn: z.string().trim().max(20).optional().or(z.literal("")),
+});
+
+adminRoutes.get("/certificates", requireAdmin, async (c) =>
+  ok(c, await listCertificatesForAdmin()),
+);
+
+adminRoutes.post("/certificates", requireAdmin, async (c) => {
+  const body = await parseBody(c, manualCertificateSchema);
+  if (!body.ok) return body.response;
+  const d = body.data;
+
+  let userId: string | null = null;
+  if (d.memberRef) {
+    const needle = d.memberRef.trim();
+    const [member] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(
+        needle.includes("@")
+          ? eq(users.email, needle.toLowerCase())
+          : eq(users.referralCode, normalizeReferralCode(needle)),
+      )
+      .limit(1);
+    if (!member) return fail(c, "No member found with that email or member ID.", "validation");
+    userId = member.id;
+  }
+
+  const issuedAt = d.issuedOn ? new Date(d.issuedOn) : undefined;
+  if (issuedAt && Number.isNaN(issuedAt.getTime())) {
+    return fail(c, "That issue date is not valid.", "validation");
+  }
+
+  const result = await issueManualCertificate({
+    recipientName: d.recipientName,
+    courseTitle: d.courseTitle,
+    userId,
+    courseId: d.courseId || null,
+    issuedAt,
+    issuedById: currentUser(c).id,
+  });
+
+  return "error" in result ? fail(c, result.error, "conflict") : ok(c, result, 201);
+});
+
+adminRoutes.patch("/certificates/:serial", requireAdmin, async (c) => {
+  const body = await parseBody(c, z.object({ revoked: z.boolean() }));
+  if (!body.ok) return body.response;
+  await setCertificateRevoked(c.req.param("serial"), body.data.revoked);
   return ok(c, { ok: true });
 });

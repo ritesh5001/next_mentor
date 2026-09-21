@@ -162,6 +162,82 @@ export async function issueCertificate(
 }
 
 /**
+ * A certificate issued by hand from the admin panel.
+ *
+ * For people the platform cannot verify by itself: an offline cohort, a
+ * workshop attendee, a member whose progress was lost. The recipient and
+ * course are typed in, so the certificate can name someone with no account
+ * and a course that is not in the catalogue. `issuedById` records which
+ * administrator did it, because a credential minted by hand should always be
+ * traceable to a person.
+ */
+export async function issueManualCertificate(params: {
+  recipientName: string;
+  courseTitle: string;
+  /** Optional: ties it to a member so it shows in their dashboard. */
+  userId?: string | null;
+  /** Optional: ties it to a catalogue course. */
+  courseId?: string | null;
+  issuedAt?: Date;
+  issuedById: string;
+}): Promise<{ ok: true; serial: string } | { error: string }> {
+  // The one-per-person-per-course rule still holds when both are known.
+  if (params.userId && params.courseId) {
+    const [existing] = await db
+      .select({ serial: certificates.serial })
+      .from(certificates)
+      .where(
+        and(eq(certificates.userId, params.userId), eq(certificates.courseId, params.courseId)),
+      )
+      .limit(1);
+    if (existing) {
+      return { error: `That member already holds a certificate for this course (${existing.serial}).` };
+    }
+  }
+
+  const [created] = await db
+    .insert(certificates)
+    .values({
+      userId: params.userId ?? null,
+      courseId: params.courseId ?? null,
+      serial: generateSerial(),
+      recipientName: params.recipientName,
+      courseTitle: params.courseTitle,
+      issuedById: params.issuedById,
+      ...(params.issuedAt ? { issuedAt: params.issuedAt } : {}),
+    })
+    .returning({ serial: certificates.serial });
+
+  return { ok: true, serial: created.serial };
+}
+
+/** Every certificate, newest first, for the admin list. */
+export function listCertificatesForAdmin() {
+  return db
+    .select({
+      serial: certificates.serial,
+      recipientName: certificates.recipientName,
+      courseTitle: certificates.courseTitle,
+      issuedAt: certificates.issuedAt,
+      revokedAt: certificates.revokedAt,
+      issuedById: certificates.issuedById,
+      email: users.email,
+    })
+    .from(certificates)
+    .leftJoin(users, eq(users.id, certificates.userId))
+    .orderBy(desc(certificates.issuedAt))
+    .limit(200);
+}
+
+/** Pulls a certificate without deleting it: verification then reports it. */
+export async function setCertificateRevoked(serial: string, revoked: boolean) {
+  await db
+    .update(certificates)
+    .set({ revokedAt: revoked ? new Date() : null })
+    .where(eq(certificates.serial, serial.trim().toUpperCase()));
+}
+
+/**
  * Renders the certificate PDF.
  *
  * Built with pdf-lib rather than a headless browser: no Chromium to cold-start

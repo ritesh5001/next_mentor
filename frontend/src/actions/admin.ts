@@ -484,3 +484,27 @@ export async function deleteTestimonialAction(id: string): Promise<ActionState> 
     "Feedback deleted",
   );
 }
+
+/* --------------------------------------------------------- certificates */
+
+/** Issues a certificate by hand, to a member or to anyone else by name. */
+export async function issueCertificateAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  try {
+    const res = await api<{ serial: string }>("/api/admin/certificates", {
+      method: "POST",
+      body: form(fd),
+    });
+    revalidatePath("/admin/certificates");
+    return { success: `Certificate issued — ${res.serial}. It can be downloaded and verified now.` };
+  } catch (err) {
+    return { error: err instanceof ApiError ? err.message : "Something went wrong." };
+  }
+}
+
+export async function setCertificateRevokedAction(serial: string, revoked: boolean): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/certificates/${serial}`, { method: "PATCH", body: { revoked } }),
+    ["/admin/certificates"],
+    revoked ? "Certificate revoked" : "Certificate restored",
+  );
+}

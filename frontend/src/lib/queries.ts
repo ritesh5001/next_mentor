@@ -209,6 +209,20 @@ export const listTestimonialsForAdmin = () =>
     "/api/admin/testimonials",
   );
 
+/** Every certificate, for the admin list. */
+export const listCertificatesForAdmin = () =>
+  api<
+    Array<{
+      serial: string;
+      recipientName: string;
+      courseTitle: string;
+      issuedAt: string;
+      revokedAt: string | null;
+      issuedById: string | null;
+      email: string | null;
+    }>
+  >("/api/admin/certificates");
+
 /* ------------------------------------------------------------------ learn */
 
 export type LearnView = {

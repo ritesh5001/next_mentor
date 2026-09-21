@@ -51,12 +51,16 @@ export const certificates = pgTable(
     id: text("id")
       .primaryKey()
       .$defaultFn(() => crypto.randomUUID()),
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    courseId: text("course_id")
-      .notNull()
-      .references(() => courses.id, { onDelete: "cascade" }),
+    /**
+     * Null for a certificate an administrator issued by hand to someone who
+     * has no account here — a workshop attendee, an offline cohort.
+     */
+    userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+    /** Null when the course title was typed rather than taken from the catalogue. */
+    courseId: text("course_id").references(() => courses.id, { onDelete: "cascade" }),
+
+    /** The admin who issued it by hand; null for one earned by completion. */
+    issuedById: text("issued_by_id").references(() => users.id, { onDelete: "set null" }),
 
     serial: text("serial").notNull(),
     /** Snapshot of the holder's and course's names at issue time. */
