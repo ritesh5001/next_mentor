@@ -18,6 +18,7 @@ export type PlanFormValues = {
   commissionRateBps?: number;
   features?: string[];
   grantsAllCourses?: boolean;
+  tier?: number;
   isFeatured?: boolean;
   position?: number;
 };
@@ -131,6 +132,16 @@ export function PlanForm({
           // converts, so no two places have to agree on the unit.
           defaultValue={values?.commissionRateBps != null ? values.commissionRateBps / 100 : 0}
           hint="Earned by members on referrals."
+        />
+        <Field
+          label="Pack tier"
+          name="tier"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={10}
+          defaultValue={values?.tier ?? 1}
+          hint="1 = entry pack. A tier includes every lower tier's courses."
         />
         <Field
           label="Sort position"

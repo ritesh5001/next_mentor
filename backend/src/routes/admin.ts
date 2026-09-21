@@ -311,6 +311,8 @@ const planSchema = z.object({
   grantsAllCourses: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
   position: z.coerce.number().int().min(0).max(100).default(0),
+  /** Pack level. Higher tiers include every lower tier's courses. */
+  tier: z.coerce.number().int().min(1).max(10).default(1),
 });
 
 /**
@@ -339,6 +341,7 @@ export const planPatchSchema = z.object({
   ),
   features: z.array(z.string()).max(20).optional(),
   grantsAllCourses: z.boolean().optional(),
+  tier: z.coerce.number().int().min(1).max(10).optional(),
   isFeatured: z.boolean().optional(),
   position: optionalNumber(0, 100),
   isActive: z.boolean().optional(),

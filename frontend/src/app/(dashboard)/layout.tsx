@@ -44,7 +44,7 @@ const NAV: NavGroup[] = [
     items: [
       { href: "/dashboard/profile", label: "Profile", icon: "UserCircle", ready: true },
       { href: "/dashboard/kyc", label: "KYC", icon: "ShieldCheck", ready: true },
-      { href: "/dashboard/plan", label: "Plan & Qualification", icon: "Sparkles", ready: true },
+      { href: "/dashboard/plan", label: "Upgrade Package", icon: "Sparkles", ready: true },
     ],
   },
 ];

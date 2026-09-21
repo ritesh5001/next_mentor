@@ -22,6 +22,7 @@ async function queryActivePlans() {
       durationDays: plans.durationDays,
       features: plans.features,
       grantsAllCourses: plans.grantsAllCourses,
+      tier: plans.tier,
       isFeatured: plans.isFeatured,
       commissionRateBps: plans.commissionRateBps,
     })
@@ -49,6 +50,8 @@ export async function getActiveSubscription(userId: string) {
       planId: plans.id,
       planName: plans.name,
       planSlug: plans.slug,
+      planTier: plans.tier,
+      planPriceInPaise: plans.priceInPaise,
       commissionRateBps: plans.commissionRateBps,
       grantsAllCourses: plans.grantsAllCourses,
       startsAt: subscriptions.startsAt,
@@ -107,6 +110,7 @@ export async function listPlansForAdmin() {
       commissionRateBps: plans.commissionRateBps,
       features: plans.features,
       grantsAllCourses: plans.grantsAllCourses,
+      tier: plans.tier,
       isActive: plans.isActive,
       isFeatured: plans.isFeatured,
       position: plans.position,
@@ -139,4 +143,55 @@ export async function expireLapsedSubscriptions() {
     .returning({ id: subscriptions.id });
 
   return result.length;
+}
+
+/* --------------------------------------------------------------- upgrades */
+
+/** How long after joining an upgrade costs only the difference. */
+export const UPGRADE_WINDOW_HOURS = 72;
+
+export type UpgradeQuote =
+  | { kind: "buy"; amountInPaise: number }
+  | { kind: "upgrade"; amountInPaise: number; discounted: boolean; windowEndsAt: Date }
+  | { kind: "blocked"; reason: string };
+
+/**
+ * What this member pays for `targetPlan` right now.
+ *
+ * Packs are a ladder: you move up it, never sideways or down. Within
+ * UPGRADE_WINDOW_HOURS of the membership starting, moving up costs the
+ * difference between the two packs; after that it costs the new pack's full
+ * price. The window is measured from the subscription's start, server-side —
+ * the browser never sends a price.
+ */
+export async function quoteForPlan(
+  userId: string,
+  targetPlan: { id: string; tier: number; priceInPaise: number; name: string },
+): Promise<UpgradeQuote> {
+  const current = await getActiveSubscription(userId);
+  if (!current) return { kind: "buy", amountInPaise: targetPlan.priceInPaise };
+
+  if (current.planId === targetPlan.id) {
+    return { kind: "blocked", reason: `You are already on ${targetPlan.name}.` };
+  }
+  if (targetPlan.tier <= current.planTier) {
+    return {
+      kind: "blocked",
+      reason: `Your current package already includes everything in ${targetPlan.name}.`,
+    };
+  }
+
+  const windowEndsAt = new Date(
+    current.startsAt.getTime() + UPGRADE_WINDOW_HOURS * 60 * 60 * 1000,
+  );
+  const withinWindow = Date.now() < windowEndsAt.getTime();
+  // Never below 1 paise: Razorpay rejects a zero-value order.
+  const difference = Math.max(1, targetPlan.priceInPaise - current.planPriceInPaise);
+
+  return {
+    kind: "upgrade",
+    amountInPaise: withinWindow ? difference : targetPlan.priceInPaise,
+    discounted: withinWindow,
+    windowEndsAt,
+  };
 }

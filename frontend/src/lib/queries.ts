@@ -96,6 +96,8 @@ type ActivePlan = {
   durationDays: number | null;
   features: string[];
   grantsAllCourses: boolean;
+  /** Pack level; higher tiers include every lower tier's courses. */
+  tier: number;
   isFeatured: boolean;
   commissionRateBps: number;
 };
@@ -135,10 +137,25 @@ export const getActiveSubscription = () =>
     planId: string;
     planName: string;
     planSlug: string;
+    planTier: number;
+    planPriceInPaise: number;
     commissionRateBps: number;
     grantsAllCourses: boolean;
+    startsAt: string;
     expiresAt: string | null;
   }>("/api/my/subscription");
+
+/** Live price for every package for this member, with the upgrade deadline. */
+export type PlanQuote =
+  | { kind: "buy"; amountInPaise: number }
+  | { kind: "upgrade"; amountInPaise: number; discounted: boolean; windowEndsAt: string }
+  | { kind: "blocked"; reason: string };
+
+export const getPlanQuotes = () =>
+  api<{
+    upgradeWindowHours: number;
+    quotes: Array<{ slug: string; tier: number; priceInPaise: number; quote: PlanQuote }>;
+  }>("/api/plans/quotes");
 
 export const getMyCoupons = () =>
   api<
@@ -525,6 +542,7 @@ export const getCourseForEditor = (courseId: string) =>
     mrpInPaise: number | null;
     level: "beginner" | "intermediate" | "advanced";
     language: string;
+    minPlanTier: number;
     status: "draft" | "published" | "archived";
     modules: Array<{
       id: string;
@@ -555,6 +573,7 @@ export const listPlansForAdmin = () =>
       commissionRateBps: number;
       features: string[];
       grantsAllCourses: boolean;
+      tier: number;
       isActive: boolean;
       isFeatured: boolean;
       position: number;

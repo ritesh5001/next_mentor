@@ -6,7 +6,12 @@ import { db } from "@/db";
 import { courses, enrollments, orders, plans } from "@/db/schema";
 import { createRazorpayOrder } from "@/lib/razorpay";
 import { validateCoupon, listVisibleCoupons } from "@/services/coupons";
-import { getActiveSubscription } from "@/services/plans";
+import {
+  getActivePlans,
+  getActiveSubscription,
+  quoteForPlan,
+  UPGRADE_WINDOW_HOURS,
+} from "@/services/plans";
 import { getUserOrders } from "@/services/orders";
 import { isEnrolled } from "@/lib/permissions";
 import { requireAccount, requireUser, currentUser } from "@/middleware/auth";
@@ -29,7 +34,12 @@ async function resolveItem(type: "course" | "plan", slug: string) {
       .limit(1);
 
     if (!course || course.status !== "published") return null;
-    return { id: course.id, title: course.title, priceInPaise: course.priceInPaise };
+    return {
+      id: course.id,
+      title: course.title,
+      priceInPaise: course.priceInPaise,
+      tier: undefined as number | undefined,
+    };
   }
 
   const [plan] = await db
@@ -37,6 +47,7 @@ async function resolveItem(type: "course" | "plan", slug: string) {
       id: plans.id,
       name: plans.name,
       priceInPaise: plans.priceInPaise,
+      tier: plans.tier,
       isActive: plans.isActive,
     })
     .from(plans)
@@ -44,7 +55,7 @@ async function resolveItem(type: "course" | "plan", slug: string) {
     .limit(1);
 
   if (!plan || !plan.isActive) return null;
-  return { id: plan.id, title: plan.name, priceInPaise: plan.priceInPaise };
+  return { id: plan.id, title: plan.name, priceInPaise: plan.priceInPaise, tier: plan.tier };
 }
 
 commerceRoutes.post("/coupons/preview", requireAccount, async (c) => {
@@ -99,7 +110,20 @@ commerceRoutes.post("/checkout", requireAccount, async (c) => {
     return ok(c, { status: "already_owned" as const });
   }
 
-  const listPriceInPaise = item.priceInPaise;
+  // A member moving up a pack pays the upgrade price, which within the
+  // 72-hour window is only the difference (services/plans#quoteForPlan).
+  let listPriceInPaise = item.priceInPaise;
+  if (itemType === "plan") {
+    const quote = await quoteForPlan(user.id, {
+      id: item.id,
+      tier: item.tier ?? 1,
+      priceInPaise: item.priceInPaise,
+      name: item.title,
+    });
+    if (quote.kind === "blocked") return fail(c, quote.reason, "validation");
+    listPriceInPaise = quote.amountInPaise;
+  }
+
   let discountInPaise = 0;
   let couponId: string | null = null;
 
@@ -230,6 +254,32 @@ commerceRoutes.post("/checkout", requireAccount, async (c) => {
     console.error("[checkout] Could not create Razorpay order", err);
     return fail(c, "Could not start checkout. Please try again.", "server_error");
   }
+});
+
+/**
+ * What each package costs this member right now, with the upgrade window's
+ * deadline. Drives the plan page: the browser displays these, never computes
+ * them.
+ */
+commerceRoutes.get("/plans/quotes", requireAccount, async (c) => {
+  const user = currentUser(c);
+  const active = await getActivePlans();
+
+  const quotes = await Promise.all(
+    active.map(async (p) => ({
+      slug: p.slug,
+      tier: p.tier,
+      priceInPaise: p.priceInPaise,
+      quote: await quoteForPlan(user.id, {
+        id: p.id,
+        tier: p.tier,
+        priceInPaise: p.priceInPaise,
+        name: p.name,
+      }),
+    })),
+  );
+
+  return ok(c, { upgradeWindowHours: UPGRADE_WINDOW_HOURS, quotes });
 });
 
 /** Polled by the buy button while it waits for the webhook to land. */

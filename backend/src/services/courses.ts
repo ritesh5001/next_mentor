@@ -80,6 +80,7 @@ async function queryCourseBySlug(slug: string) {
       mrpInPaise: courses.mrpInPaise,
       level: courses.level,
       language: courses.language,
+      minPlanTier: courses.minPlanTier,
       status: courses.status,
     })
     .from(courses)

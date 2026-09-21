@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, gt, gte, isNull, lte, or } from "drizzle-orm";
 
 import { db } from "@/db";
 import { courses, enrollments, plans, subscriptions, users } from "@/db/schema";
@@ -103,7 +103,7 @@ export async function grantPlan(params: {
   grantedById: string;
 }): Promise<GrantResult> {
   const [plan] = await db
-    .select({ id: plans.id, durationDays: plans.durationDays })
+    .select({ id: plans.id, durationDays: plans.durationDays, tier: plans.tier })
     .from(plans)
     .where(eq(plans.id, params.planId))
     .limit(1);
@@ -144,6 +144,7 @@ export async function grantPlan(params: {
         updatedAt: new Date(),
       })
       .where(eq(subscriptions.id, active.id));
+    await enrolPlanCourses(db, { userId: params.userId, tier: plan.tier });
     return { ok: true, created: false };
   }
 
@@ -154,6 +155,9 @@ export async function grantPlan(params: {
     expiresAt,
     grantedById: params.grantedById,
   });
+
+  // Packs are cumulative: this opens the granted tier and everything below it.
+  await enrolPlanCourses(db, { userId: params.userId, tier: plan.tier });
 
   return { ok: true, created: true };
 }
@@ -206,4 +210,61 @@ export async function getUserAccess(userId: string) {
   ]);
 
   return { enrolled, membership: membership[0] ?? null };
+}
+
+/* ------------------------------------------------------- cumulative packs */
+
+/**
+ * Enrols a member in every published course their pack includes.
+ *
+ * Packs are cumulative: tier 2 includes everything marked tier 1 and 2, tier 3
+ * includes the lot. Enrolment is what actually opens a course (see
+ * lib/permissions#isEnrolled), so this runs wherever a plan starts — a paid
+ * order, an admin grant — and again when a course is published, for members
+ * who already qualify.
+ *
+ * `onConflictDoNothing` against UNIQUE(userId, courseId) makes it safe to
+ * re-run: an existing enrolment, paid or comped, is never overwritten.
+ */
+export async function enrolPlanCourses(
+  client: Pick<typeof db, "select" | "insert">,
+  params: { userId: string; tier: number },
+): Promise<number> {
+  const eligible = await client
+    .select({ id: courses.id })
+    .from(courses)
+    .where(and(eq(courses.status, "published"), lte(courses.minPlanTier, params.tier)));
+
+  if (eligible.length === 0) return 0;
+
+  await client
+    .insert(enrollments)
+    .values(eligible.map((c) => ({ userId: params.userId, courseId: c.id })))
+    .onConflictDoNothing();
+
+  return eligible.length;
+}
+
+/** Everyone on a live plan whose tier includes the given course tier. */
+export async function enrolExistingMembersInCourse(courseId: string, minPlanTier: number) {
+  const members = await db
+    .select({ userId: subscriptions.userId })
+    .from(subscriptions)
+    .innerJoin(plans, eq(plans.id, subscriptions.planId))
+    .where(
+      and(
+        eq(subscriptions.status, "active"),
+        gte(plans.tier, minPlanTier),
+        or(isNull(subscriptions.expiresAt), gt(subscriptions.expiresAt, new Date())),
+      ),
+    );
+
+  if (members.length === 0) return 0;
+
+  await db
+    .insert(enrollments)
+    .values(members.map((m) => ({ userId: m.userId, courseId })))
+    .onConflictDoNothing();
+
+  return members.length;
 }

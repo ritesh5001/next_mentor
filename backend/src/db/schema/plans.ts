@@ -60,6 +60,13 @@ export const plans = pgTable(
     /** Grants access to every published course while the plan is active. */
     grantsAllCourses: boolean("grants_all_courses").notNull().default(false),
 
+    /**
+     * Pack level: 1 = entry, 2 = middle, 3 = top. Access is cumulative —
+     * buying tier 2 unlocks every course marked tier 1 or 2 — so this is the
+     * number that decides what a member can open, not the price.
+     */
+    tier: integer("tier").notNull().default(1),
+
     isActive: boolean("is_active").notNull().default(true),
     isFeatured: boolean("is_featured").notNull().default(false),
     position: integer("position").notNull().default(0),

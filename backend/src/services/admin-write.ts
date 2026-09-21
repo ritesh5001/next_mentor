@@ -15,6 +15,7 @@ import {
   trainingModules,
   users,
 } from "@/db/schema";
+import { enrolExistingMembersInCourse } from "@/services/grants";
 import { invalidateTag } from "@/lib/cache";
 import { CATALOG_TAG, courseTag, slugify, uniqueSlug } from "./courses";
 import { PLANS_TAG } from "./plans";
@@ -57,6 +58,7 @@ type CourseInput = {
   mrpInRupees?: number;
   level: "beginner" | "intermediate" | "advanced";
   language: string;
+  minPlanTier?: number;
 };
 
 function courseValues(d: CourseInput) {
@@ -71,6 +73,7 @@ function courseValues(d: CourseInput) {
     mrpInPaise: d.mrpInRupees ? d.mrpInRupees * 100 : null,
     level: d.level,
     language: d.language,
+    minPlanTier: d.minPlanTier ?? 1,
   };
 }
 
@@ -115,7 +118,7 @@ export async function setCourseStatus(
   status: "draft" | "published" | "archived",
 ): Promise<Result> {
   const [course] = await db
-    .select({ slug: courses.slug, publishedAt: courses.publishedAt })
+    .select({ slug: courses.slug, publishedAt: courses.publishedAt, minPlanTier: courses.minPlanTier })
     .from(courses)
     .where(eq(courses.id, courseId))
     .limit(1);
@@ -144,6 +147,12 @@ export async function setCourseStatus(
       updatedAt: new Date(),
     })
     .where(eq(courses.id, courseId));
+
+  // Packs are cumulative and enrolment is what opens a course, so publishing
+  // one has to reach the members whose pack already includes it.
+  if (status === "published") {
+    await enrolExistingMembersInCourse(courseId, course.minPlanTier);
+  }
 
   invalidateTag(CATALOG_TAG);
   invalidateTag(courseTag(course.slug));
@@ -405,6 +414,7 @@ type PlanInput = {
   isFeatured?: boolean;
   position?: number;
   isActive?: boolean;
+  tier?: number;
 };
 
 function planValues(d: PlanInput) {
@@ -421,6 +431,7 @@ function planValues(d: PlanInput) {
     grantsAllCourses: d.grantsAllCourses ?? false,
     isFeatured: d.isFeatured ?? false,
     position: d.position ?? 0,
+    tier: d.tier ?? 1,
   };
 }
 
@@ -451,6 +462,7 @@ export async function updatePlan(planId: string, d: Partial<PlanInput>) {
   }
   if (d.features !== undefined) patch.features = d.features;
   if (d.grantsAllCourses !== undefined) patch.grantsAllCourses = d.grantsAllCourses;
+  if (d.tier !== undefined) patch.tier = d.tier;
   if (d.isFeatured !== undefined) patch.isFeatured = d.isFeatured;
   if (d.position !== undefined) patch.position = d.position;
   // Deactivating hides a plan from pricing but leaves existing members on it —

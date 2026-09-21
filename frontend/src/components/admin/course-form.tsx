@@ -20,6 +20,7 @@ export type CourseFormValues = {
   priceInPaise?: number;
   mrpInPaise?: number | null;
   level?: "beginner" | "intermediate" | "advanced";
+  minPlanTier?: number;
   language?: string;
 };
 
@@ -134,6 +135,17 @@ export function CourseForm({
             <option value="advanced">Advanced</option>
           </select>
         </div>
+
+        <Field
+          label="Included from pack tier"
+          name="minPlanTier"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={10}
+          defaultValue={values?.minPlanTier ?? 1}
+          hint="1 = every package. 2 = the middle package and above."
+        />
 
         <Field
           label="Language"

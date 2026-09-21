@@ -2,6 +2,7 @@ import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { awardCommission, reverseCommissionsForOrder } from "@/lib/referral";
+import { enrolPlanCourses } from "@/services/grants";
 import {
   courses,
   coupons,
@@ -157,7 +158,7 @@ type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
  */
 async function grantSubscription(tx: Tx, params: { userId: string; planId: string }) {
   const [plan] = await tx
-    .select({ durationDays: plans.durationDays })
+    .select({ durationDays: plans.durationDays, tier: plans.tier })
     .from(plans)
     .where(eq(plans.id, params.planId))
     .limit(1);
@@ -193,6 +194,10 @@ async function grantSubscription(tx: Tx, params: { userId: string; planId: strin
       expiresAt,
     });
   }
+
+  // Packs are cumulative, so this opens every course at or below the tier —
+  // including the lower packs' courses on an upgrade.
+  await enrolPlanCourses(tx, { userId: params.userId, tier: plan.tier });
 }
 
 export async function markOrderFailed(razorpayOrderId: string, reason: string) {

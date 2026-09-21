@@ -44,6 +44,9 @@ export const courses = pgTable(
     mrpInPaise: integer("mrp_in_paise"),
 
     level: courseLevelEnum("level").notNull().default("beginner"),
+
+    /** Lowest pack tier that includes this course (see plans.tier). */
+    minPlanTier: integer("min_plan_tier").notNull().default(1),
     language: text("language").notNull().default("en"),
     status: courseStatusEnum("status").notNull().default("draft"),
 

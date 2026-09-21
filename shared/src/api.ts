@@ -248,6 +248,8 @@ export const courseFormSchema = z.object({
   mrpInRupees: z.coerce.number().int().min(0).max(1_000_000).optional(),
   level: z.enum(["beginner", "intermediate", "advanced"]),
   language: z.string().trim().min(2).max(20).default("en"),
+  /** Lowest pack tier that includes this course; access is cumulative. */
+  minPlanTier: z.coerce.number().int().min(1).max(10).default(1),
 });
 
 /* ----------------------------------------------------------------- commerce */
