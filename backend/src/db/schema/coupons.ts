@@ -57,6 +57,15 @@ export const coupons = pgTable(
 
     isActive: boolean("is_active").notNull().default(true),
 
+    /**
+     * Private code: only this member may redeem it. Null is a public code.
+     * Kept as a column rather than a separate table because validation is one
+     * indexed row read and must stay that way.
+     */
+    assignedUserId: text("assigned_user_id").references(() => users.id, { onDelete: "cascade" }),
+    /** Whether the assigned member sees it listed, or must type it in. */
+    isVisibleToAssignee: boolean("is_visible_to_assignee").notNull().default(true),
+
     createdById: text("created_by_id").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -65,6 +74,7 @@ export const coupons = pgTable(
     uniqueIndex("coupons_code_unique").on(t.code),
     index("coupons_active_idx").on(t.isActive),
     index("coupons_scope_target_idx").on(t.scope, t.targetId),
+    index("coupons_assigned_user_idx").on(t.assignedUserId),
   ],
 );
 

@@ -16,6 +16,7 @@ import {
   users,
 } from "@/db/schema";
 import { enrolExistingMembersInCourse } from "@/services/grants";
+import { normalizeReferralCode } from "@/lib/referral-code";
 import { invalidateTag } from "@/lib/cache";
 import { CATALOG_TAG, courseTag, slugify, uniqueSlug } from "./courses";
 import { PLANS_TAG } from "./plans";
@@ -485,6 +486,8 @@ type CouponInput = {
   maxRedemptions?: number;
   perUserLimit: number;
   validUntil?: string;
+  assignTo?: string;
+  visibleToAssignee?: boolean;
 };
 
 export async function createCoupon(d: CouponInput, adminId: string): Promise<Result> {
@@ -494,6 +497,24 @@ export async function createCoupon(d: CouponInput, adminId: string): Promise<Res
   }
   if (d.discountType === "percent" && d.value > 100) {
     return { ok: false, error: "A percentage discount cannot exceed 100%." };
+  }
+
+  // A private code is tied to one member, found by email or member ID.
+  let assignedUserId: string | null = null;
+  if (d.assignTo) {
+    const needle = d.assignTo.trim();
+    const [target] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(
+        needle.includes("@")
+          ? eq(users.email, needle.toLowerCase())
+          : eq(users.referralCode, normalizeReferralCode(needle)),
+      )
+      .limit(1);
+
+    if (!target) return { ok: false, error: "No member found with that email or member ID." };
+    assignedUserId = target.id;
   }
 
   try {
@@ -510,6 +531,8 @@ export async function createCoupon(d: CouponInput, adminId: string): Promise<Res
       perUserLimit: d.perUserLimit,
       validUntil: d.validUntil ? new Date(d.validUntil) : null,
       scope: "all",
+      assignedUserId,
+      isVisibleToAssignee: d.visibleToAssignee ?? true,
       createdById: adminId,
     });
   } catch {

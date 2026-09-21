@@ -45,6 +45,7 @@ export default async function AdminCouponsPage() {
                   <th scope="col" className="px-4 py-3 font-semibold">Code</th>
                   <th scope="col" className="px-4 py-3 font-semibold">Discount</th>
                   <th scope="col" className="px-4 py-3 text-right font-semibold">Used</th>
+                  <th scope="col" className="px-4 py-3 font-semibold">For</th>
                   <th scope="col" className="px-4 py-3 font-semibold">Expires</th>
                   <th scope="col" className="px-4 py-3 font-semibold">Status</th>
                   <th scope="col" className="px-4 py-3 text-right font-semibold">Actions</th>
@@ -69,6 +70,18 @@ export default async function AdminCouponsPage() {
                     <td className="tabular px-4 py-3 text-right">
                       {c.usedCount}
                       {c.maxRedemptions !== null && ` / ${c.maxRedemptions}`}
+                    </td>
+                    <td className="px-4 py-3">
+                      {c.assignedToEmail ? (
+                        <span className="flex flex-col">
+                          <span className="truncate text-[13px] font-medium">{c.assignedToEmail}</span>
+                          <span className="text-[11px] text-[var(--color-muted-foreground)]">
+                            {c.assignedToCode} · {c.isVisibleToAssignee ? "shown in their list" : "hidden"}
+                          </span>
+                        </span>
+                      ) : (
+                        <span className="text-[13px] text-[var(--color-muted-foreground)]">Everyone</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-xs text-[var(--color-muted-foreground)]">
                       {c.validUntil ? formatDate(c.validUntil) : "No expiry"}

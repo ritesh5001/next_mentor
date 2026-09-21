@@ -593,6 +593,9 @@ export const listCouponsForAdmin = () =>
       maxRedemptions: number | null;
       validUntil: string | null;
       isActive: boolean;
+      assignedToEmail: string | null;
+      assignedToCode: string | null;
+      isVisibleToAssignee: boolean;
     }>
   >("/api/admin/coupons");
 

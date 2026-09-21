@@ -371,6 +371,10 @@ const couponSchema = z.object({
   maxRedemptions: z.coerce.number().int().min(1).optional(),
   perUserLimit: z.coerce.number().int().min(1).max(100).default(1),
   validUntil: z.string().optional().or(z.literal("")),
+  /** Email or member ID of the one person who may use this code. */
+  assignTo: z.string().trim().max(120).optional().or(z.literal("")),
+  /** Whether that member sees it in their coupons list. */
+  visibleToAssignee: z.boolean().default(true),
 });
 
 adminRoutes.post("/coupons", requireAdmin, async (c) => {

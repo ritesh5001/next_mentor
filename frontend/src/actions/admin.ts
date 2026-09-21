@@ -238,7 +238,10 @@ export async function revokeAccessAction(
 /* ---------------------------------------------------------------- coupons */
 
 export async function createCouponAction(_p: ActionState, fd: FormData): Promise<ActionState> {
-  return run(() => api("/api/admin/coupons", { method: "POST", body: form(fd) }), ["/admin/coupons"], "Coupon created");
+  // An unticked checkbox is absent from FormData, so this is false rather
+  // than undefined and the API sees a real boolean.
+  const body = { ...form(fd), visibleToAssignee: fd.get("visibleToAssignee") === "on" };
+  return run(() => api("/api/admin/coupons", { method: "POST", body }), ["/admin/coupons"], "Coupon created");
 }
 
 export async function setCouponActiveAction(couponId: string, isActive: boolean): Promise<ActionState> {

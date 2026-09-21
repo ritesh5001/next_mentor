@@ -126,6 +126,32 @@ export function CouponForm({ action }: { action: FormAction }) {
         />
       </div>
 
+      {/* Private codes: one member, nobody else. */}
+      <div className="grid gap-4 rounded-[14px] bg-[var(--brand-hero-wash)] p-4 sm:grid-cols-2">
+        <Field
+          label="Only for this member (optional)"
+          name="assignTo"
+          autoComplete="off"
+          placeholder="email or member ID"
+          hint="Leave blank for a code anyone can use."
+          containerClassName="sm:col-span-2"
+        />
+        <label className="flex cursor-pointer items-start gap-3 text-sm sm:col-span-2">
+          <input
+            type="checkbox"
+            name="visibleToAssignee"
+            defaultChecked
+            className="mt-0.5 size-4 shrink-0 cursor-pointer accent-[var(--brand-blue)]"
+          />
+          <span>
+            Show it in that member&apos;s Exclusive Coupons list
+            <span className="block text-xs text-[var(--color-muted-foreground)]">
+              Untick to keep it private — they can still type the code at checkout.
+            </span>
+          </span>
+        </label>
+      </div>
+
       <div className="pt-1">
         <SubmitButton />
       </div>

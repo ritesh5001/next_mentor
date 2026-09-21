@@ -103,6 +103,13 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
   }
 
   const referredById = await resolveReferrer(caller?.id ?? null, input.referralCode);
+  // A typed referral ID that matches nobody is a typo, not "no referrer" —
+  // silently dropping it loses the sponsor their commission.
+  if (!referredById && input.referralCode && !caller) {
+    return fail(c, "No member found with that referral ID.", "validation", {
+      referralCode: "Check this ID with the person who referred you.",
+    });
+  }
   const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
   const pendingPasswordEnc = encryptSecret(input.password);
 

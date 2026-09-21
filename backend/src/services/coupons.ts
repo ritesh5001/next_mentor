@@ -1,7 +1,7 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, isNull, or, sql } from "drizzle-orm";
 
 import { db } from "@/db";
-import { coupons, couponRedemptions } from "@/db/schema";
+import { couponRedemptions, coupons, users } from "@/db/schema";
 
 /**
  * Coupon validation.
@@ -54,6 +54,9 @@ export async function validateCoupon(params: {
   const invalid = { valid: false as const, reason: "That code is not valid." };
 
   if (!coupon || !coupon.isActive) return invalid;
+
+  // A private code belongs to one member; to anyone else it does not exist.
+  if (coupon.assignedUserId && coupon.assignedUserId !== params.userId) return invalid;
 
   const now = new Date();
   if (coupon.validFrom && coupon.validFrom > now) return invalid;
@@ -143,6 +146,12 @@ export async function listVisibleCoupons(userId: string) {
       and(
         eq(coupons.isActive, true),
         eq(coupons.scope, "all"),
+        // Public codes, plus this member's own private ones when the admin
+        // chose to show them.
+        or(
+          isNull(coupons.assignedUserId),
+          and(eq(coupons.assignedUserId, userId), eq(coupons.isVisibleToAssignee, true)),
+        ),
         sql`(${coupons.validUntil} is null or ${coupons.validUntil} > ${now})`,
         sql`(${coupons.maxRedemptions} is null or ${coupons.usedCount} < ${coupons.maxRedemptions})`,
       ),
@@ -166,7 +175,11 @@ export async function listCouponsForAdmin() {
       validUntil: coupons.validUntil,
       isActive: coupons.isActive,
       createdAt: coupons.createdAt,
+      assignedToEmail: users.email,
+      assignedToCode: users.referralCode,
+      isVisibleToAssignee: coupons.isVisibleToAssignee,
     })
     .from(coupons)
+    .leftJoin(users, eq(users.id, coupons.assignedUserId))
     .orderBy(coupons.createdAt);
 }

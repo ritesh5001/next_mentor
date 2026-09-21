@@ -71,7 +71,7 @@ export function SignupForm({
       confirmPassword: String(f.get("confirmPassword") ?? ""),
       acceptedTerms: f.get("acceptedTerms") === "on",
       planSlug: plan,
-      referralCode: sponsor ? undefined : referralCode,
+      referralCode: sponsor ? undefined : referralCode || String(f.get("referralCode") ?? ""),
     };
 
     setError(null);
@@ -145,12 +145,24 @@ export function SignupForm({
     <form onSubmit={(e) => void onSubmit(e)} className="flex flex-col gap-5" noValidate>
       {error && <Alert tone="error">{error}</Alert>}
 
-      {!sponsor && referralCode && (
-        <div className="flex items-center gap-2.5 rounded-[14px] bg-[#e5f2e3] px-4 py-3 text-sm text-[#0b4a34]">
-          <Gift className="size-4 shrink-0" strokeWidth={1.8} aria-hidden="true" />
-          Referral ID <strong className="font-semibold">{referralCode}</strong> applied
-        </div>
-      )}
+      {!sponsor &&
+        (referralCode ? (
+          <div className="flex items-center gap-2.5 rounded-[14px] bg-[#e5f2e3] px-4 py-3 text-sm text-[#0b4a34]">
+            <Gift className="size-4 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+            Referral ID <strong className="font-semibold">{referralCode}</strong> applied
+          </div>
+        ) : (
+          // Typed by hand when someone joins under a member without using
+          // their link — the Member ID printed on that member's dashboard.
+          <Field
+            label="Referral ID (optional)"
+            name="referralCode"
+            autoComplete="off"
+            placeholder="e.g. MR3HJWFP"
+            hint="The Member ID of the person who introduced you. Leave blank if none."
+            error={fields.referralCode}
+          />
+        ))}
 
       {/* Package */}
       {/* min-w-0: a fieldset defaults to min-content width and would push the
