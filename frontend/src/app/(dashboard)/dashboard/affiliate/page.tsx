@@ -6,7 +6,7 @@ import { AffiliateLink } from "@/components/dashboard/affiliate-link";
 import { Alert } from "@/components/ui/alert";
 import { formatPrice, formatDate, appUrl } from "@/lib/format";
 
-import { getActivePlans, getActiveSubscription, getAffiliateSummary, requireUser } from "@/lib/queries";
+import { getActivePlans, getActiveSubscription, getAffiliateSummary, getProfile, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Affiliate link",
@@ -15,10 +15,11 @@ export const metadata: Metadata = {
 
 export default async function AffiliatePage() {
   const user = await requireUser();
-  const [summary, plan, plans] = await Promise.all([
+  const [summary, plan, plans, profile] = await Promise.all([
     getAffiliateSummary(),
     getActiveSubscription(),
     getActivePlans(),
+    getProfile(),
   ]);
   const { stats, associates } = summary;
 
@@ -55,10 +56,12 @@ export default async function AffiliatePage() {
         </div>
       )}
 
-      <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+      <section className="flex flex-col gap-4 rounded-[22px] bg-white p-5 shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] ring-1 ring-[rgb(16_26_71/0.07)] sm:p-7">
+        <h2 className="text-[19px] font-semibold tracking-[-0.3px] text-[var(--brand-ink)]">Affiliate links</h2>
         <AffiliateLink
           baseUrl={appUrl()}
           code={user.referralCode}
+          name={profile.name?.trim() || profile.email.split("@")[0]}
           packages={plans.map((p) => ({ slug: p.slug, name: p.name, priceInPaise: p.priceInPaise }))}
         />
       </section>

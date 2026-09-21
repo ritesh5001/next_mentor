@@ -216,7 +216,6 @@ affiliateRoutes.post("/affiliate/kyc", requireUser, async (c) => {
       ["aadhaarFrontPath", "Aadhaar front"],
       ["aadhaarBackPath", "Aadhaar back"],
       ["panFrontPath", "PAN front"],
-      ["panBackPath", "PAN back"],
       ["bankProofPath", "bank passbook"],
     ] as const
   )

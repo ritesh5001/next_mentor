@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
 
 type LinkPackage = { slug: string; name: string; priceInPaise: number };
@@ -19,10 +18,13 @@ type LinkPackage = { slug: string; name: string; priceInPaise: number };
 export function AffiliateLink({
   baseUrl,
   code,
+  name,
   packages,
 }: {
   baseUrl: string;
   code: string;
+  /** The member's name, shown beside their code as on a referral card. */
+  name: string;
   packages: LinkPackage[];
 }) {
   const [copied, setCopied] = useState(false);
@@ -59,70 +61,68 @@ export function AffiliateLink({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <fieldset className="min-w-0">
-        <legend className="text-[13px] font-semibold uppercase tracking-[0.12em] text-[var(--color-muted-foreground)]">
-          Link for
-        </legend>
-        <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {[...packages.map((p) => ({ slug: p.slug, label: p.name, price: formatPrice(p.priceInPaise) })), { slug: "", label: "Homepage", price: "Any package" }].map((opt) => {
-            const active = opt.slug === target;
-            return (
-              <button
-                key={opt.slug || "home"}
-                type="button"
-                onClick={() => {
-                  setTarget(opt.slug);
-                  setCopied(false);
-                }}
-                aria-pressed={active}
-                className={cn(
-                  "flex min-h-14 flex-col items-start justify-center rounded-[14px] px-3.5 py-2 text-left ring-1 transition-colors",
-                  active
-                    ? "bg-[var(--brand-ink)] text-white ring-[var(--brand-ink)]"
-                    : "bg-white text-[var(--brand-ink)] ring-[rgb(16_26_71/0.12)] hover:ring-[rgb(16_26_71/0.25)]",
-                )}
-              >
-                <span className="text-[14px] font-semibold">{opt.label}</span>
-                <span className={cn("tabular text-[12px]", active ? "text-white/70" : "text-[var(--color-muted-foreground)]")}>
-                  {opt.price}
-                </span>
-              </button>
-            );
-          })}
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1.5">
+        <span className="text-sm font-medium text-[var(--brand-ink)]">My referral code</span>
+        <div className="flex min-h-12 items-center justify-between gap-3 rounded-[12px] bg-[var(--brand-hero-wash)] px-4 ring-1 ring-[rgb(16_26_71/0.1)]">
+          <span className="truncate text-[15px] font-medium text-[var(--brand-ink)]">{name}</span>
+          <span className="shrink-0 font-mono text-[14px] font-bold text-[var(--brand-green)]">{code}</span>
         </div>
-      </fieldset>
+      </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <div className="flex min-h-11 min-w-0 flex-1 items-center rounded-[12px] bg-[var(--brand-hero-wash)] px-3 py-2.5 ring-1 ring-[rgb(16_26_71/0.08)]">
-          <span className="truncate font-mono text-[13px] text-[var(--brand-ink)]">{url}</span>
-        </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="link-for" className="text-sm font-medium text-[var(--brand-ink)]">
+          Generate link for
+        </label>
+        <select
+          id="link-for"
+          value={target}
+          onChange={(e) => {
+            setTarget(e.target.value);
+            setCopied(false);
+          }}
+          className="min-h-12 rounded-[12px] border border-[rgb(16_26_71/0.15)] bg-white px-4 text-[16px] font-medium text-[var(--brand-ink)]"
+        >
+          {packages.map((p) => (
+            <option key={p.slug} value={p.slug}>
+              {p.name} package — {formatPrice(p.priceInPaise)}
+            </option>
+          ))}
+          <option value="">Homepage — any package</option>
+        </select>
+      </div>
 
-        <div className="flex gap-2">
-          <Button onClick={() => void copy()} className="flex-1 sm:flex-none">
-            {copied ? (
-              <>
-                <Check className="size-4" strokeWidth={2} aria-hidden="true" />
-                Copied
-              </>
-            ) : (
-              <>
-                <Copy className="size-4" strokeWidth={1.5} aria-hidden="true" />
-                Copy link
-              </>
-            )}
-          </Button>
+      <div className="flex min-h-11 min-w-0 items-center rounded-[12px] bg-[var(--brand-hero-wash)] px-3 py-2.5 ring-1 ring-[rgb(16_26_71/0.08)]">
+        <span className="truncate font-mono text-[13px] text-[var(--brand-ink)]/80">{url}</span>
+      </div>
 
-          <Button
-            variant="secondary"
-            onClick={() => void share()}
-            aria-label="Share your affiliate link"
-            className="flex-1 sm:flex-none"
-          >
-            <Share2 className="size-4" strokeWidth={1.5} aria-hidden="true" />
-            Share
-          </Button>
-        </div>
+      <div className="flex flex-col gap-2.5 sm:flex-row">
+        <button
+          type="button"
+          onClick={() => void copy()}
+          className="flex min-h-13 flex-1 items-center justify-center gap-2 rounded-[14px] bg-[linear-gradient(90deg,#0e7a4a,#0b4a34_45%,#101a47)] px-6 text-[16px] font-semibold text-white shadow-[0_14px_28px_-16px_rgb(16_26_71/0.8)] transition-opacity hover:opacity-95"
+        >
+          {copied ? (
+            <>
+              <Check className="size-5" strokeWidth={2.2} aria-hidden="true" />
+              Link copied
+            </>
+          ) : (
+            <>
+              <Copy className="size-5" strokeWidth={1.8} aria-hidden="true" />
+              Copy referral link
+            </>
+          )}
+        </button>
+        <Button
+          variant="secondary"
+          onClick={() => void share()}
+          aria-label="Share your referral link"
+          className="min-h-13 sm:w-auto"
+        >
+          <Share2 className="size-4" strokeWidth={1.5} aria-hidden="true" />
+          Share
+        </Button>
       </div>
 
       {/* Announced politely so a screen reader confirms the copy happened. */}
@@ -131,11 +131,9 @@ export function AffiliateLink({
       </span>
 
       <p className="text-xs leading-relaxed text-[var(--color-muted-foreground)]">
-        Your referral ID <span className="font-mono font-bold text-[var(--brand-ink)]">{code}</span> is in
-        the link.{" "}
         {selected
-          ? `It opens signup with the ${selected.name} package already selected.`
-          : "It opens the homepage, where they can pick any package."}{" "}
+          ? `The link opens signup with the ${selected.name} package already selected, with your referral ID ${code} applied.`
+          : `The link opens the homepage with your referral ID ${code} applied — they can pick any package.`}{" "}
         Anyone who signs up through it is credited to you for 30 days after their first visit.
       </p>
     </div>

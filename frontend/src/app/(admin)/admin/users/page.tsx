@@ -6,7 +6,8 @@ import { ActionButton, ActionSelect } from "@/components/admin/row-actions";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/format";
 import { setUserBlockedAction, setUserRoleAction } from "@/actions/admin";
-import { listUsersForAdmin, requireAdmin } from "@/lib/queries";
+import { listPlansForAdmin, listUsersForAdmin, requireAdmin } from "@/lib/queries";
+import { FreeMemberForm } from "@/components/admin/free-member-form";
 
 export const metadata: Metadata = {
   title: "Users",
@@ -25,7 +26,7 @@ export default async function AdminUsersPage({
 }) {
   await requireAdmin();
   const { q } = await searchParams;
-  const users = await listUsersForAdmin(q);
+  const [users, plans] = await Promise.all([listUsersForAdmin(q), listPlansForAdmin()]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -35,6 +36,14 @@ export default async function AdminUsersPage({
           {users.length} shown{q ? ` for “${q}”` : ""}
         </p>
       </header>
+
+      <FreeMemberForm
+        plans={plans
+          .filter((p) => p.isActive)
+          // Highest first, so the default is the top all-access plan.
+          .sort((x, y) => y.priceInPaise - x.priceInPaise)
+          .map((p) => ({ id: p.id, name: p.name, grantsAllCourses: p.grantsAllCourses }))}
+      />
 
       {/* A plain GET form — search belongs in the URL so it can be shared,
           bookmarked and survives a back navigation. */}

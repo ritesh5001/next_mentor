@@ -28,7 +28,6 @@ export default async function KycPage() {
     aadhaarFront: Boolean(kyc?.hasAadhaarFront),
     aadhaarBack: Boolean(kyc?.hasAadhaarBack),
     panFront: Boolean(kyc?.hasPanFront),
-    panBack: Boolean(kyc?.hasPanBack),
     bankProof: Boolean(kyc?.hasBankProof),
   };
 
@@ -120,7 +119,7 @@ export default async function KycPage() {
             </Alert>
           )}
 
-          {/* Documents come first: the form cannot be submitted until all five
+          {/* Documents come first: the form cannot be submitted until all four
               are on file, so asking for them after the bank details would be
               a wasted trip through the form. */}
           {kyc?.status !== "pending" && (

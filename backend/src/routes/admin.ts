@@ -7,6 +7,7 @@ import { db } from "@/db";
 import { lessonResources, lessons, modules, plans } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
+import { createFreeMember } from "@/services/signup";
 import {
   ALLOWED_RESOURCE_TYPES,
   MAX_RESOURCE_BYTES,
@@ -214,6 +215,38 @@ adminRoutes.post("/lessons/:lessonId/upload/confirm", requireAdmin, async (c) =>
 const grantSchema = z.object({
   itemType: z.enum(["course", "plan"]),
   itemId: z.string().min(1),
+});
+
+/* ------------------------------------------------------- free member */
+
+const freeMemberSchema = z.object({
+  name: z.string().trim().min(2, "Enter the full name.").max(80),
+  phone: z
+    .string()
+    .transform((v) => v.replace(/\D/g, "").replace(/^(91|0)(?=\d{10}$)/, ""))
+    .refine((v) => /^[6-9]\d{9}$/.test(v), "Enter a valid 10-digit mobile number."),
+  email: z.string().trim().toLowerCase().email("Enter a valid email address."),
+  state: z.string().trim().min(2, "Choose a state.").max(60),
+  password: z
+    .string()
+    .min(8, "At least 8 characters.")
+    .max(72)
+    .regex(/[A-Z]/, "Include an uppercase letter.")
+    .regex(/\d/, "Include a number."),
+  planId: z.string().min(1, "Choose a plan."),
+  sponsorCode: z.string().trim().max(20).optional().transform((v) => v || undefined),
+});
+
+/**
+ * Creates an active member with a plan granted free — no payment. For people
+ * the owner brings on without charging; see services/signup#createFreeMember.
+ */
+adminRoutes.post("/members", requireAdmin, async (c) => {
+  const body = await parseBody(c, freeMemberSchema);
+  if (!body.ok) return body.response;
+
+  const result = await createFreeMember({ ...body.data, adminId: currentUser(c).id });
+  return "error" in result ? fail(c, result.error, "validation") : ok(c, result, 201);
 });
 
 adminRoutes.get("/users/:userId/access", requireAdmin, async (c) =>

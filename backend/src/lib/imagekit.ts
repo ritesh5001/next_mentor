@@ -193,7 +193,6 @@ export const KYC_DOC_SLOTS = [
   "aadhaarFront",
   "aadhaarBack",
   "panFront",
-  "panBack",
   "bankProof",
 ] as const;
 
@@ -203,7 +202,6 @@ export const KYC_DOC_LABELS: Record<KycDocSlot, string> = {
   aadhaarFront: "Aadhaar — front",
   aadhaarBack: "Aadhaar — back",
   panFront: "PAN — front",
-  panBack: "PAN — back",
   bankProof: "Bank passbook or cancelled cheque",
 };
 

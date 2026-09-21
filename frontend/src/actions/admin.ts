@@ -434,3 +434,24 @@ export async function deleteLessonResourceAction(resourceId: string): Promise<Ac
   revalidatePath("/admin/courses");
   return { success: "Removed" };
 }
+
+/* ------------------------------------------------------------ free member */
+
+/** Creates an active member with a free plan and emails their credentials. */
+export async function createFreeMemberAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  try {
+    const res = await api<{ memberId: string }>("/api/admin/members", {
+      method: "POST",
+      body: form(fd),
+    });
+    revalidatePath("/admin/users");
+    return {
+      success: `Member created — ID ${res.memberId}. Login details have been emailed to ${String(fd.get("email") ?? "")}.`,
+    };
+  } catch (err) {
+    if (err instanceof ApiError && err.fields) {
+      return { error: Object.values(err.fields)[0] ?? err.message };
+    }
+    return { error: err instanceof ApiError ? err.message : "Something went wrong." };
+  }
+}

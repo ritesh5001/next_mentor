@@ -266,12 +266,14 @@ export const previewCouponSchema = z.object({
 
 /* -------------------------------------------------------------- affiliate */
 
-/** The five identity documents required before a KYC review can happen. */
+/**
+ * The identity documents required before a KYC review can happen. PAN is
+ * front only — the back carries nothing a reviewer needs.
+ */
 export const KYC_DOC_SLOTS = [
   "aadhaarFront",
   "aadhaarBack",
   "panFront",
-  "panBack",
   "bankProof",
 ] as const;
 
@@ -281,7 +283,6 @@ export const KYC_DOC_LABELS: Record<KycDocSlot, string> = {
   aadhaarFront: "Aadhaar card — front",
   aadhaarBack: "Aadhaar card — back",
   panFront: "PAN card — front",
-  panBack: "PAN card — back",
   bankProof: "Bank passbook or cancelled cheque",
 };
 

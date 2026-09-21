@@ -10,7 +10,7 @@ import { KYC_DOC_SLOTS, KYC_DOC_LABELS, type KycDocSlot } from "@nextmentor/shar
 import { cn } from "@/lib/cn";
 
 /**
- * The five identity documents required before KYC can be reviewed.
+ * The four identity documents required before KYC can be reviewed (PAN is front only).
  *
  * These post to our own API rather than straight to ImageKit, unlike every
  * other upload in the app. ImageKit's upload signature covers only
@@ -178,7 +178,7 @@ export function MissingDocumentsNotice({
   return (
     <Alert tone="info">
       {missing.length === KYC_DOC_SLOTS.length
-        ? "Upload all five documents below before submitting."
+        ? "Upload all four documents below before submitting."
         : `Still needed: ${missing.map((s) => KYC_DOC_LABELS[s]).join(", ")}.`}
     </Alert>
   );
