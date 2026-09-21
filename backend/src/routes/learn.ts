@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { courses, lessonResources, lessons, modules } from "@/db/schema";
 import { getLearnView, getPlayback, saveProgress } from "@/services/playback";
 import { authorizeLessonPlayback, isEnrolled } from "@/lib/permissions";
+import { issueCertificate } from "@/services/certificates";
 import { signedResourceUrl } from "@/lib/r2-video";
 import { evaluateAchievementsQuietly } from "@/services/achievements";
 import { requireUser, currentUser } from "@/middleware/auth";
@@ -82,7 +83,13 @@ learnRoutes.post("/progress", requireUser, async (c) => {
   });
 
   // Finishing a lesson can unlock a badge; cheap enough to check inline.
-  if (body.data.completed) await evaluateAchievementsQuietly(user.id);
+  if (body.data.completed) {
+    await evaluateAchievementsQuietly(user.id);
+    // Finishing the last lesson earns the certificate there and then, with
+    // the student's name and course filled in — no button to find, and
+    // issueCertificate is a no-op until the course is genuinely complete.
+    await issueCertificateQuietly(user.id, auth.courseId);
+  }
 
   return ok(c, { saved: true });
 });
@@ -123,3 +130,19 @@ learnRoutes.get("/resources/:resourceId", requireUser, async (c) => {
 
   return ok(c, { url, title: row.title, mimeType: row.mimeType });
 });
+
+/**
+ * Never throws: the lesson's progress is already saved, and a certificate
+ * that cannot be minted must not turn that into an error for the student.
+ */
+async function issueCertificateQuietly(userId: string, courseId: string) {
+  if (!courseId) return;
+  try {
+    const result = await issueCertificate(userId, courseId);
+    if (result.status === "issued") {
+      console.info("[certificates] Auto-issued on completion", { userId, courseId });
+    }
+  } catch (err) {
+    console.error("[certificates] Auto-issue failed", { userId, courseId }, err);
+  }
+}
