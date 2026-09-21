@@ -43,50 +43,70 @@ export default async function OverviewPage() {
     <div className="flex flex-col gap-5">
       {/* Live income hero — the card members screenshot and share, so it
           carries their name, photo, plan and the headline figure. */}
-      <section className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(135deg,#101a47_0%,#132a6b_50%,#0b4a34_100%)] p-6 text-white sm:p-8">
+      <section className="relative overflow-hidden rounded-[24px] bg-[linear-gradient(135deg,#101a47_0%,#132a6b_50%,#0b4a34_100%)] p-5 text-white sm:rounded-[28px] sm:p-8">
         <span aria-hidden="true" className="absolute -right-24 -top-24 size-80 rounded-full bg-[radial-gradient(circle,rgb(61_220_114/0.35),transparent_65%)]" />
         <span aria-hidden="true" className="absolute -bottom-28 -left-20 size-72 rounded-full bg-[radial-gradient(circle,rgb(46_111_212/0.35),transparent_65%)]" />
         <span aria-hidden="true" className="absolute bottom-5 right-6 h-20 w-36 bg-[radial-gradient(circle,rgb(255_255_255/0.18)_1.5px,transparent_1.6px)] [background-size:12px_12px]" />
 
-        <div className="relative flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 items-center gap-4">
-            <span className="rounded-full bg-[linear-gradient(145deg,#3ddc72,#2e6fd4)] p-[3px]">
+        <div className="relative flex flex-col gap-5 sm:gap-7 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
+            {/* Two sizes rather than one: 72px is right on a laptop and eats a
+                quarter of the hero on a 360px phone. */}
+            <span className="shrink-0 rounded-full bg-[linear-gradient(145deg,#3ddc72,#2e6fd4)] p-[3px]">
               <span className="block rounded-full bg-[#101a47] p-[2px]">
-                <Avatar name={fullName} src={profile.avatarUrl} size={72} />
+                <span className="block sm:hidden">
+                  <Avatar name={fullName} src={profile.avatarUrl} size={52} />
+                </span>
+                <span className="hidden sm:block">
+                  <Avatar name={fullName} src={profile.avatarUrl} size={72} />
+                </span>
               </span>
             </span>
             <div className="min-w-0">
               <p className="text-[13px] font-medium text-white/65">Welcome back,</p>
-              <h1 className="truncate text-[26px] font-bold leading-tight tracking-[-0.6px] sm:text-[32px]">
+              <h1 className="truncate text-[21px] font-bold leading-tight tracking-[-0.6px] sm:text-[32px]">
                 {fullName}
               </h1>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="pill bg-[var(--brand-green-bright)] px-3 py-1 text-[12px] font-bold text-[var(--brand-ink)]">
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2 sm:gap-2">
+                <span className="pill bg-[var(--brand-green-bright)] px-2.5 py-0.5 text-[11.5px] font-bold text-[var(--brand-ink)] sm:px-3 sm:py-1 sm:text-[12px]">
                   {data.planName ?? "No plan"}
                 </span>
-                <span className="pill bg-white/10 px-3 py-1 font-mono text-[12px] font-semibold ring-1 ring-white/15">
+                <span className="pill bg-white/10 px-2.5 py-0.5 font-mono text-[11.5px] font-semibold ring-1 ring-white/15 sm:px-3 sm:py-1 sm:text-[12px]">
                   ID {profile.referralCode}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col items-start gap-2 lg:items-end">
-            <LiveRefresh />
-            <p className="text-[13px] font-medium uppercase tracking-[0.16em] text-white/60">Total income</p>
-            <p className="tabular bg-[linear-gradient(90deg,#ffffff,#b8f5cc)] bg-clip-text text-[44px] font-bold leading-none tracking-[-1.5px] text-transparent sm:text-[56px]">
+          <div className="flex flex-col items-start gap-1.5 sm:gap-2 lg:items-end">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <LiveRefresh />
+              <p className="text-[12px] font-medium uppercase tracking-[0.16em] text-white/60 sm:text-[13px]">
+                Total income
+              </p>
+            </div>
+            <p className="tabular bg-[linear-gradient(90deg,#ffffff,#b8f5cc)] bg-clip-text text-[40px] font-bold leading-none tracking-[-1.5px] text-transparent sm:text-[56px]">
               {formatPrice(data.earned.allTime)}
             </p>
-            <div className="mt-2 flex flex-wrap gap-2">
+            {data.wallet.pendingInPaise > 0 && (
+              <p className="text-[12.5px] text-white/70">
+                Includes{" "}
+                <span className="tabular font-semibold text-[var(--brand-green-bright)]">
+                  {formatPrice(data.wallet.pendingInPaise)}
+                </span>{" "}
+                clearing the 7-day refund window
+              </p>
+            )}
+            <div className="mt-1.5 flex flex-wrap gap-2 sm:mt-2">
               <Link
                 href="/dashboard/earnings"
-                className="inline-flex min-h-11 items-center rounded-full bg-white px-5 text-[14px] font-semibold text-[var(--brand-ink)] transition-colors hover:bg-white/90"
+                className="inline-flex min-h-10 items-center rounded-full bg-white px-4 text-[13.5px] font-semibold text-[var(--brand-ink)] transition-colors hover:bg-white/90 sm:min-h-11 sm:px-5 sm:text-[14px]"
               >
                 View earnings
               </Link>
               <Link
                 href="/dashboard/affiliate"
-                className="inline-flex min-h-11 items-center rounded-full px-5 text-[14px] font-semibold text-white ring-[1.5px] ring-white/50 transition-colors hover:bg-white/10"
+                className="inline-flex min-h-10 items-center rounded-full px-4 text-[13.5px] font-semibold text-white ring-[1.5px] ring-white/50 transition-colors hover:bg-white/10 sm:min-h-11 sm:px-5 sm:text-[14px]"
               >
                 Share my link
               </Link>
@@ -105,16 +125,16 @@ export default async function OverviewPage() {
         ].map((t) => (
           <div
             key={t.label}
-            className="relative overflow-hidden rounded-[22px] p-4 text-white shadow-[0_18px_36px_-22px_rgb(16_26_71/0.7)] sm:p-5"
+            className="relative overflow-hidden rounded-[18px] p-3.5 text-white shadow-[0_18px_36px_-22px_rgb(16_26_71/0.7)] sm:rounded-[22px] sm:p-5"
             style={{ background: t.bg }}
           >
             <span aria-hidden="true" className="absolute -right-6 -top-6 size-24 rounded-full bg-white/10" />
             <span aria-hidden="true" className="absolute -bottom-10 right-6 size-20 rounded-full bg-white/[0.07]" />
-            <span className="relative flex size-10 items-center justify-center rounded-[12px] bg-white/20">
-              <t.icon className="size-5" strokeWidth={1.8} aria-hidden="true" />
+            <span className="relative flex size-8 items-center justify-center rounded-[10px] bg-white/20 sm:size-10 sm:rounded-[12px]">
+              <t.icon className="size-4 sm:size-5" strokeWidth={1.8} aria-hidden="true" />
             </span>
-            <p className="relative mt-4 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-white/80">{t.label}</p>
-            <p className="tabular relative mt-1 text-[24px] font-bold leading-tight tracking-[-0.5px] sm:text-[28px]">
+            <p className="relative mt-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/80 sm:mt-4 sm:text-[11.5px] sm:tracking-[0.14em]">{t.label}</p>
+            <p className="tabular relative mt-0.5 text-[20px] font-bold leading-tight tracking-[-0.5px] sm:mt-1 sm:text-[28px]">
               {formatPrice(t.value)}
             </p>
           </div>
@@ -156,12 +176,16 @@ export default async function OverviewPage() {
             <p className="text-[12px] text-[var(--color-muted-foreground)]">Clears after the 7-day refund window</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 rounded-[22px] bg-[linear-gradient(135deg,#0e5a40,#0b4a34)] p-5 text-white shadow-[0_18px_40px_-28px_rgb(11_74_52/0.8)]">
+        {/* The button shares the row only where there is room for it: at 390px
+            it squeezed the label into three lines. */}
+        <div className="flex flex-wrap items-center gap-4 rounded-[22px] bg-[linear-gradient(135deg,#0e5a40,#0b4a34)] p-5 text-white shadow-[0_18px_40px_-28px_rgb(11_74_52/0.8)]">
           <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-white/15">
             <IndianRupee className="size-6" strokeWidth={1.8} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-white/70">Ready to withdraw</p>
+            <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.08em] text-white/70 sm:text-[11.5px] sm:tracking-[0.14em]">
+              Ready to withdraw
+            </p>
             <p className="tabular text-[24px] font-bold">{formatPrice(data.wallet.availableInPaise)}</p>
           </div>
           <Link

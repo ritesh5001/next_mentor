@@ -61,7 +61,7 @@ export default async function AdminUsersPage({
             id="q"
             name="q"
             defaultValue={q ?? ""}
-            placeholder="Name, email or referral code"
+            placeholder="Name, email, phone or member ID"
             className="min-h-11 w-full rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-card)] py-2 pl-9 pr-3 text-[16px]"
           />
         </div>
@@ -104,9 +104,14 @@ export default async function AdminUsersPage({
                         {u.name ?? u.email}
                       </Link>
                       {u.isBlocked && <Badge tone="danger">Blocked</Badge>}
-                      {!u.emailVerified && <Badge tone="warning">Unverified</Badge>}
+                      {!u.emailVerified && <Badge tone="warning">Not paid</Badge>}
                     </div>
                     <div className="text-xs text-[var(--color-muted-foreground)]">{u.email}</div>
+                    {(u.phone || u.state) && (
+                      <div className="text-xs text-[var(--color-muted-foreground)]">
+                        {[u.phone, u.state].filter(Boolean).join(" · ")}
+                      </div>
+                    )}
                     <div className="font-mono text-xs text-[var(--color-muted-foreground)]">
                       {u.referralCode}
                     </div>

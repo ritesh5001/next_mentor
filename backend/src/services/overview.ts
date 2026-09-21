@@ -23,8 +23,16 @@ import {
  * projection; these are the underlying facts.
  */
 
-/** Commission that actually counts as earned. Reversed sales never do. */
-const EARNED = ["approved", "paid"] as const;
+/**
+ * Commission that counts as income. Only a reversed sale does not.
+ *
+ * `pending` is included deliberately: it is money the member has genuinely
+ * earned, merely inside the 7-day refund window. Leaving it out showed a
+ * member who had just made their first sale a total income of zero next to a
+ * pending balance — the dashboard contradicting itself. What is withdrawable
+ * is a separate question, answered by the wallet cards.
+ */
+const EARNED = ["pending", "approved", "paid"] as const;
 
 function daysAgo(n: number): Date {
   const d = new Date();

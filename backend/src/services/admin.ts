@@ -10,7 +10,12 @@ export async function listUsersForAdmin(params: { query?: string; limit?: number
   const q = params.query?.trim();
 
   const where = q
-    ? or(ilike(users.name, `%${q}%`), ilike(users.email, `%${q}%`), eq(users.referralCode, q.toUpperCase()))
+    ? or(
+        ilike(users.name, `%${q}%`),
+        ilike(users.email, `%${q}%`),
+        ilike(users.phone, `%${q.replace(/\D/g, "") || q}%`),
+        eq(users.referralCode, q.toUpperCase()),
+      )
     : undefined;
 
   return db
@@ -18,6 +23,8 @@ export async function listUsersForAdmin(params: { query?: string; limit?: number
       id: users.id,
       name: users.name,
       email: users.email,
+      phone: users.phone,
+      state: users.state,
       role: users.role,
       isBlocked: users.isBlocked,
       emailVerified: users.emailVerified,

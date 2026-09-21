@@ -260,6 +260,38 @@ export const getEarningsReport = () =>
     };
   }>("/api/admin/earnings");
 
+export type PayoutRunRow = {
+  userId: string;
+  name: string | null;
+  email: string;
+  phone: string | null;
+  memberId: string;
+  amountInPaise: number;
+  kycStatus: "pending" | "approved" | "rejected" | null;
+  bankAccountName: string | null;
+  accountNumber: string | null;
+  accountNumberLast4: string | null;
+  ifsc: string | null;
+  lastPaidAt: string | null;
+};
+
+/** The Monday payout run: who to transfer money to this week, and how much. */
+export const getWeeklyPayoutRun = () =>
+  api<{
+    runDate: string;
+    followingRunDate: string;
+    pay: PayoutRunRow[];
+    blocked: PayoutRunRow[];
+    inProcess: PayoutRunRow[];
+    forecast: Array<{ runDate: string; totalInPaise: number; members: PayoutRunRow[] }>;
+    totals: {
+      payInPaise: number;
+      blockedInPaise: number;
+      inProcessInPaise: number;
+      maturingInPaise: number;
+    };
+  }>("/api/admin/payout-run");
+
 /** One member's commissions line by line, and their payouts. */
 export const getMemberEarnings = (userId: string) =>
   apiOrNull<{
@@ -708,6 +740,8 @@ export const listUsersForAdmin = (query?: string) =>
       id: string;
       name: string | null;
       email: string;
+      phone: string | null;
+      state: string | null;
       role: "student" | "instructor" | "admin";
       isBlocked: boolean;
       emailVerified: string | null;
@@ -717,6 +751,25 @@ export const listUsersForAdmin = (query?: string) =>
       spentInPaise: number;
     }>
   >(`/api/admin/users${query ? `?q=${encodeURIComponent(query)}` : ""}`);
+
+/** A member's signup details and sponsor, for the admin member page. */
+export const getUserProfileForAdmin = (userId: string) =>
+  apiOrNull<{
+    id: string;
+    name: string | null;
+    email: string;
+    phone: string | null;
+    state: string | null;
+    role: "student" | "instructor" | "admin";
+    isBlocked: boolean;
+    emailVerified: string | null;
+    memberId: string;
+    createdAt: string;
+    sponsorName: string | null;
+    sponsorEmail: string | null;
+    sponsorMemberId: string | null;
+    planName: string | null;
+  }>(`/api/admin/users/${userId}/profile`);
 
 export const getUserAccessForAdmin = (userId: string) =>
   api<{

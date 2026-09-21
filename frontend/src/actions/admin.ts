@@ -311,6 +311,23 @@ export async function rejectPayoutAction(payoutId: string, reason: string): Prom
   );
 }
 
+/**
+ * Records a transfer made during the Monday payout run. Unlike marking a
+ * member's own request paid, this both debits their wallet and closes the
+ * payout, so the balance on their dashboard drops the moment it is recorded.
+ */
+export async function recordPayoutRunAction(
+  userId: string,
+  amountInPaise: number,
+  utrNumber: string,
+): Promise<ActionState> {
+  return run(
+    () => api("/api/admin/payout-run", { method: "POST", body: { userId, amountInPaise, utrNumber } }),
+    ["/admin/payout-run", "/admin/payouts", "/admin/earnings"],
+    `Recorded · UTR ${utrNumber}`,
+  );
+}
+
 /* ---------------------------------------------------------------- content */
 
 export async function createPromoAssetAction(_p: ActionState, fd: FormData): Promise<ActionState> {
@@ -507,4 +524,50 @@ export async function setCertificateRevokedAction(serial: string, revoked: boole
     ["/admin/certificates"],
     revoked ? "Certificate revoked" : "Certificate restored",
   );
+}
+
+/* ------------------------------------------------------ member details */
+
+export async function updateUserDetailsAction(
+  userId: string,
+  _p: ActionState,
+  fd: FormData,
+): Promise<ActionState> {
+  try {
+    await api(`/api/admin/users/${userId}/details`, { method: "PATCH", body: form(fd) });
+    revalidatePath(`/admin/users/${userId}`);
+    revalidatePath("/admin/users");
+    return { success: "Details saved" };
+  } catch (err) {
+    if (err instanceof ApiError && err.fields) {
+      return { error: Object.values(err.fields)[0] ?? err.message };
+    }
+    return { error: err instanceof ApiError ? err.message : "Something went wrong." };
+  }
+}
+
+export async function setUserPasswordAction(
+  userId: string,
+  _p: ActionState,
+  fd: FormData,
+): Promise<ActionState> {
+  try {
+    const res = await api<{ emailed: boolean }>(`/api/admin/users/${userId}/password`, {
+      method: "POST",
+      body: {
+        password: String(fd.get("password") ?? ""),
+        emailMember: fd.get("emailMember") === "on",
+      },
+    });
+    return {
+      success: res.emailed
+        ? "New password set and emailed to the member."
+        : "New password set. Share it with the member yourself.",
+    };
+  } catch (err) {
+    if (err instanceof ApiError && err.fields) {
+      return { error: Object.values(err.fields)[0] ?? err.message };
+    }
+    return { error: err instanceof ApiError ? err.message : "Something went wrong." };
+  }
 }

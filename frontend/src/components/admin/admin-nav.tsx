@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   BookOpen,
   BadgeIndianRupee,
+  CalendarCheck,
   FolderOpen,
   LayoutDashboard,
   Menu,
@@ -57,6 +58,7 @@ const GROUPS: Array<{ heading: string; items: NavItem[] }> = [
   {
     heading: "Money",
     items: [
+      { href: "/admin/payout-run", label: "Monday payout run", icon: CalendarCheck },
       { href: "/admin/earnings", label: "Earnings & payouts", icon: IndianRupee },
       { href: "/admin/orders", label: "Orders", icon: Receipt },
       { href: "/admin/payouts", label: "Payouts", icon: Wallet },

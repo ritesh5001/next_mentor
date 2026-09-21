@@ -9,6 +9,8 @@ import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
 import { createFreeMember } from "@/services/signup";
 import * as feedback from "@/services/testimonials";
+import { getUserProfileForAdmin, setUserPassword, updateUserDetails } from "@/services/admin-users";
+import { sendPasswordSetByAdminEmail } from "@/lib/email";
 import { getEarningsReport, getMemberEarnings } from "@/services/earnings-report";
 import {
   issueManualCertificate,
@@ -27,6 +29,7 @@ import { listCouponsForAdmin } from "@/services/coupons";
 import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay } from "@/services/admin";
 import { listKycForAdmin, listPayoutsForAdmin } from "@/services/affiliate";
 import { approvePayout, markPayoutPaid, rejectPayout } from "@/services/payouts";
+import { getWeeklyPayoutRun, recordDirectPayout } from "@/services/payout-run";
 import {
   createUploadAuth,
   signedDocumentUrl,
@@ -759,6 +762,25 @@ adminRoutes.patch("/certificates/:serial", requireAdmin, async (c) => {
   return ok(c, { ok: true });
 });
 
+/* ---------------------------------------------------- weekly payout run */
+
+adminRoutes.get("/payout-run", requireAdmin, async (c) => ok(c, await getWeeklyPayoutRun()));
+
+adminRoutes.post("/payout-run", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      userId: z.string().uuid(),
+      amountInPaise: z.number().int().positive(),
+      utrNumber: z.string().trim().min(6, "Enter the bank UTR / reference number."),
+    }),
+  );
+  if (!body.ok) return body.response;
+
+  const result = await recordDirectPayout({ ...body.data, adminId: currentUser(c).id });
+  return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
+});
+
 /* ------------------------------------------------------- earnings report */
 
 adminRoutes.get("/earnings", requireAdmin, async (c) => ok(c, await getEarningsReport()));
@@ -766,4 +788,65 @@ adminRoutes.get("/earnings", requireAdmin, async (c) => ok(c, await getEarningsR
 adminRoutes.get("/earnings/:userId", requireAdmin, async (c) => {
   const report = await getMemberEarnings(c.req.param("userId"));
   return report ? ok(c, report) : fail(c, "No such member.", "not_found");
+});
+
+/* ------------------------------------------------------ member details */
+
+adminRoutes.get("/users/:userId/profile", requireAdmin, async (c) => {
+  const profile = await getUserProfileForAdmin(c.req.param("userId"));
+  return profile ? ok(c, profile) : fail(c, "No such member.", "not_found");
+});
+
+adminRoutes.patch("/users/:userId/details", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      name: z.string().trim().min(2, "Enter the full name.").max(80),
+      email: z.string().trim().email("Enter a valid email address."),
+      phone: z.string().trim().max(20).optional().or(z.literal("")),
+      state: z.string().trim().max(60).optional().or(z.literal("")),
+    }),
+  );
+  if (!body.ok) return body.response;
+
+  const result = await updateUserDetails(c.req.param("userId"), body.data);
+  if ("error" in result) {
+    return fail(c, result.error, "validation", result.field ? { [result.field]: result.error } : undefined);
+  }
+  return ok(c, result);
+});
+
+adminRoutes.post("/users/:userId/password", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      password: z
+        .string()
+        .min(8, "At least 8 characters.")
+        .max(72)
+        .regex(/[A-Z]/, "Include an uppercase letter.")
+        .regex(/\d/, "Include a number."),
+      emailMember: z.boolean().default(false),
+    }),
+  );
+  if (!body.ok) return body.response;
+
+  const userId = c.req.param("userId");
+  const result = await setUserPassword(userId, body.data.password);
+  if ("error" in result) return fail(c, result.error, "validation");
+
+  let emailed = false;
+  if (body.data.emailMember) {
+    const profile = await getUserProfileForAdmin(userId);
+    if (profile) {
+      const sent = await sendPasswordSetByAdminEmail({
+        to: profile.email,
+        name: profile.name,
+        memberId: profile.memberId,
+        password: body.data.password,
+      });
+      emailed = sent.ok;
+    }
+  }
+  return ok(c, { ok: true, emailed });
 });

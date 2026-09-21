@@ -310,3 +310,30 @@ export function sendWelcomeCredentialsEmail(params: {
     ),
   });
 }
+
+/** Sent when an admin sets a new password for a member, if they chose to. */
+export function sendPasswordSetByAdminEmail(params: {
+  to: string;
+  name: string | null;
+  memberId: string;
+  password: string;
+}) {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:8px 0;color:#64748b">${label}</td><td align="right" style="padding:8px 0;font-weight:600;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;word-break:break-all">${value}</td></tr>`;
+
+  return send({
+    to: params.to,
+    subject: "Your NextMentor password has been updated",
+    html: layout(
+      `Hi${params.name ? ` ${esc(params.name.split(" ")[0])}` : ""}, your password was updated`,
+      `<p style="margin:0">Our team has set a new password for your account. Your login details:</p>
+       <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;font-size:14px;background:#f1f5f9;border-radius:12px;padding:8px 16px">
+         ${row("Member ID", esc(params.memberId))}
+         ${row("Login email", esc(params.to))}
+         ${row("New password", esc(params.password))}
+       </table>
+       <p style="margin:20px 0 0;font-size:13px;color:#64748b">For your security, change it after you log in (Dashboard → Profile). If you did not ask for this, contact support.</p>`,
+      { label: "Log in", url: `${appUrl()}/login` },
+    ),
+  });
+}
