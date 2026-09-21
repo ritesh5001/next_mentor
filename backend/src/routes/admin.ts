@@ -9,6 +9,7 @@ import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
 import { createFreeMember } from "@/services/signup";
 import * as feedback from "@/services/testimonials";
+import { getEarningsReport, getMemberEarnings } from "@/services/earnings-report";
 import {
   issueManualCertificate,
   listCertificatesForAdmin,
@@ -756,4 +757,13 @@ adminRoutes.patch("/certificates/:serial", requireAdmin, async (c) => {
   if (!body.ok) return body.response;
   await setCertificateRevoked(c.req.param("serial"), body.data.revoked);
   return ok(c, { ok: true });
+});
+
+/* ------------------------------------------------------- earnings report */
+
+adminRoutes.get("/earnings", requireAdmin, async (c) => ok(c, await getEarningsReport()));
+
+adminRoutes.get("/earnings/:userId", requireAdmin, async (c) => {
+  const report = await getMemberEarnings(c.req.param("userId"));
+  return report ? ok(c, report) : fail(c, "No such member.", "not_found");
 });

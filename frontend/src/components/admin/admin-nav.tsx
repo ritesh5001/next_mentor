@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Sparkles,
   Award,
+  IndianRupee,
   MessageSquareQuote,
   Ticket,
   Users,
@@ -56,6 +57,7 @@ const GROUPS: Array<{ heading: string; items: NavItem[] }> = [
   {
     heading: "Money",
     items: [
+      { href: "/admin/earnings", label: "Earnings & payouts", icon: IndianRupee },
       { href: "/admin/orders", label: "Orders", icon: Receipt },
       { href: "/admin/payouts", label: "Payouts", icon: Wallet },
     ],

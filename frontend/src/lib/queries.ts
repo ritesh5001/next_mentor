@@ -223,6 +223,70 @@ export const listCertificatesForAdmin = () =>
     }>
   >("/api/admin/certificates");
 
+export type EarningsRow = {
+  userId: string;
+  name: string | null;
+  email: string;
+  phone: string | null;
+  memberId: string;
+  planName: string | null;
+  referrals: number;
+  sales: number;
+  lifetimeEarnedInPaise: number;
+  pendingInPaise: number;
+  availableInPaise: number;
+  withdrawnInPaise: number;
+  inProcessInPaise: number;
+  toPayInPaise: number;
+  lastEarnedAt: string | null;
+  kycStatus: "pending" | "approved" | "rejected" | null;
+  bankAccountName: string | null;
+  accountNumberLast4: string | null;
+  ifsc: string | null;
+};
+
+/** Admin payout sheet: every earning member, with totals. */
+export const getEarningsReport = () =>
+  api<{
+    members: EarningsRow[];
+    totals: {
+      members: number;
+      lifetimeEarnedInPaise: number;
+      pendingInPaise: number;
+      availableInPaise: number;
+      inProcessInPaise: number;
+      withdrawnInPaise: number;
+      toPayInPaise: number;
+    };
+  }>("/api/admin/earnings");
+
+/** One member's commissions line by line, and their payouts. */
+export const getMemberEarnings = (userId: string) =>
+  apiOrNull<{
+    member: { id: string; name: string | null; email: string; memberId: string };
+    commissions: Array<{
+      id: string;
+      createdAt: string;
+      maturesAt: string;
+      status: "pending" | "approved" | "paid" | "reversed";
+      rateBps: number;
+      baseAmountInPaise: number;
+      amountInPaise: number;
+      level: number;
+      fromName: string | null;
+      fromEmail: string | null;
+      itemName: string | null;
+    }>;
+    payouts: Array<{
+      id: string;
+      amountInPaise: number;
+      status: "requested" | "approved" | "paid" | "rejected";
+      utrNumber: string | null;
+      createdAt: string;
+      processedAt: string | null;
+    }>;
+  }>(`/api/admin/earnings/${userId}`);
+
 /* ------------------------------------------------------------------ learn */
 
 export type LearnView = {
