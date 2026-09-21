@@ -12,6 +12,7 @@ import {
   Receipt,
   ShieldCheck,
   Sparkles,
+  MessageSquareQuote,
   Ticket,
   Users,
   Wallet,
@@ -47,6 +48,7 @@ const GROUPS: Array<{ heading: string; items: NavItem[] }> = [
       { href: "/admin/plans", label: "Plans", icon: Sparkles },
       { href: "/admin/coupons", label: "Coupons", icon: Ticket },
       { href: "/admin/content", label: "Training & Promo", icon: FolderOpen },
+      { href: "/admin/testimonials", label: "Student feedback", icon: MessageSquareQuote },
     ],
   },
   {

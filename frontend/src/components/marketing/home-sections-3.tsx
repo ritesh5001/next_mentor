@@ -29,7 +29,7 @@ import {
 import { CtaButton } from "./cta-button";
 import { SectionHead } from "./home-sections";
 import { cn } from "@/lib/cn";
-import { TESTIMONIALS, type Testimonial } from "@/lib/testimonials";
+import type { Testimonial } from "@/lib/queries";
 
 /* ------------------------------------------------------------ how it works */
 
@@ -664,10 +664,11 @@ function FeedbackCard({ t }: { t: Testimonial }) {
             aria-label="Verified student"
           />
         </span>
-        <span className="mt-0.5 block text-[13px] text-[var(--color-muted-foreground)]">
-          {t.who ? `${t.who} · ` : ""}
-          {t.course}
-        </span>
+        {(t.who || t.course) && (
+          <span className="mt-0.5 block text-[13px] text-[var(--color-muted-foreground)]">
+            {[t.who, t.course].filter(Boolean).join(" · ")}
+          </span>
+        )}
       </figcaption>
     </figure>
   );
@@ -679,12 +680,14 @@ function FeedbackCard({ t }: { t: Testimonial }) {
  * so the CSS loop joins up seamlessly. Only the first pass is exposed to
  * screen readers; the copies are decoration.
  */
-export function StudentFeedback() {
-  if (TESTIMONIALS.length === 0) return null;
+export function StudentFeedback({ items }: { items: Testimonial[] }) {
+  // Nothing published yet: leave the section out rather than show an empty
+  // shelf. Staff add feedback in Admin → Student feedback.
+  if (items.length === 0) return null;
 
   // Below three, a moving strip would just repeat the same card over and
   // over, so they sit still in a row instead.
-  if (TESTIMONIALS.length < 3) {
+  if (items.length < 3) {
     return (
       <section className="bg-[var(--brand-hero-wash)]">
         <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20 lg:py-24">
@@ -695,8 +698,8 @@ export function StudentFeedback() {
             lede="Real feedback from people who learned with NextMentor, in their own words."
           />
           <ul className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-5">
-            {TESTIMONIALS.map((t) => (
-              <li key={t.name} className="flex">
+            {items.map((t) => (
+              <li key={t.id} className="flex">
                 <FeedbackCard t={t} />
               </li>
             ))}
@@ -706,7 +709,7 @@ export function StudentFeedback() {
     );
   }
 
-  const pass = Array.from({ length: Math.ceil(8 / TESTIMONIALS.length) }, () => TESTIMONIALS).flat();
+  const pass = Array.from({ length: Math.ceil(8 / items.length) }, () => items).flat();
 
   return (
     <section className="overflow-hidden bg-[var(--brand-hero-wash)]">
@@ -731,7 +734,7 @@ export function StudentFeedback() {
               aria-hidden={copy === 1 ? true : undefined}
             >
               {pass.map((t, i) => (
-                <li key={`${t.name}-${i}`} className="flex" aria-hidden={copy === 0 && i >= TESTIMONIALS.length ? true : undefined}>
+                <li key={`${t.id}-${i}`} className="flex" aria-hidden={copy === 0 && i >= items.length ? true : undefined}>
                   <FeedbackCard t={t} />
                 </li>
               ))}

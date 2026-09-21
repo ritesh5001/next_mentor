@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { envUrl } from "@nextmentor/shared";
 
-import { getActivePlans, getCatalog } from "@/lib/queries";
+import { getActivePlans, getCatalog, getTestimonials } from "@/lib/queries";
 import { Hero, TrustBar } from "@/components/marketing/home-sections";
 import {
   HowItWorks,
@@ -33,7 +33,11 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   // Both are cached public reads that fall back to an empty list, so a cold
   // API cannot take the homepage down with it.
-  const [plans, courses] = await Promise.all([getActivePlans(), getCatalog()]);
+  const [plans, courses, testimonials] = await Promise.all([
+    getActivePlans(),
+    getCatalog(),
+    getTestimonials(),
+  ]);
 
   return (
     <>
@@ -64,7 +68,7 @@ export default async function HomePage() {
       <Roadmap />
       <Founder />
       <Trainers />
-      <StudentFeedback />
+      <StudentFeedback items={testimonials} />
       <EarnBand
         rates={plans
           .filter((p) => p.commissionRateBps > 0)

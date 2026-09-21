@@ -8,6 +8,7 @@ import { lessonResources, lessons, modules, plans } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
 import { createFreeMember } from "@/services/signup";
+import * as feedback from "@/services/testimonials";
 import {
   ALLOWED_RESOURCE_TYPES,
   MAX_RESOURCE_BYTES,
@@ -657,4 +658,36 @@ adminRoutes.delete("/resources/:resourceId", requireAdmin, async (c) => {
   if (row?.filePath) await deleteR2Object(row.filePath);
 
   return ok(c, { deleted: true });
+});
+
+/* ------------------------------------------------------ student feedback */
+
+const testimonialSchema = z.object({
+  name: z.string().trim().min(2, "Enter the student's name.").max(80),
+  who: z.string().trim().max(60).optional().or(z.literal("")),
+  course: z.string().trim().max(80).optional().or(z.literal("")),
+  body: z.string().trim().min(10, "Paste what they actually wrote.").max(600),
+  position: z.coerce.number().int().min(0).max(999).default(0),
+});
+
+adminRoutes.get("/testimonials", requireAdmin, async (c) =>
+  ok(c, await feedback.listTestimonialsForAdmin()),
+);
+
+adminRoutes.post("/testimonials", requireAdmin, async (c) => {
+  const body = await parseBody(c, testimonialSchema);
+  if (!body.ok) return body.response;
+  return ok(c, await feedback.createTestimonial(body.data, currentUser(c).id), 201);
+});
+
+adminRoutes.patch("/testimonials/:id", requireAdmin, async (c) => {
+  const body = await parseBody(c, z.object({ isPublished: z.boolean() }));
+  if (!body.ok) return body.response;
+  await feedback.updateTestimonial(c.req.param("id"), body.data);
+  return ok(c, { ok: true });
+});
+
+adminRoutes.delete("/testimonials/:id", requireAdmin, async (c) => {
+  await feedback.deleteTestimonial(c.req.param("id"));
+  return ok(c, { ok: true });
 });

@@ -458,3 +458,29 @@ export async function createFreeMemberAction(_p: ActionState, fd: FormData): Pro
     return { error: err instanceof ApiError ? err.message : "Something went wrong." };
   }
 }
+
+/* ------------------------------------------------------ student feedback */
+
+export async function createTestimonialAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  return run(
+    () => api("/api/admin/testimonials", { method: "POST", body: form(fd) }),
+    ["/admin/testimonials", "/"],
+    "Feedback added",
+  );
+}
+
+export async function setTestimonialPublishedAction(id: string, isPublished: boolean): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/testimonials/${id}`, { method: "PATCH", body: { isPublished } }),
+    ["/admin/testimonials", "/"],
+    isPublished ? "Shown on the homepage" : "Hidden from the homepage",
+  );
+}
+
+export async function deleteTestimonialAction(id: string): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/testimonials/${id}`, { method: "DELETE" }),
+    ["/admin/testimonials", "/"],
+    "Feedback deleted",
+  );
+}

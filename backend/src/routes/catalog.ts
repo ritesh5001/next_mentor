@@ -4,6 +4,7 @@ import { getCatalog, getCourseBySlug, getEnrolledCourses } from "@/services/cour
 import { getActivePlans } from "@/services/plans";
 import { isEnrolled } from "@/lib/permissions";
 import { optionalAuth, requireUser, currentUser } from "@/middleware/auth";
+import { getPublishedTestimonials } from "@/services/testimonials";
 import { ok, fail } from "@/middleware/respond";
 
 /** Public catalog. Reads only — no guard beyond optional auth for entitlement. */
@@ -32,3 +33,6 @@ catalogRoutes.get("/courses/:slug", optionalAuth, async (c) => {
 catalogRoutes.get("/my/courses", requireUser, async (c) =>
   ok(c, await getEnrolledCourses(currentUser(c).id)),
 );
+
+/** Student feedback for the homepage. Public and cached. */
+catalogRoutes.get("/testimonials", async (c) => ok(c, await getPublishedTestimonials()));

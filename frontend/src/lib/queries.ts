@@ -188,6 +188,27 @@ export const getProfile = cache(() =>
   }>("/api/profile"),
 );
 
+/** Student feedback for the homepage. Public, cached like the catalogue. */
+export type Testimonial = {
+  id: string;
+  name: string;
+  who: string | null;
+  course: string | null;
+  body: string;
+};
+
+export const getTestimonials = () =>
+  publicRead(
+    "testimonials",
+    () => api<Testimonial[]>("/api/testimonials", { anonymous: true, revalidate: 60, tags: ["testimonials"] }),
+    [] as Testimonial[],
+  );
+
+export const listTestimonialsForAdmin = () =>
+  api<Array<Testimonial & { isPublished: boolean; position: number; createdAt: string }>>(
+    "/api/admin/testimonials",
+  );
+
 /* ------------------------------------------------------------------ learn */
 
 export type LearnView = {

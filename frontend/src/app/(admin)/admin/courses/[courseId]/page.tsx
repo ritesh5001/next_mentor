@@ -8,10 +8,11 @@ import { CourseForm } from "@/components/admin/course-form";
 import { ThumbnailUpload } from "@/components/admin/thumbnail-upload";
 import { CurriculumEditor } from "@/components/admin/curriculum-editor";
 import { PublishControls } from "@/components/admin/publish-controls";
+import { ActionButton } from "@/components/admin/row-actions";
 import { Badge } from "@/components/ui/badge";
 import { createLessonAction, createModuleAction, deleteLessonAction, deleteModuleAction, requestLessonUploadAction, confirmLessonUploadAction,
   requestResourceUploadAction,
-  confirmResourceUploadAction, requestThumbnailUploadAction, setCourseStatusAction, setCourseThumbnailAction, updateCourseAction } from "@/actions/admin";
+  confirmResourceUploadAction, deleteCourseAction, requestThumbnailUploadAction, setCourseStatusAction, setCourseThumbnailAction, updateCourseAction } from "@/actions/admin";
 import { getCourseForEditor } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -106,6 +107,29 @@ export default async function EditCoursePage({
       <section className="flex max-w-2xl flex-col gap-4 border-t border-[var(--color-border)] pt-8">
         <h2 className="text-lg font-bold tracking-tight">Details</h2>
         <CourseForm action={updateCourseAction} values={course} submitLabel="Save changes" />
+      </section>
+
+      {/* Deleting is separated and confirmed: it takes the lessons and their
+          videos with it. A course anyone has paid for cannot be deleted at
+          all — the API refuses, because orders are financial records — so
+          archiving is the way to retire one of those. */}
+      <section className="flex max-w-2xl flex-col gap-3 rounded-[18px] border border-[var(--color-destructive)]/30 bg-[var(--color-destructive)]/[0.04] p-5">
+        <h2 className="text-lg font-bold tracking-tight text-[var(--color-destructive)]">Danger zone</h2>
+        <p className="text-sm text-[var(--color-muted-foreground)]">
+          Deleting <strong className="font-semibold">{course.title}</strong> removes its modules,
+          lessons and uploaded videos for good. If anyone has bought it, delete is refused — archive
+          it instead, which hides it while keeping every record.
+        </p>
+        <div className="flex justify-start">
+          <ActionButton
+            run={deleteCourseAction.bind(null, course.id)}
+            label="Delete this course"
+            busyLabel="Deleting…"
+            variant="danger"
+            size="md"
+            confirm={`Delete "${course.title}" and all its lessons and videos? This cannot be undone.`}
+          />
+        </div>
       </section>
     </div>
   );
