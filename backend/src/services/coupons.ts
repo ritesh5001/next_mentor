@@ -35,7 +35,14 @@ export function normalizeCouponCode(input: string): string {
  */
 export async function validateCoupon(params: {
   code: string;
-  userId: string;
+  /**
+   * The buyer, when there is one. Signup previews a code before the account
+   * exists, and pass `null`: a private code then matches nobody (correct — it
+   * belongs to a member) and the per-person limit counts zero, which is what a
+   * brand-new account's count would be anyway. The binding check still runs at
+   * checkout, against the real user.
+   */
+  userId: string | null;
   amountInPaise: number;
   scope: "course" | "plan";
   targetId: string;
@@ -83,15 +90,17 @@ export async function validateCoupon(params: {
 
   // Per-user limit is counted from actual redemptions, not from a counter —
   // a counter cannot answer "who used it".
-  const [{ used }] = await db
-    .select({ used: sql<number>`cast(count(*) as int)` })
-    .from(couponRedemptions)
-    .where(
-      and(eq(couponRedemptions.couponId, coupon.id), eq(couponRedemptions.userId, params.userId)),
-    );
+  if (params.userId) {
+    const [{ used }] = await db
+      .select({ used: sql<number>`cast(count(*) as int)` })
+      .from(couponRedemptions)
+      .where(
+        and(eq(couponRedemptions.couponId, coupon.id), eq(couponRedemptions.userId, params.userId)),
+      );
 
-  if (used >= coupon.perUserLimit) {
-    return { valid: false, reason: "You have already used this code." };
+    if (used >= coupon.perUserLimit) {
+      return { valid: false, reason: "You have already used this code." };
+    }
   }
 
   let discountInPaise =

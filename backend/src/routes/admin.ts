@@ -31,6 +31,13 @@ import { listKycForAdmin, listPayoutsForAdmin } from "@/services/affiliate";
 import { approvePayout, markPayoutPaid, rejectPayout } from "@/services/payouts";
 import { getWeeklyPayoutRun, recordDirectPayout } from "@/services/payout-run";
 import {
+  createOffer,
+  deleteOffer,
+  getOfferLeaderboard,
+  listOffersForAdmin,
+  updateOffer,
+} from "@/services/offers";
+import {
   createUploadAuth,
   signedDocumentUrl,
   uploadCourseResource,
@@ -760,6 +767,79 @@ adminRoutes.patch("/certificates/:serial", requireAdmin, async (c) => {
   if (!body.ok) return body.response;
   await setCertificateRevoked(c.req.param("serial"), body.data.revoked);
   return ok(c, { ok: true });
+});
+
+/* ------------------------------------------------------------- offers */
+
+const criterionSchema = z.object({
+  metric: z.enum(["referrals", "sales", "earnings"]),
+  target: z.number().int().positive("Set a target above zero."),
+  label: z.string().trim().max(80).optional(),
+});
+
+const offerSchema = z.object({
+  title: z.string().trim().min(3, "Give the offer a title.").max(120),
+  description: z.string().trim().max(1000).optional().or(z.literal("")),
+  reward: z.string().trim().min(2, "Say what they win.").max(200),
+  imageUrl: z.string().trim().url().optional().or(z.literal("")),
+  startsAt: z.coerce.date(),
+  endsAt: z.coerce.date().optional().nullable(),
+  criteria: z.array(criterionSchema).min(1, "Add at least one target."),
+  isPublished: z.boolean().default(false),
+  position: z.number().int().min(0).default(0),
+});
+
+/** Empty strings from a form mean "not set", not a value of "". */
+const clean = (v: string | undefined | null) => (v ? v : null);
+
+adminRoutes.get("/offers", requireAdmin, async (c) => ok(c, await listOffersForAdmin()));
+
+adminRoutes.post("/offers", requireAdmin, async (c) => {
+  const body = await parseBody(c, offerSchema);
+  if (!body.ok) return body.response;
+
+  const d = body.data;
+  if (d.endsAt && d.endsAt <= d.startsAt) {
+    return fail(c, "The end date must be after the start date.", "validation", {
+      endsAt: "Must be after the start date.",
+    });
+  }
+
+  const created = await createOffer(
+    { ...d, description: clean(d.description), imageUrl: clean(d.imageUrl), endsAt: d.endsAt ?? null },
+    currentUser(c).id,
+  );
+  return ok(c, created);
+});
+
+adminRoutes.patch("/offers/:offerId", requireAdmin, async (c) => {
+  const body = await parseBody(c, offerSchema.partial());
+  if (!body.ok) return body.response;
+
+  const d = body.data;
+  if (d.startsAt && d.endsAt && d.endsAt <= d.startsAt) {
+    return fail(c, "The end date must be after the start date.", "validation", {
+      endsAt: "Must be after the start date.",
+    });
+  }
+
+  const updated = await updateOffer(c.req.param("offerId"), {
+    ...d,
+    ...(d.description === undefined ? {} : { description: clean(d.description) }),
+    ...(d.imageUrl === undefined ? {} : { imageUrl: clean(d.imageUrl) }),
+  });
+  return updated ? ok(c, updated) : fail(c, "No such offer.", "not_found");
+});
+
+adminRoutes.delete("/offers/:offerId", requireAdmin, async (c) => {
+  const removed = await deleteOffer(c.req.param("offerId"));
+  return removed ? ok(c, removed) : fail(c, "No such offer.", "not_found");
+});
+
+/** Who qualifies right now — the list the owner needs to hand the prize over. */
+adminRoutes.get("/offers/:offerId/standings", requireAdmin, async (c) => {
+  const board = await getOfferLeaderboard(c.req.param("offerId"));
+  return board ? ok(c, board) : fail(c, "No such offer.", "not_found");
 });
 
 /* ---------------------------------------------------- weekly payout run */

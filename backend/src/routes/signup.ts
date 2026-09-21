@@ -59,6 +59,24 @@ const signupSchema = z
     message: "Passwords do not match.",
   });
 
+/**
+ * What a member is allowed to sell: their own pack level.
+ *
+ * A Starter member may introduce someone to Starter, a Pro member to Starter
+ * or Pro, and so on — you can only sell what you own. Admins are not selling,
+ * so they are not capped.
+ */
+export async function sellableTier(userId: string): Promise<number> {
+  const [row] = await db
+    .select({ role: users.role })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (row?.role === "admin") return Number.MAX_SAFE_INTEGER;
+  const sub = await getActiveSubscription(userId);
+  return sub?.planTier ?? 0;
+}
+
 /** A signed-in member sponsoring the signup, or the referral code on the form. */
 async function resolveReferrer(callerId: string | null, code: string | undefined) {
   if (callerId) {
@@ -112,6 +130,23 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
       referralCode: "Check this ID with the person who referred you.",
     });
   }
+  // A member can only introduce someone to a package they hold themselves.
+  // The form hides the ones they cannot sell; this is the backstop, because a
+  // hidden radio button is not a rule.
+  if (referredById) {
+    const allowed = await sellableTier(referredById);
+    if (plan.tier > allowed) {
+      return fail(
+        c,
+        caller
+          ? "You can only create accounts on packages you own. Upgrade your own package first."
+          : "The member who referred you cannot introduce this package. Choose a package they hold, or sign up without a referral ID.",
+        "validation",
+        { planSlug: "Not available through this referral ID." },
+      );
+    }
+  }
+
   const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
   const pendingPasswordEnc = encryptSecret(input.password);
 
@@ -237,6 +272,69 @@ signupRoutes.post("/signup/checkout", optionalAuth, async (c) => {
       "server_error",
     );
   }
+});
+
+/**
+ * Prices a coupon before the account exists, so the signup form can show what
+ * will actually be charged instead of making someone pay to find out.
+ *
+ * Indicative by design: the binding check happens when the order is created,
+ * against the real account. A code that passes here can still be refused there
+ * — if it is private to a member, or if that email has already used it.
+ */
+signupRoutes.post("/signup/coupon-preview", async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({ code: z.string().trim().min(1).max(32), planSlug: z.string().min(1) }),
+  );
+  if (!body.ok) return body.response;
+
+  const plan = await getPlanBySlug(body.data.planSlug);
+  if (!plan || !plan.isActive) return fail(c, "That package is not available.", "not_found");
+
+  const check = await validateCoupon({
+    code: body.data.code,
+    userId: null,
+    amountInPaise: plan.priceInPaise,
+    scope: "plan",
+    targetId: plan.id,
+  });
+
+  return check.valid
+    ? ok(c, {
+        valid: true as const,
+        code: check.code,
+        discountInPaise: check.discountInPaise,
+        finalAmountInPaise: check.finalAmountInPaise,
+      })
+    : ok(c, { valid: false as const, reason: check.reason });
+});
+
+/**
+ * Who a referral ID belongs to, and the highest package they can introduce.
+ *
+ * Public on purpose: the code is printed on the link the member shares. It
+ * gives back only a first name — enough for the signup page to say who
+ * referred you and to hide the packages that member cannot sell.
+ */
+signupRoutes.get("/signup/referrer", async (c) => {
+  const code = normalizeReferralCode(c.req.query("code") ?? "");
+  if (code.length < 4) return ok(c, { found: false });
+
+  const [referrer] = await db
+    .select({ id: users.id, name: users.name, code: users.referralCode, isBlocked: users.isBlocked })
+    .from(users)
+    .where(eq(users.referralCode, code))
+    .limit(1);
+
+  if (!referrer || referrer.isBlocked) return ok(c, { found: false });
+
+  return ok(c, {
+    found: true,
+    code: referrer.code,
+    name: referrer.name?.trim().split(/\s+/)[0] ?? null,
+    maxTier: Math.min(99, await sellableTier(referrer.id)),
+  });
 });
 
 /**

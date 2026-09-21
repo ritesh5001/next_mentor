@@ -6,3 +6,4 @@ export * from "./commerce";
 export * from "./referral";
 export * from "./engagement";
 export * from "./testimonials";
+export * from "./offers";

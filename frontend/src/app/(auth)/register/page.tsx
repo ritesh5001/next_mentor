@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
 
-import { REFERRAL_COOKIE, normalizeReferralCode } from "@nextmentor/shared";
 import { SignupForm } from "@/components/auth/signup-form";
 import { toSignupPlans } from "@/lib/packages";
-import { getActivePlans } from "@/lib/queries";
+import { getActivePlans, getReferrer } from "@/lib/queries";
+import { resolveSignupReferral } from "@/lib/referral";
 
 export const metadata: Metadata = {
   title: "Create your account",
@@ -15,19 +14,25 @@ export const metadata: Metadata = {
 /**
  * Paid signup. No OTP and no free account: the details and the package are
  * taken together, and the ID only exists once Razorpay confirms the payment.
- * `?plan=` preselects a package and `?ref=` (captured into a cookie by the
- * proxy) credits the member who shared the link.
+ * `?plan=` preselects a package and `?ref=` credits the member who shared the
+ * link.
  */
 export default async function RegisterPage({
   searchParams,
 }: {
   searchParams: Promise<{ plan?: string; ref?: string }>;
 }) {
-  const [{ plan, ref }, plans, jar] = await Promise.all([searchParams, getActivePlans(), cookies()]);
-  // First-touch attribution: the cookie wins; the link's own ?ref covers a
-  // browser that blocked the cookie.
-  const raw = jar.get(REFERRAL_COOKIE)?.value ?? ref;
-  const referralCode = raw ? normalizeReferralCode(raw) : undefined;
+  const [{ plan, ref }, plans] = await Promise.all([searchParams, getActivePlans()]);
+  const referralCode = await resolveSignupReferral(ref);
+
+  // A member may only introduce someone to a package they own themselves, so
+  // the ones above their level are not offered at all. The API enforces the
+  // same rule — this only keeps the form from showing a choice that would be
+  // refused at payment.
+  const referrer = referralCode ? await getReferrer(referralCode).catch(() => null) : null;
+  const sponsor = referrer?.found ? referrer : null;
+  const offered = sponsor ? plans.filter((p) => p.tier <= sponsor.maxTier) : plans;
+  const cappedBy = sponsor && offered.length < plans.length ? sponsor : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -39,12 +44,25 @@ export default async function RegisterPage({
         </p>
       </header>
 
-      {plans.length === 0 ? (
+      {offered.length === 0 ? (
         <p className="rounded-[14px] bg-[var(--brand-hero-wash)] px-4 py-3 text-sm text-[var(--color-muted-foreground)]">
-          Packages are unavailable right now. Please try again shortly.
+          {sponsor
+            ? "The member who referred you does not hold a package yet, so they cannot introduce one. Ask them for a new link, or "
+            : "Packages are unavailable right now. Please try again shortly."}
+          {sponsor && (
+            <Link href="/register" className="font-semibold text-[var(--brand-blue)] underline">
+              sign up without a referral ID
+            </Link>
+          )}
         </p>
       ) : (
-        <SignupForm plans={toSignupPlans(plans)} initialPlan={plan} referralCode={referralCode} />
+        <SignupForm
+          plans={toSignupPlans(offered)}
+          initialPlan={plan}
+          referralCode={referralCode}
+          referrerName={sponsor?.name ?? null}
+          cappedPlanName={cappedBy ? offered[offered.length - 1]?.name ?? null : null}
+        />
       )}
 
       <p className="text-center text-sm text-[var(--color-muted-foreground)]">

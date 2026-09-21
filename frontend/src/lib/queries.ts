@@ -145,6 +145,75 @@ export const getActiveSubscription = () =>
     expiresAt: string | null;
   }>("/api/my/subscription");
 
+/**
+ * Who a referral ID belongs to, and the top package they may introduce.
+ * Anonymous: the signup page needs it before anyone is signed in.
+ */
+export const getReferrer = (code: string) =>
+  api<
+    | { found: false }
+    | { found: true; code: string; name: string | null; maxTier: number }
+  >(`/api/signup/referrer?code=${encodeURIComponent(code)}`, { anonymous: true });
+
+export type OfferMetric = "referrals" | "sales" | "earnings";
+
+export type OfferCriterion = { metric: OfferMetric; target: number; label?: string };
+
+export type OfferProgress = {
+  id: string;
+  title: string;
+  description: string | null;
+  reward: string;
+  imageUrl: string | null;
+  startsAt: string;
+  endsAt: string | null;
+  criteria: Array<{
+    metric: OfferMetric;
+    label: string;
+    target: number;
+    current: number;
+    percent: number;
+    met: boolean;
+  }>;
+  percent: number;
+  qualified: boolean;
+  daysLeft: number | null;
+};
+
+/** Live offers and how far this member has got towards each. */
+export const getMyOffers = () => api<OfferProgress[]>("/api/my/offers");
+
+export type AdminOffer = {
+  id: string;
+  title: string;
+  description: string | null;
+  reward: string;
+  imageUrl: string | null;
+  startsAt: string;
+  endsAt: string | null;
+  criteria: OfferCriterion[];
+  isPublished: boolean;
+  position: number;
+  createdAt: string;
+};
+
+export const listOffersForAdmin = () => api<AdminOffer[]>("/api/admin/offers");
+
+/** Who qualifies for one offer right now. */
+export const getOfferStandings = (offerId: string) =>
+  apiOrNull<{
+    offer: AdminOffer;
+    members: Array<{
+      id: string;
+      name: string | null;
+      email: string;
+      memberId: string;
+      percent: number;
+      qualified: boolean;
+      criteria: Array<{ metric: OfferMetric; target: number; label?: string; current: number }>;
+    }>;
+  }>(`/api/admin/offers/${offerId}/standings`);
+
 /** Live price for every package for this member, with the upgrade deadline. */
 export type PlanQuote =
   | { kind: "buy"; amountInPaise: number }

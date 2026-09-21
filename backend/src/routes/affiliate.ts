@@ -24,6 +24,7 @@ import {
 } from "@/services/affiliate";
 import { createPayoutRequest } from "@/services/payouts";
 import { getOverview } from "@/services/overview";
+import { getOffersForUser } from "@/services/offers";
 import { requireUser, currentUser } from "@/middleware/auth";
 import { ok, fail, parseBody } from "@/middleware/respond";
 
@@ -261,3 +262,11 @@ affiliateRoutes.post("/affiliate/payouts", requireUser, async (c) => {
 
   return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
 });
+
+/**
+ * Live offers with this member's progress. Read-only and derived, so it is
+ * safe to poll from a dashboard that refreshes itself.
+ */
+affiliateRoutes.get("/my/offers", requireUser, async (c) =>
+  ok(c, await getOffersForUser(currentUser(c).id)),
+);

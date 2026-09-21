@@ -32,6 +32,7 @@ const NAV: NavGroup[] = [
       { href: "/dashboard/earnings", label: "Associates & Earnings", icon: "Coins", ready: true },
       { href: "/dashboard/affiliate", label: "Affiliate Link", icon: "Gift", ready: true },
       { href: "/dashboard/leads", label: "Leads Dashboard", icon: "TrendingUp", ready: true },
+      { href: "/dashboard/offers", label: "Offers & Rewards", icon: "Target", ready: true },
       { href: "/dashboard/top-performers", label: "Top Performers", icon: "Trophy", ready: true },
       { href: "/dashboard/training", label: "Affiliate Training", icon: "GraduationCap", ready: true },
       { href: "/dashboard/promo", label: "Promotional Material", icon: "Megaphone", ready: true },

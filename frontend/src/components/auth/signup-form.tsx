@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
-import { CheckCircle2, Gift, Loader2, PartyPopper } from "lucide-react";
+import { CheckCircle2, Gift, Loader2, PartyPopper, TicketPercent, X } from "lucide-react";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { PasswordField } from "@/components/ui/password-field";
-import { signupCheckoutAction, signupStatusAction, type SignupInput } from "@/actions/auth";
+import {
+  clearReferralAction,
+  lookupReferrerAction,
+  previewSignupCouponAction,
+  signupCheckoutAction,
+  signupStatusAction,
+  type SignupCouponPreview,
+  type SignupInput,
+} from "@/actions/auth";
 import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
 import { loadCheckoutScript } from "@/lib/use-razorpay-checkout";
@@ -29,11 +37,17 @@ export function SignupForm({
   plans,
   initialPlan,
   referralCode,
+  referrerName,
+  cappedPlanName,
   mode = "self",
 }: {
   plans: SignupPlan[];
   initialPlan?: string;
   referralCode?: string;
+  /** First name of the member whose link this is, when it is known. */
+  referrerName?: string | null;
+  /** Set when packages above this one are hidden because the referrer cannot sell them. */
+  cappedPlanName?: string | null;
   mode?: "self" | "sponsor";
 }) {
   const sponsor = mode === "sponsor";
@@ -44,6 +58,31 @@ export function SignupForm({
   const [error, setError] = useState<string | null>(null);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [done, setDone] = useState<Done | null>(null);
+  const [clearing, startClearing] = useTransition();
+  // Confirmation that a hand-typed referral ID belongs to a real member —
+  // a mistyped code is refused at checkout, which is far too late to notice.
+  const [typedCode, setTypedCode] = useState("");
+  const [typedSponsor, setTypedSponsor] = useState<
+    { state: "checking" } | { state: "found"; name: string | null } | { state: "unknown" } | null
+  >(null);
+  const [coupon, setCoupon] = useState("");
+  const [couponState, setCouponState] = useState<SignupCouponPreview | "checking" | null>(null);
+
+  /** Looks the typed ID up once the person stops typing on it. */
+  async function checkTypedCode(raw: string) {
+    const code = raw.trim().toUpperCase();
+    if (code.length < 4) return setTypedSponsor(null);
+    setTypedSponsor({ state: "checking" });
+    const res = await lookupReferrerAction(code);
+    setTypedSponsor(res.found ? { state: "found", name: res.name } : { state: "unknown" });
+  }
+
+  async function applyCoupon() {
+    const code = coupon.trim();
+    if (!code || !plan) return;
+    setCouponState("checking");
+    setCouponState(await previewSignupCouponAction(code, plan));
+  }
 
   async function waitForActivation(orderId: string, info: Omit<Done, "confirmed">) {
     setPhase("confirming");
@@ -141,6 +180,10 @@ export function SignupForm({
   }
 
   const selected = plans.find((p) => p.slug === plan);
+  const couponValid =
+    couponState && couponState !== "checking" && couponState.valid ? couponState : false;
+  // What the button promises, and what Razorpay will ask for.
+  const payable = couponValid ? couponValid.finalAmountInPaise : selected?.priceInPaise ?? 0;
 
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="flex flex-col gap-5" noValidate>
@@ -148,21 +191,73 @@ export function SignupForm({
 
       {!sponsor &&
         (referralCode ? (
-          <div className="flex items-center gap-2.5 rounded-[14px] bg-[#e5f2e3] px-4 py-3 text-sm text-[#0b4a34]">
-            <Gift className="size-4 shrink-0" strokeWidth={1.8} aria-hidden="true" />
-            Referral ID <strong className="font-semibold">{referralCode}</strong> applied
+          // "Not them?" matters: the code can come from a cookie left by an
+          // earlier link on the same phone, and without a way out the wrong
+          // sponsor would be credited for the sale.
+          <div className="flex min-w-0 flex-col gap-1.5 rounded-[14px] bg-[#e5f2e3] px-4 py-3 text-sm text-[#0b4a34]">
+            <span className="flex items-center gap-2.5">
+              <Gift className="size-4 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+              <span className="min-w-0">
+                Referred by{" "}
+                <strong className="font-semibold">{referrerName ?? referralCode}</strong>
+                {referrerName && <span className="font-mono text-[12.5px]"> · {referralCode}</span>}
+              </span>
+            </span>
+            {/* A plain button, not a nested <form>: this banner sits inside
+                the signup form, and the browser silently drops a form inside
+                a form — the control rendered but did nothing. */}
+            <button
+              type="button"
+              onClick={() => startClearing(() => void clearReferralAction(plan))}
+              disabled={clearing}
+              className="self-start text-[12.5px] font-semibold text-[#0b4a34]/70 underline underline-offset-2 hover:text-[#0b4a34] disabled:opacity-60"
+            >
+              {clearing ? "Removing…" : "Not them? Remove this referral ID"}
+            </button>
           </div>
         ) : (
           // Typed by hand when someone joins under a member without using
           // their link — the Member ID printed on that member's dashboard.
-          <Field
-            label="Referral ID (optional)"
-            name="referralCode"
-            autoComplete="off"
-            placeholder="e.g. MR3HJWFP"
-            hint="The Member ID of the person who introduced you. Leave blank if none."
-            error={fields.referralCode}
-          />
+          // The name is looked up as it is typed, because a code is eight
+          // characters of noise and nobody can proofread it otherwise.
+          <div className="flex flex-col gap-1.5">
+            <Field
+              label="Referral ID (optional)"
+              name="referralCode"
+              autoComplete="off"
+              placeholder="e.g. MR3HJWFP"
+              className="uppercase"
+              value={typedCode}
+              onChange={(e) => {
+                setTypedCode(e.target.value.toUpperCase());
+                setTypedSponsor(null);
+              }}
+              onBlur={(e) => void checkTypedCode(e.target.value)}
+              hint={
+                typedSponsor
+                  ? undefined
+                  : "The Member ID of the person who introduced you. Leave blank if none."
+              }
+              error={fields.referralCode}
+            />
+            {typedSponsor?.state === "checking" && (
+              <p className="flex items-center gap-1.5 text-xs text-[var(--color-muted-foreground)]">
+                <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                Checking this ID…
+              </p>
+            )}
+            {typedSponsor?.state === "found" && (
+              <p className="flex items-center gap-1.5 text-xs font-medium text-[#0b4a34]" aria-live="polite">
+                <CheckCircle2 className="size-3.5" strokeWidth={2} aria-hidden="true" />
+                {typedSponsor.name ? `${typedSponsor.name} will be your referrer.` : "Valid referral ID."}
+              </p>
+            )}
+            {typedSponsor?.state === "unknown" && (
+              <p className="text-xs font-medium text-[var(--color-destructive)]" aria-live="polite">
+                No member has this ID. Check it with the person who referred you.
+              </p>
+            )}
+          </div>
         ))}
 
       {/* Package */}
@@ -172,6 +267,13 @@ export function SignupForm({
         <legend className="mb-2 text-sm font-medium text-[var(--color-foreground)]">
           Choose a package <span className="text-[var(--color-destructive)]">*</span>
         </legend>
+        {cappedPlanName && (
+          <p className="mb-1 text-[12.5px] leading-relaxed text-[var(--color-muted-foreground)]">
+            {sponsor
+              ? `You hold the ${cappedPlanName} package, so you can sign someone up to that level.`
+              : `${referrerName ?? "The member who referred you"} holds the ${cappedPlanName} package, so only packages up to that level can be bought through their link.`}
+          </p>
+        )}
         {plans.map((p) => {
           const active = p.slug === plan;
           return (
@@ -189,7 +291,12 @@ export function SignupForm({
                 name="plan"
                 value={p.slug}
                 checked={active}
-                onChange={() => setPlan(p.slug)}
+                onChange={() => {
+                  setPlan(p.slug);
+                  // A code can be tied to one package, and its discount to
+                  // that price — re-check rather than show a stale total.
+                  setCouponState(null);
+                }}
                 className="size-4 accent-[var(--brand-blue)]"
               />
               <span className="min-w-0 flex-1">
@@ -281,17 +388,82 @@ export function SignupForm({
         error={fields.confirmPassword}
       />
 
-      {/* Checked by the API when the order is created, so the discount here
-          can never be more than the code really gives. */}
-      <Field
-        label="Coupon code (optional)"
-        name="couponCode"
-        autoComplete="off"
-        placeholder="e.g. LAUNCH20"
-        hint="Have a code? Enter it and the discount applies at payment."
-        className="uppercase"
-        error={fields.couponCode}
-      />
+      {/* Applied before paying, not after: the amount on the button is the
+          amount charged. The API re-checks the code when the order is created,
+          so this preview can never give away more than the code really does. */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="couponCode" className="text-sm font-medium text-[var(--color-foreground)]">
+          Coupon code (optional)
+        </label>
+        <div className="flex gap-2">
+          <input
+            id="couponCode"
+            name="couponCode"
+            autoComplete="off"
+            placeholder="e.g. LAUNCH20"
+            value={coupon}
+            onChange={(e) => {
+              setCoupon(e.target.value.toUpperCase());
+              setCouponState(null);
+            }}
+            aria-invalid={fields.couponCode ? true : undefined}
+            className={cn(
+              "min-h-11 min-w-0 flex-1 rounded-[var(--radius-control)] border bg-[var(--color-card)] px-3 py-2 text-[16px] uppercase text-[var(--color-foreground)] placeholder:text-[var(--color-muted-foreground)]",
+              fields.couponCode || couponValid === false
+                ? "border-[var(--color-destructive)]"
+                : "border-[var(--color-border)] focus:border-[var(--color-primary)]",
+            )}
+          />
+          {couponValid ? (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setCoupon("");
+                setCouponState(null);
+              }}
+            >
+              <X className="size-4" strokeWidth={2} aria-hidden="true" />
+              Remove
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => void applyCoupon()}
+              disabled={coupon.trim().length === 0 || couponState === "checking"}
+            >
+              {couponState === "checking" ? (
+                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <TicketPercent className="size-4" strokeWidth={1.8} aria-hidden="true" />
+              )}
+              Apply
+            </Button>
+          )}
+        </div>
+
+        {couponValid ? (
+          <p className="flex flex-wrap items-center gap-1.5 text-xs font-medium text-[#0b4a34]" aria-live="polite">
+            <CheckCircle2 className="size-3.5" strokeWidth={2} aria-hidden="true" />
+            {formatPrice(couponValid.discountInPaise)} off applied — you pay{" "}
+            <strong className="font-bold">{formatPrice(couponValid.finalAmountInPaise)}</strong>
+          </p>
+        ) : couponValid === false && couponState !== "checking" && couponState !== null ? (
+          <p className="text-xs font-medium text-[var(--color-destructive)]" aria-live="polite">
+            {(couponState as { reason: string }).reason}
+          </p>
+        ) : (
+          <p className="text-xs text-[var(--color-muted-foreground)]">
+            Have a code? Enter it and press Apply to see your new total.
+          </p>
+        )}
+        {fields.couponCode && (
+          <p role="alert" className="text-xs font-medium text-[var(--color-destructive)]">
+            {fields.couponCode}
+          </p>
+        )}
+      </div>
 
       <label className="flex cursor-pointer items-start gap-3 text-[13px] leading-relaxed text-[var(--color-muted-foreground)]">
         <input
@@ -326,7 +498,7 @@ export function SignupForm({
         {phase === "idle" ? (
           <>
             <CheckCircle2 className="size-4" strokeWidth={2} aria-hidden="true" />
-            Create ID &amp; pay {selected ? formatPrice(selected.priceInPaise) : ""}
+            Create ID &amp; pay {selected ? formatPrice(payable) : ""}
           </>
         ) : (
           <>

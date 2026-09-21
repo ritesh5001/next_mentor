@@ -4,7 +4,7 @@ import { UserPlus } from "lucide-react";
 import { SignupForm } from "@/components/auth/signup-form";
 import { PageHeader } from "@/components/dashboard/panels";
 import { toSignupPlans } from "@/lib/packages";
-import { getActivePlans, getProfile } from "@/lib/queries";
+import { getActivePlans, getActiveSubscription, getProfile } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Create account",
@@ -18,7 +18,15 @@ export const metadata: Metadata = {
  * payment succeeds.
  */
 export default async function CreateAccountPage() {
-  const [profile, plans] = await Promise.all([getProfile(), getActivePlans()]);
+  const [profile, plans, plan] = await Promise.all([
+    getProfile(),
+    getActivePlans(),
+    getActiveSubscription(),
+  ]);
+  // The same rule as the affiliate links: a member signs people up on
+  // packages they own, not above.
+  const sellable = plans.filter((p) => p.tier <= (plan?.planTier ?? 0));
+  const locked = plans.filter((p) => p.tier > (plan?.planTier ?? 0));
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,7 +37,11 @@ export default async function CreateAccountPage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,560px)_1fr]">
         <section className="min-w-0 rounded-[22px] bg-white p-5 shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] ring-1 ring-[rgb(16_26_71/0.07)] sm:p-7">
-          <SignupForm plans={toSignupPlans(plans)} mode="sponsor" />
+          <SignupForm
+            plans={toSignupPlans(sellable)}
+            mode="sponsor"
+            cappedPlanName={locked.length > 0 ? sellable[sellable.length - 1]?.name ?? null : null}
+          />
         </section>
 
         <aside className="h-fit rounded-[22px] bg-[linear-gradient(145deg,#12a150,#0b4a34)] p-6 text-white">
@@ -46,6 +58,12 @@ export default async function CreateAccountPage() {
             <li>2. Choose their package and pay</li>
             <li>3. They get their ID &amp; password by email</li>
           </ul>
+          {locked.length > 0 && (
+            <p className="mt-5 border-t border-white/20 pt-4 text-[13px] text-white/75">
+              You can sign people up on the packages you own. {locked.map((p) => p.name).join(" and ")}{" "}
+              {locked.length === 1 ? "needs" : "need"} an upgrade of your own package first.
+            </p>
+          )}
         </aside>
       </div>
     </div>

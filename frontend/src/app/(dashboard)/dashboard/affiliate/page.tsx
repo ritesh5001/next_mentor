@@ -22,6 +22,9 @@ export default async function AffiliatePage() {
     getProfile(),
   ]);
   const { stats, associates } = summary;
+  const myTier = plan?.planTier ?? 0;
+  const sellable = plans.filter((p) => p.tier <= myTier);
+  const locked = plans.filter((p) => p.tier > myTier);
 
 
   const tiles = [
@@ -58,11 +61,16 @@ export default async function AffiliatePage() {
 
       <section className="flex flex-col gap-4 rounded-[22px] bg-white p-5 shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] ring-1 ring-[rgb(16_26_71/0.07)] sm:p-7">
         <h2 className="text-[19px] font-semibold tracking-[-0.3px] text-[var(--brand-ink)]">Affiliate links</h2>
+        {/* You can only sell what you own: a Starter member's links offer
+            Starter alone. The signup API refuses the rest anyway, so offering
+            them here would only produce links that fail at payment. */}
         <AffiliateLink
           baseUrl={appUrl()}
           code={user.referralCode}
           name={profile.name?.trim() || profile.email.split("@")[0]}
-          packages={plans.map((p) => ({ slug: p.slug, name: p.name, priceInPaise: p.priceInPaise }))}
+          packages={sellable.map((p) => ({ slug: p.slug, name: p.name, priceInPaise: p.priceInPaise }))}
+          lockedPackages={locked.map((p) => p.name)}
+          canShareHomepage={locked.length === 0}
         />
       </section>
 

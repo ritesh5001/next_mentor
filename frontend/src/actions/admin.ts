@@ -328,6 +328,68 @@ export async function recordPayoutRunAction(
   );
 }
 
+/* ----------------------------------------------------------------- offers */
+
+/** The form posts criteria as JSON so the target rows stay one field. */
+function offerBody(fd: FormData) {
+  const criteria = JSON.parse(String(fd.get("criteria") ?? "[]")) as Array<{
+    metric: string;
+    target: number;
+    label?: string;
+  }>;
+  return {
+    title: String(fd.get("title") ?? ""),
+    description: String(fd.get("description") ?? ""),
+    reward: String(fd.get("reward") ?? ""),
+    imageUrl: String(fd.get("imageUrl") ?? ""),
+    startsAt: String(fd.get("startsAt") ?? ""),
+    endsAt: String(fd.get("endsAt") ?? "") || null,
+    criteria,
+    isPublished: fd.get("isPublished") === "on",
+    position: Number(fd.get("position") ?? 0),
+  };
+}
+
+export async function createOfferAction(_p: ActionState, fd: FormData): Promise<ActionState> {
+  return run(
+    () => api("/api/admin/offers", { method: "POST", body: offerBody(fd) }),
+    ["/admin/offers", "/dashboard/offers"],
+    "Offer created.",
+  );
+}
+
+export async function updateOfferAction(
+  offerId: string,
+  _p: ActionState,
+  fd: FormData,
+): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/offers/${offerId}`, { method: "PATCH", body: offerBody(fd) }),
+    ["/admin/offers", "/dashboard/offers"],
+    "Offer updated.",
+  );
+}
+
+/** Release or withdraw an offer without touching anything else about it. */
+export async function setOfferPublishedAction(
+  offerId: string,
+  isPublished: boolean,
+): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/offers/${offerId}`, { method: "PATCH", body: { isPublished } }),
+    ["/admin/offers", "/dashboard/offers"],
+    isPublished ? "Offer released to members." : "Offer withdrawn.",
+  );
+}
+
+export async function deleteOfferAction(offerId: string): Promise<ActionState> {
+  return run(
+    () => api(`/api/admin/offers/${offerId}`, { method: "DELETE" }),
+    ["/admin/offers", "/dashboard/offers"],
+    "Offer deleted.",
+  );
+}
+
 /* ---------------------------------------------------------------- content */
 
 export async function createPromoAssetAction(_p: ActionState, fd: FormData): Promise<ActionState> {

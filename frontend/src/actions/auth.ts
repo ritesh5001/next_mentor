@@ -183,6 +183,55 @@ export async function signOutAction(): Promise<void> {
   redirect("/");
 }
 
+/**
+ * Drops the remembered referral ID and reloads signup without one.
+ *
+ * Needed because the cookie is httpOnly, so the page cannot clear it: without
+ * this, someone signing up on a phone that had opened somebody else's link had
+ * no way to get that sponsor off their form.
+ */
+export async function clearReferralAction(planSlug?: string): Promise<void> {
+  (await cookies()).set(REFERRAL_COOKIE, "", {
+    maxAge: 0,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
+  redirect(planSlug ? `/register?plan=${encodeURIComponent(planSlug)}` : "/register");
+}
+
+/** Who a typed referral ID belongs to, so signup can confirm the name. */
+export async function lookupReferrerAction(
+  code: string,
+): Promise<{ found: false } | { found: true; code: string; name: string | null; maxTier: number }> {
+  try {
+    return await api(`/api/signup/referrer?code=${encodeURIComponent(code)}`, { anonymous: true });
+  } catch {
+    return { found: false };
+  }
+}
+
+export type SignupCouponPreview =
+  | { valid: true; code: string; discountInPaise: number; finalAmountInPaise: number }
+  | { valid: false; reason: string };
+
+/** Prices a coupon on the signup form, before any account exists. */
+export async function previewSignupCouponAction(
+  code: string,
+  planSlug: string,
+): Promise<SignupCouponPreview> {
+  try {
+    return await api<SignupCouponPreview>("/api/signup/coupon-preview", {
+      method: "POST",
+      body: { code, planSlug },
+      anonymous: true,
+    });
+  } catch (err) {
+    return { valid: false, reason: err instanceof ApiError ? err.message : "That code is not valid." };
+  }
+}
+
 /* ------------------------------------------------------------ paid signup */
 
 export type SignupInput = {

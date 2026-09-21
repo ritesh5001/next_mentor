@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Share2 } from "lucide-react";
+import { Check, Copy, Lock, Share2 } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/format";
@@ -20,12 +21,19 @@ export function AffiliateLink({
   code,
   name,
   packages,
+  lockedPackages = [],
+  canShareHomepage = true,
 }: {
   baseUrl: string;
   code: string;
   /** The member's name, shown beside their code as on a referral card. */
   name: string;
+  /** Only the packages this member owns, and may therefore introduce. */
   packages: LinkPackage[];
+  /** Names of the packages above their level, named so the limit is not a mystery. */
+  lockedPackages?: string[];
+  /** The homepage link sells anything, so it is only offered at the top tier. */
+  canShareHomepage?: boolean;
 }) {
   const [copied, setCopied] = useState(false);
   const [target, setTarget] = useState<string>(packages[0]?.slug ?? "");
@@ -88,7 +96,7 @@ export function AffiliateLink({
               {p.name} package — {formatPrice(p.priceInPaise)}
             </option>
           ))}
-          <option value="">Homepage — any package</option>
+          {canShareHomepage && <option value="">Homepage — any package</option>}
         </select>
       </div>
 
@@ -125,6 +133,21 @@ export function AffiliateLink({
         </Button>
       </div>
 
+      {lockedPackages.length > 0 && (
+        <div className="flex items-start gap-2.5 rounded-[12px] bg-[var(--brand-hero-wash)] px-4 py-3 text-[13px] text-[var(--brand-ink)]/80 ring-1 ring-[rgb(16_26_71/0.08)]">
+          <Lock className="mt-0.5 size-4 shrink-0 text-[var(--color-muted-foreground)]" strokeWidth={1.8} aria-hidden="true" />
+          <span className="min-w-0">
+            You can only introduce people to packages you own, so{" "}
+            <strong className="font-semibold">{lockedPackages.join(" and ")}</strong>{" "}
+            {lockedPackages.length === 1 ? "is" : "are"} not available in your links yet.{" "}
+            <Link href="/dashboard/plan" className="font-semibold text-[var(--brand-blue)] underline underline-offset-2">
+              Upgrade your package
+            </Link>{" "}
+            to sell {lockedPackages.length === 1 ? "it" : "them"} too.
+          </span>
+        </div>
+      )}
+
       {/* Announced politely so a screen reader confirms the copy happened. */}
       <span className="sr-only" aria-live="polite">
         {copied ? "Link copied to clipboard" : ""}
@@ -134,7 +157,7 @@ export function AffiliateLink({
         {selected
           ? `The link opens signup with the ${selected.name} package already selected, with your referral ID ${code} applied.`
           : `The link opens the homepage with your referral ID ${code} applied — they can pick any package.`}{" "}
-        Anyone who signs up through it is credited to you for 30 days after their first visit.
+        Anyone who signs up through it is credited to you for 30 days, unless they later open someone else&rsquo;s link.
       </p>
     </div>
   );

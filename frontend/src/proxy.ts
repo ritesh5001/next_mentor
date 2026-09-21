@@ -46,11 +46,13 @@ export function proxy(request: NextRequest) {
   if (ref) {
     const normalized = ref.trim().toUpperCase().replace(/[^0-9A-Z]/g, "").slice(0, 16);
     if (normalized.length >= 4) {
-      // First-touch attribution: an existing cookie is never overwritten, so
-      // the affiliate who actually introduced the visitor keeps the credit even
-      // if a later link is clicked before signup.
+      // Last-touch attribution: the link actually being opened replaces any
+      // code remembered from before. First-touch kept the first cookie
+      // forever, so a phone that had once opened one member's link credited
+      // that member for every account created on it for the next thirty days
+      // — the wrong sponsor on every sale made from a shared phone.
       const existing = request.cookies.get(REFERRAL_COOKIE)?.value;
-      if (!existing) {
+      if (existing !== normalized) {
         // Signal to the landing page that this is a fresh click worth logging.
         // The write itself happens in a Server Component, not here — the proxy
         // runs on every request and must not touch the database.

@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Sparkles,
   Award,
+  Target,
   IndianRupee,
   MessageSquareQuote,
   Ticket,
@@ -53,6 +54,7 @@ const GROUPS: Array<{ heading: string; items: NavItem[] }> = [
       { href: "/admin/content", label: "Training & Promo", icon: FolderOpen },
       { href: "/admin/testimonials", label: "Student feedback", icon: MessageSquareQuote },
       { href: "/admin/certificates", label: "Certificates", icon: Award },
+      { href: "/admin/offers", label: "Offers & rewards", icon: Target },
     ],
   },
   {
