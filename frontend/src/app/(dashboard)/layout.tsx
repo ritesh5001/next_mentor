@@ -5,7 +5,7 @@ import { Logo } from "@/components/brand/logo";
 import { DashboardNav, MobileMenu, type NavGroup } from "@/components/dashboard/dashboard-nav";
 import { Avatar } from "@/components/dashboard/panels";
 import { SignOutButton } from "@/components/dashboard/sign-out-button";
-import { getProfile, requireUser } from "@/lib/queries";
+import { getProfile, requireMember } from "@/lib/queries";
 
 /**
  * Sidebar sections. Grouped by what the member is doing — learning, earning,
@@ -50,7 +50,10 @@ const NAV: NavGroup[] = [
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  await requireUser();
+  // Membership first: every read below this line is plan-gated by the API
+  // (402 plan_required), so checking after them would crash the layout
+  // instead of sending a member without a plan to choose one.
+  await requireMember();
   // The session token carries no name or photo; the profile does.
   const profile = await getProfile();
   // Always a name to greet by: the part before the @ when none is on file.

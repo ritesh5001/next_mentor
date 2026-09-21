@@ -97,7 +97,9 @@ export async function apiOrNull<T>(path: string, options: Options = {}): Promise
   try {
     return await api<T>(path, options);
   } catch (err) {
-    if (err instanceof ApiError && [401, 403, 404].includes(err.status)) return null;
+    // 402 is "no active plan" — an expected state for a signed-in visitor,
+    // not a failure worth crashing a page over.
+    if (err instanceof ApiError && [401, 402, 403, 404].includes(err.status)) return null;
     throw err;
   }
 }
