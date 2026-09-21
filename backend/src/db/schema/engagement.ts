@@ -311,6 +311,8 @@ export const promoAssets = pgTable(
     r2Key: text("r2_key"),
     /** Inline copy for "script" assets, which have nothing to download. */
     bodyText: text("body_text"),
+    /** YouTube, Drive or Instagram link, instead of or as well as a file. */
+    videoUrl: text("video_url"),
     dimensions: text("dimensions"),
 
     planRequiredId: text("plan_required_id").references(() => plans.id, {
@@ -334,6 +336,8 @@ export const trainingModules = pgTable(
 
     /** Cloudflare Stream UID — same pipeline as course lessons. */
     streamVideoId: text("stream_video_id"),
+    /** YouTube or other link, used when no video has been uploaded. */
+    videoUrl: text("video_url"),
     durationSeconds: integer("duration_seconds").notNull().default(0),
 
     planRequiredId: text("plan_required_id").references(() => plans.id, {

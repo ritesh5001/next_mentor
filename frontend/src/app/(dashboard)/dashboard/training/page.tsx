@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GraduationCap, Lock, PlayCircle } from "lucide-react";
+import { GraduationCap, Lock } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { formatDuration } from "@/lib/format";
+import { VideoEmbed } from "@/components/dashboard/video-embed";
 import { getTrainingModules, requireUser } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -77,11 +78,12 @@ export default async function TrainingPage() {
                 >
                   Upgrade to unlock
                 </Link>
-              ) : m.streamVideoId ? (
-                <span className={buttonClasses({ size: "sm" })}>
-                  <PlayCircle className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
-                  Watch
-                </span>
+              ) : m.videoSrc || m.videoUrl ? (
+                // Full width under the text, so the player is big enough to
+                // actually watch rather than squeezed into the row.
+                <div className="w-full">
+                  <VideoEmbed src={m.videoSrc} url={m.videoUrl} title={m.title} />
+                </div>
               ) : (
                 <span className="text-xs text-[var(--color-muted-foreground)]">
                   Video coming soon

@@ -124,8 +124,8 @@ export default async function AdminContentPage() {
                 <div className="flex min-w-0 flex-col gap-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-semibold">{m.title}</span>
-                    <Badge tone={m.streamVideoId ? "success" : "warning"}>
-                      {m.streamVideoId ? "Has video" : "No video"}
+                    <Badge tone={m.streamVideoId || m.videoUrl ? "success" : "warning"}>
+                      {m.streamVideoId ? "Has video" : m.videoUrl ? "Has link" : "No video"}
                     </Badge>
                     {m.planRequiredId && <Badge tone="primary">Gated</Badge>}
                   </div>

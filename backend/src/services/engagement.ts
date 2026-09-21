@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, gt, isNull, or, sql } from "drizzle-orm";
 
 import { db } from "@/db";
+import { signVideoUrl } from "@/lib/r2-video";
 import {
   communityComments,
   communityPosts,
@@ -160,10 +161,16 @@ export async function getMentorshipSlots(userId: string) {
 /* --------------------------------------------------- promo + training assets */
 
 /** The user's active plan id, or null. Used for content gating. */
-async function activePlanId(userId: string): Promise<string | null> {
+/**
+ * The tier of the member's live plan, 0 for none. Content marked "Pro and
+ * above" is gated on tier, not on one exact plan — otherwise a member who
+ * upgraded past it would be locked out of it.
+ */
+async function activePlanTier(userId: string): Promise<number> {
   const [row] = await db
-    .select({ planId: subscriptions.planId })
+    .select({ tier: plans.tier })
     .from(subscriptions)
+    .innerJoin(plans, eq(plans.id, subscriptions.planId))
     .where(
       and(
         eq(subscriptions.userId, userId),
@@ -171,13 +178,14 @@ async function activePlanId(userId: string): Promise<string | null> {
         or(isNull(subscriptions.expiresAt), gt(subscriptions.expiresAt, new Date())),
       ),
     )
+    .orderBy(desc(plans.tier))
     .limit(1);
 
-  return row?.planId ?? null;
+  return row?.tier ?? 0;
 }
 
 export async function getPromoAssets(userId: string) {
-  const myPlanId = await activePlanId(userId);
+  const myTier = await activePlanTier(userId);
 
   const rows = await db
     .select({
@@ -186,10 +194,12 @@ export async function getPromoAssets(userId: string) {
       description: promoAssets.description,
       type: promoAssets.type,
       r2Key: promoAssets.r2Key,
+      videoUrl: promoAssets.videoUrl,
       bodyText: promoAssets.bodyText,
       dimensions: promoAssets.dimensions,
       planRequiredId: promoAssets.planRequiredId,
       planRequiredName: plans.name,
+      planRequiredTier: plans.tier,
     })
     .from(promoAssets)
     .leftJoin(plans, eq(plans.id, promoAssets.planRequiredId))
@@ -197,10 +207,11 @@ export async function getPromoAssets(userId: string) {
     .orderBy(asc(promoAssets.position));
 
   return rows.map((r) => {
-    const locked = r.planRequiredId !== null && r.planRequiredId !== myPlanId;
+    const locked = r.planRequiredId !== null && myTier < (r.planRequiredTier ?? 0);
     return {
       ...r,
       locked,
+      videoUrl: locked ? null : r.videoUrl,
       // Locked rows keep their title and description as a teaser, but the
       // downloadable key and the copy itself are withheld server-side.
       r2Key: locked ? null : r.r2Key,
@@ -210,7 +221,7 @@ export async function getPromoAssets(userId: string) {
 }
 
 export async function getTrainingModules(userId: string) {
-  const myPlanId = await activePlanId(userId);
+  const myTier = await activePlanTier(userId);
 
   const rows = await db
     .select({
@@ -218,17 +229,29 @@ export async function getTrainingModules(userId: string) {
       title: trainingModules.title,
       description: trainingModules.description,
       streamVideoId: trainingModules.streamVideoId,
+      videoUrl: trainingModules.videoUrl,
       durationSeconds: trainingModules.durationSeconds,
       planRequiredId: trainingModules.planRequiredId,
       planRequiredName: plans.name,
+      planRequiredTier: plans.tier,
     })
     .from(trainingModules)
     .leftJoin(plans, eq(plans.id, trainingModules.planRequiredId))
     .where(eq(trainingModules.isActive, true))
     .orderBy(asc(trainingModules.position));
 
-  return rows.map((r) => {
-    const locked = r.planRequiredId !== null && r.planRequiredId !== myPlanId;
-    return { ...r, locked, streamVideoId: locked ? null : r.streamVideoId };
-  });
+  return Promise.all(
+    rows.map(async (r) => {
+      const locked = r.planRequiredId !== null && myTier < (r.planRequiredTier ?? 0);
+      return {
+        ...r,
+        locked,
+        streamVideoId: locked ? null : r.streamVideoId,
+        // Uploaded videos are private in R2, so each unlocked one is handed
+        // out as a short-lived signed link. Locked rows never get one.
+        videoSrc: !locked && r.streamVideoId ? await signVideoUrl(r.streamVideoId) : null,
+        videoUrl: locked ? null : r.videoUrl,
+      };
+    }),
+  );
 }

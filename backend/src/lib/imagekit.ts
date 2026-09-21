@@ -44,6 +44,13 @@ const ALLOWED_IMAGE_TYPES = new Set([
 /** KYC documents and promo material may also be PDFs. */
 const ALLOWED_DOC_TYPES = new Set(["application/pdf"]);
 
+/**
+ * Promo material may also be a short video members repost — a reel or a
+ * story. Longer videos belong on YouTube and are added by link instead.
+ */
+const ALLOWED_PROMO_VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime"]);
+export const MAX_PROMO_VIDEO_BYTES = 100 * 1024 * 1024;
+
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 export const MAX_DOC_BYTES = 10 * 1024 * 1024;
 
@@ -74,19 +81,24 @@ export function createUploadAuth(params: {
 }): UploadAuth | { error: string } {
   const isDoc = ALLOWED_DOC_TYPES.has(params.contentType);
   const isImage = ALLOWED_IMAGE_TYPES.has(params.contentType);
+  const isPromoVideo =
+    params.folder === "promo" && ALLOWED_PROMO_VIDEO_TYPES.has(params.contentType);
 
   // KYC and promo accept PDFs; a thumbnail or avatar must be an image.
   const docAllowed = params.folder === "kyc" || params.folder === "promo";
 
-  if (!isImage && !(isDoc && docAllowed)) {
+  if (!isImage && !isPromoVideo && !(isDoc && docAllowed)) {
     return {
-      error: docAllowed
-        ? "Use a JPEG, PNG, WebP, AVIF or PDF file."
-        : "Use a JPEG, PNG, WebP or AVIF image.",
+      error:
+        params.folder === "promo"
+          ? "Use a JPEG, PNG, WebP, PDF, or an MP4 / WebM / MOV video."
+          : docAllowed
+            ? "Use a JPEG, PNG, WebP, AVIF or PDF file."
+            : "Use a JPEG, PNG, WebP or AVIF image.",
     };
   }
 
-  const maxBytes = isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
+  const maxBytes = isPromoVideo ? MAX_PROMO_VIDEO_BYTES : isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
 
   if (params.contentLength <= 0) return { error: "That file appears to be empty." };
   if (params.contentLength > maxBytes) {
@@ -96,7 +108,7 @@ export function createUploadAuth(params: {
   const cfg = env("imagekit");
   const auth = ik().getAuthenticationParameters();
 
-  const ext = params.contentType.split("/")[1].replace("jpeg", "jpg");
+  const ext = params.contentType.split("/")[1].replace("jpeg", "jpg").replace("quicktime", "mov");
   // Random name, never the user's filename: filenames collide, leak
   // information about the uploader, and can carry path traversal.
   const fileName = `${crypto.randomUUID()}.${ext}`;

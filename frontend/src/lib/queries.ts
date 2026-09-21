@@ -513,6 +513,7 @@ export const getPromoAssets = () =>
       description: string | null;
       type: "banner" | "video" | "script" | "pdf";
       r2Key: string | null;
+      videoUrl: string | null;
       bodyText: string | null;
       dimensions: string | null;
       planRequiredName: string | null;
@@ -527,6 +528,9 @@ export const getTrainingModules = () =>
       title: string;
       description: string | null;
       streamVideoId: string | null;
+      /** Signed playback link for an uploaded video; null when locked or none. */
+      videoSrc: string | null;
+      videoUrl: string | null;
       durationSeconds: number;
       planRequiredName: string | null;
       locked: boolean;
@@ -743,6 +747,7 @@ export const getAdminContent = () =>
       id: string;
       title: string;
       streamVideoId: string | null;
+      videoUrl: string | null;
       durationSeconds: number;
       planRequiredId: string | null;
     }>;

@@ -193,11 +193,40 @@ export function PromoAssetForm({
           <FileUpload
             requestUpload={requestUpload}
             onUploaded={(key, name) => setUploaded({ key, name })}
-            accept="image/*,application/pdf,video/*"
-            label={uploaded ? "Replace file" : "Upload file"}
+            // Each type only offers the files it can hold, so the picker
+            // never suggests something the server will refuse.
+            accept={
+              type === "video"
+                ? "video/mp4,video/webm,video/quicktime"
+                : type === "pdf"
+                  ? "application/pdf"
+                  : "image/jpeg,image/png,image/webp,image/avif"
+            }
+            label={
+              uploaded
+                ? "Replace file"
+                : type === "video"
+                  ? "Upload video (MP4, WebM or MOV, up to 100MB)"
+                  : type === "pdf"
+                    ? "Upload PDF"
+                    : "Upload image"
+            }
           />
           {uploaded && (
             <p className="text-xs text-[var(--color-success)]">Uploaded {uploaded.name}</p>
+          )}
+
+          {/* Longer videos belong on YouTube or Drive; a link is enough. */}
+          {type === "video" && (
+            <Field
+              label="…or a video link"
+              name="videoUrl"
+              type="url"
+              inputMode="url"
+              maxLength={500}
+              placeholder="https://youtube.com/… or a Google Drive link"
+              hint="Use a link for long videos. Either an upload or a link is enough."
+            />
           )}
         </div>
       )}
@@ -227,6 +256,15 @@ export function TrainingModuleForm({
 
       <Field label="Title" name="title" required maxLength={120} placeholder="How to write a hook that stops the scroll" />
       <Field label="Description" name="description" maxLength={500} />
+      <Field
+        label="YouTube / video link (optional)"
+        name="videoUrl"
+        type="url"
+        inputMode="url"
+        maxLength={500}
+        placeholder="https://youtu.be/…"
+        hint="Paste a YouTube link, or add the module and then upload a video file to it below."
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Sort position" name="position" type="number" inputMode="numeric" min={0} defaultValue={0} />

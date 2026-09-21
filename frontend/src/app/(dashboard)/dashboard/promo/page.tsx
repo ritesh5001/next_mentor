@@ -7,6 +7,7 @@ import { CopyButton } from "@/components/ui/copy-button";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { getPromoAssets, requireUser } from "@/lib/queries";
+import { VideoEmbed } from "@/components/dashboard/video-embed";
 
 export const metadata: Metadata = {
   title: "Promotional material",
@@ -104,6 +105,20 @@ export default async function PromoPage() {
                     <div className="w-fit">
                       <CopyButton text={a.bodyText} label="Copy this copy" />
                     </div>
+                  </div>
+                ) : a.type === "video" && (href || a.videoUrl) ? (
+                  <div className="mt-auto flex flex-col gap-3">
+                    <VideoEmbed src={href} url={a.videoUrl} title={a.title} />
+                    {href && (
+                      <a
+                        href={href}
+                        download
+                        className={buttonClasses({ size: "sm", className: "w-fit" })}
+                      >
+                        <Download className="size-3.5" strokeWidth={1.5} aria-hidden="true" />
+                        Download video
+                      </a>
+                    )}
                   </div>
                 ) : href ? (
                   <a

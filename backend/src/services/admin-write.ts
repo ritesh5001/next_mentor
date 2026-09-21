@@ -679,18 +679,30 @@ export async function createPromoAsset(input: {
   description?: string;
   type: "banner" | "video" | "script" | "pdf";
   r2Key?: string;
+  videoUrl?: string;
   bodyText?: string;
   dimensions?: string;
   planRequiredId?: string;
   position?: number;
 }): Promise<Result> {
+  const videoUrl = input.videoUrl?.trim() || null;
+  if (videoUrl && !/^https?:\/\//i.test(videoUrl)) {
+    return { ok: false, error: "The video link must start with http:// or https://." };
+  }
   // A script is copy to paste, everything else is a file. Saving one without
   // the other produces a card with nothing behind it.
   if (input.type === "script" && !input.bodyText) {
     return { ok: false, error: "A script asset needs its copy in the body field." };
   }
-  if (input.type !== "script" && !input.r2Key) {
-    return { ok: false, error: "Upload the file before saving." };
+  // A video may be a link instead of an upload; anything else needs its file.
+  if (input.type !== "script" && !input.r2Key && !(input.type === "video" && videoUrl)) {
+    return {
+      ok: false,
+      error:
+        input.type === "video"
+          ? "Upload the video, or paste a video link, before saving."
+          : "Upload the file before saving.",
+    };
   }
 
   await db.insert(promoAssets).values({
@@ -698,6 +710,7 @@ export async function createPromoAsset(input: {
     description: input.description || null,
     type: input.type,
     r2Key: input.r2Key || null,
+    videoUrl,
     bodyText: input.bodyText || null,
     dimensions: input.dimensions || null,
     planRequiredId: input.planRequiredId || null,
@@ -720,12 +733,18 @@ export async function deletePromoAsset(id: string) {
 export async function createTrainingModule(input: {
   title: string;
   description?: string;
+  videoUrl?: string;
   planRequiredId?: string;
   position?: number;
 }): Promise<Result> {
+  const videoUrl = input.videoUrl?.trim() || null;
+  if (videoUrl && !/^https?:\/\//i.test(videoUrl)) {
+    return { ok: false, error: "The video link must start with http:// or https://." };
+  }
   await db.insert(trainingModules).values({
     title: input.title,
     description: input.description || null,
+    videoUrl,
     planRequiredId: input.planRequiredId || null,
     position: input.position ?? 0,
   });
