@@ -98,9 +98,20 @@ export default async function MarketingLayout({ children }: { children: React.Re
         </div>
 
         <div className="mx-auto mt-10 max-w-7xl px-5 sm:mt-14 sm:px-8">
-          <p className="border-t border-white/10 pb-8 pt-6 text-[13px] text-white/45">
-            © {new Date().getFullYear()} NextMentor. All rights reserved.
-          </p>
+          <div className="flex flex-col gap-2 border-t border-white/10 pb-8 pt-6 text-[13px] text-white/45 sm:flex-row sm:items-center sm:justify-between">
+            <p>© {new Date().getFullYear()} NextMentor. All rights reserved.</p>
+            <p>
+              Developed by{" "}
+              <a
+                href="https://nextgenfusion.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-white/70 hover:text-white"
+              >
+                NextGen Fusion
+              </a>
+            </p>
+          </div>
         </div>
       </footer>
     </div>
