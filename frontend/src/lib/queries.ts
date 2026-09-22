@@ -832,6 +832,7 @@ export const getUserProfileForAdmin = (userId: string) =>
     state: string | null;
     role: "student" | "instructor" | "admin";
     isBlocked: boolean;
+    doubleEarningsOnDashboard: boolean;
     emailVerified: string | null;
     memberId: string;
     createdAt: string;

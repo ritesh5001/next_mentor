@@ -189,6 +189,13 @@ export async function getOverview(userId: string) {
     lifetimeEarnedInPaise: 0,
   };
 
+  const [settings] = await db
+    .select({ doubleEarningsOnDashboard: users.doubleEarningsOnDashboard })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const earningsMultiplier = settings?.doubleEarningsOnDashboard ? 2 : 1;
+
   const [sub] = await db
     .select({ planName: plans.name })
     .from(subscriptions)
@@ -197,15 +204,29 @@ export async function getOverview(userId: string) {
     .limit(1);
 
   return {
-    earned: earnedRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 },
-    series,
+    earned: Object.fromEntries(
+      Object.entries(earnedRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 })
+        .map(([key, value]) => [key, value * earningsMultiplier]),
+    ) as { today: number; last7: number; last30: number; allTime: number },
+    series: series.map((point) => ({
+      ...point,
+      amountInPaise: point.amountInPaise * earningsMultiplier,
+    })),
     sales: salesRows,
     totalSales: salesRows.reduce((n, r) => n + r.count, 0),
     members: memberRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 },
     clicks: clickRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 },
-    wallet,
-    recent: recentRows,
-    monthEarnedInPaise: monthRow[0]?.earned ?? 0,
+    wallet: {
+      ...wallet,
+      availableInPaise: wallet.availableInPaise * earningsMultiplier,
+      pendingInPaise: wallet.pendingInPaise * earningsMultiplier,
+      lifetimeEarnedInPaise: wallet.lifetimeEarnedInPaise * earningsMultiplier,
+    },
+    recent: recentRows.map((row) => ({
+      ...row,
+      amountInPaise: row.amountInPaise * earningsMultiplier,
+    })),
+    monthEarnedInPaise: (monthRow[0]?.earned ?? 0) * earningsMultiplier,
     planName: sub?.planName ?? null,
   };
 }

@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/format";
 import {
   grantAccessAction,
   revokeAccessAction,
+  setUserDashboardEarningsAction,
   setUserPasswordAction,
   updateUserDetailsAction,
 } from "@/actions/admin";
@@ -116,6 +117,26 @@ export default async function AdminUserPage({
           action={updateUserDetailsAction.bind(null, userId)}
           values={{ name: user.name, email: user.email, phone: user.phone, state: user.state }}
         />
+      </section>
+
+      <section className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-bold tracking-tight">Dashboard earnings</h2>
+            <p className="text-sm text-[var(--color-muted-foreground)]">
+              Double this member&apos;s earnings figures on the dashboard homepage only. Stored earnings and payouts are unchanged.
+            </p>
+          </div>
+          <ActionButton
+            label={user.doubleEarningsOnDashboard ? "Turn off doubling" : "Double earnings"}
+            variant={user.doubleEarningsOnDashboard ? "secondary" : "primary"}
+            run={async () => {
+              "use server";
+              return setUserDashboardEarningsAction(userId, !user.doubleEarningsOnDashboard);
+            }}
+          />
+        </div>
+        {user.doubleEarningsOnDashboard && <Badge tone="money">Active on dashboard</Badge>}
       </section>
 
       <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">

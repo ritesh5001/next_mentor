@@ -425,6 +425,7 @@ adminRoutes.patch("/users/:userId", requireAdmin, async (c) => {
     z.object({
       role: z.enum(["student", "admin"]).optional(),
       isBlocked: z.boolean().optional(),
+      doubleEarningsOnDashboard: z.boolean().optional(),
     }),
   );
   if (!body.ok) return body.response;

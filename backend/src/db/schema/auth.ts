@@ -55,6 +55,7 @@ export const users = pgTable(
     pendingPasswordEnc: text("pending_password_enc"),
 
     isBlocked: boolean("is_blocked").notNull().default(false),
+    doubleEarningsOnDashboard: boolean("double_earnings_on_dashboard").notNull().default(false),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

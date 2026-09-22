@@ -23,6 +23,7 @@ export async function getUserProfileForAdmin(userId: string) {
       state: users.state,
       role: users.role,
       isBlocked: users.isBlocked,
+      doubleEarningsOnDashboard: users.doubleEarningsOnDashboard,
       emailVerified: users.emailVerified,
       memberId: users.referralCode,
       createdAt: users.createdAt,

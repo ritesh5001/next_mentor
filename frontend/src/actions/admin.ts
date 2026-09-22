@@ -273,6 +273,21 @@ export async function setUserBlockedAction(userId: string, isBlocked: boolean): 
   );
 }
 
+export async function setUserDashboardEarningsAction(
+  userId: string,
+  doubleEarningsOnDashboard: boolean,
+): Promise<ActionState> {
+  return run(
+    () =>
+      api(`/api/admin/users/${userId}`, {
+        method: "PATCH",
+        body: { doubleEarningsOnDashboard },
+      }),
+    [`/admin/users/${userId}`],
+    doubleEarningsOnDashboard ? "Dashboard earnings doubled" : "Dashboard earnings restored",
+  );
+}
+
 /* ------------------------------------------------------------- KYC/payouts */
 
 export async function reviewKycAction(
