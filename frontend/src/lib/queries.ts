@@ -537,16 +537,21 @@ export const getOverview = () =>
     planName: string | null;
   }>("/api/affiliate/overview");
 
-export const getTopPerformers = () =>
-  api<
-    Array<{
+export type LeaderboardPeriod = "today" | "week" | "month" | "all";
+
+export const getTopPerformers = (period: LeaderboardPeriod) =>
+  api<{
+    period: LeaderboardPeriod;
+    top: Array<{
       userId: string;
       name: string | null;
       image: string | null;
       earnedInPaise: number;
       saleCount: number;
-    }>
-  >("/api/affiliate/leaderboard");
+      rank: number;
+    }>;
+    me: { rank: number; earnedInPaise: number } | null;
+  }>(`/api/affiliate/leaderboard?period=${period}`);
 
 /* ----------------------------------------------------------- certificates */
 

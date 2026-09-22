@@ -18,6 +18,8 @@ import {
   getLedger,
   getReferralStats,
   getTopPerformers,
+  LEADERBOARD_PERIODS,
+  type LeaderboardPeriod,
   getMyKyc,
   getMyPayouts,
   MIN_PAYOUT_IN_PAISE,
@@ -64,9 +66,13 @@ affiliateRoutes.get("/affiliate/overview", requireUser, async (c) =>
   ok(c, await getOverview(currentUser(c).id)),
 );
 
-affiliateRoutes.get("/affiliate/leaderboard", requireUser, async (c) =>
-  ok(c, await getTopPerformers(20)),
-);
+affiliateRoutes.get("/affiliate/leaderboard", requireUser, async (c) => {
+  const raw = c.req.query("period");
+  const period = LEADERBOARD_PERIODS.includes(raw as LeaderboardPeriod)
+    ? (raw as LeaderboardPeriod)
+    : "month";
+  return ok(c, await getTopPerformers(currentUser(c).id, period));
+});
 
 affiliateRoutes.get("/affiliate/kyc", requireUser, async (c) =>
   ok(c, await getMyKyc(currentUser(c).id)),

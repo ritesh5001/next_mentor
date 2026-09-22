@@ -137,34 +137,78 @@ export async function getReferralStats(userId: string, referralCode: string) {
   };
 }
 
-/**
- * Top performers over a rolling 30 days.
- *
- * Ranked on approved and paid commission only — counting pending would let
- * someone top the board with sales that are still refundable.
- */
-export async function getTopPerformers(limit = 20) {
-  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+export const LEADERBOARD_PERIODS = ["today", "week", "month", "all"] as const;
+export type LeaderboardPeriod = (typeof LEADERBOARD_PERIODS)[number];
 
-  return db
+/** Start of the window for a period, on the same UTC day boundaries the overview uses. */
+function periodStart(period: LeaderboardPeriod): Date | null {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  if (period === "today") return d;
+  if (period === "week") {
+    d.setUTCDate(d.getUTCDate() - 6);
+    return d;
+  }
+  if (period === "month") return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
+  return null;
+}
+
+/**
+ * Top performers for a period, plus the viewer's own standing.
+ *
+ * Ranked on earned commission — pending, approved and paid — the same
+ * definition the overview uses. Counting cleared commission only left "today"
+ * and "this week" permanently empty, because nothing clears inside the 7-day
+ * refund window. Reversed commission never counts.
+ */
+export async function getTopPerformers(
+  viewerId: string,
+  period: LeaderboardPeriod = "month",
+  limit = 10,
+) {
+  const since = periodStart(period);
+
+  const totals = db
     .select({
-      userId: users.id,
-      name: users.name,
-      image: users.image,
-      earnedInPaise: sql<number>`cast(coalesce(sum(${commissions.amountInPaise}), 0) as int)`,
-      saleCount: sql<number>`cast(count(*) as int)`,
+      userId: commissions.earnerId,
+      earnedInPaise: sql<number>`cast(sum(${commissions.amountInPaise}) as int)`.as("earned"),
+      saleCount: sql<number>`cast(count(*) as int)`.as("sale_count"),
+      rank: sql<number>`cast(rank() over (order by sum(${commissions.amountInPaise}) desc) as int)`.as(
+        "rank",
+      ),
     })
     .from(commissions)
-    .innerJoin(users, eq(users.id, commissions.earnerId))
     .where(
       and(
-        gte(commissions.createdAt, since),
-        sql`${commissions.status} in ('approved', 'paid')`,
+        sql`${commissions.status} in ('pending', 'approved', 'paid')`,
+        since ? gte(commissions.createdAt, since) : undefined,
       ),
     )
-    .groupBy(users.id)
-    .orderBy(desc(sql`sum(${commissions.amountInPaise})`))
-    .limit(limit);
+    .groupBy(commissions.earnerId)
+    .as("totals");
+
+  const [top, mine] = await Promise.all([
+    db
+      .select({
+        userId: users.id,
+        name: users.name,
+        image: users.image,
+        earnedInPaise: totals.earnedInPaise,
+        saleCount: totals.saleCount,
+        rank: totals.rank,
+      })
+      .from(totals)
+      .innerJoin(users, eq(users.id, totals.userId))
+      .orderBy(totals.rank, users.id)
+      .limit(limit),
+    db
+      .select({ rank: totals.rank, earnedInPaise: totals.earnedInPaise })
+      .from(totals)
+      .where(eq(totals.userId, viewerId))
+      .limit(1),
+  ]);
+
+  return { period, top, me: mine[0] ?? null };
 }
 
 /* ---------------------------------------------------------------------- KYC */
