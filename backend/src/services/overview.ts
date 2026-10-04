@@ -3,6 +3,7 @@ import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   commissions,
+  earningCredits,
   orders,
   plans,
   referralClicks,
@@ -63,6 +64,8 @@ export async function getOverview(userId: string) {
     walletRow,
     recentRows,
     monthRow,
+    creditRows,
+    creditSeriesRows,
   ] = await Promise.all([
     // Earnings bucketed by period, in one pass over the same rows.
     db
@@ -171,12 +174,34 @@ export async function getOverview(userId: string) {
           gte(commissions.createdAt, startOfMonth()),
         ),
       ),
+
+    // Admin credits count as income exactly like commission does.
+    db
+      .select({
+        today: sql<number>`coalesce(sum(case when ${earningCredits.createdAt} >= ${today} then ${earningCredits.amountInPaise} else 0 end), 0)::int`,
+        last7: sql<number>`coalesce(sum(case when ${earningCredits.createdAt} >= ${last7} then ${earningCredits.amountInPaise} else 0 end), 0)::int`,
+        last30: sql<number>`coalesce(sum(case when ${earningCredits.createdAt} >= ${last30} then ${earningCredits.amountInPaise} else 0 end), 0)::int`,
+        allTime: sql<number>`coalesce(sum(${earningCredits.amountInPaise}), 0)::int`,
+        month: sql<number>`coalesce(sum(case when ${earningCredits.createdAt} >= ${startOfMonth()} then ${earningCredits.amountInPaise} else 0 end), 0)::int`,
+      })
+      .from(earningCredits)
+      .where(eq(earningCredits.userId, userId)),
+
+    db
+      .select({
+        day: sql<string>`to_char(date_trunc('day', ${earningCredits.createdAt}), 'YYYY-MM-DD')`,
+        amount: sql<number>`coalesce(sum(${earningCredits.amountInPaise}), 0)::int`,
+      })
+      .from(earningCredits)
+      .where(and(eq(earningCredits.userId, userId), gte(earningCredits.createdAt, last7)))
+      .groupBy(sql`date_trunc('day', ${earningCredits.createdAt})`),
   ]);
 
   // The chart needs a point for every day, including the ones with no sale.
   // Left to the database's GROUP BY, an empty Tuesday would simply vanish and
   // the line would misrepresent the week.
   const byDay = new Map(seriesRows.map((r) => [r.day, r.amount]));
+  for (const r of creditSeriesRows) byDay.set(r.day, (byDay.get(r.day) ?? 0) + r.amount);
   const series: Array<{ day: string; amountInPaise: number }> = [];
   for (let i = 6; i >= 0; i--) {
     const key = daysAgo(i).toISOString().slice(0, 10);
@@ -189,13 +214,6 @@ export async function getOverview(userId: string) {
     lifetimeEarnedInPaise: 0,
   };
 
-  const [settings] = await db
-    .select({ doubleEarningsOnDashboard: users.doubleEarningsOnDashboard })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
-  const earningsMultiplier = settings?.doubleEarningsOnDashboard ? 2 : 1;
-
   const [sub] = await db
     .select({ planName: plans.name })
     .from(subscriptions)
@@ -203,30 +221,24 @@ export async function getOverview(userId: string) {
     .where(and(eq(subscriptions.userId, userId), eq(subscriptions.status, "active")))
     .limit(1);
 
+  const commission = earnedRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 };
+  const credit = creditRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0, month: 0 };
+
   return {
-    earned: Object.fromEntries(
-      Object.entries(earnedRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 })
-        .map(([key, value]) => [key, value * earningsMultiplier]),
-    ) as { today: number; last7: number; last30: number; allTime: number },
-    series: series.map((point) => ({
-      ...point,
-      amountInPaise: point.amountInPaise * earningsMultiplier,
-    })),
+    earned: {
+      today: commission.today + credit.today,
+      last7: commission.last7 + credit.last7,
+      last30: commission.last30 + credit.last30,
+      allTime: commission.allTime + credit.allTime,
+    },
+    series,
     sales: salesRows,
     totalSales: salesRows.reduce((n, r) => n + r.count, 0),
     members: memberRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 },
     clicks: clickRows[0] ?? { today: 0, last7: 0, last30: 0, allTime: 0 },
-    wallet: {
-      ...wallet,
-      availableInPaise: wallet.availableInPaise * earningsMultiplier,
-      pendingInPaise: wallet.pendingInPaise * earningsMultiplier,
-      lifetimeEarnedInPaise: wallet.lifetimeEarnedInPaise * earningsMultiplier,
-    },
-    recent: recentRows.map((row) => ({
-      ...row,
-      amountInPaise: row.amountInPaise * earningsMultiplier,
-    })),
-    monthEarnedInPaise: (monthRow[0]?.earned ?? 0) * earningsMultiplier,
+    wallet,
+    recent: recentRows,
+    monthEarnedInPaise: (monthRow[0]?.earned ?? 0) + credit.month,
     planName: sub?.planName ?? null,
   };
 }

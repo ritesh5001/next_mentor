@@ -37,7 +37,7 @@ export default async function KycPage() {
         title="KYC verification"
         subtitle="Required before you can withdraw earnings."
         aside={
-          kyc ? (
+          kyc && kyc.status !== "draft" ? (
             <Badge
               tone={
                 kyc.status === "approved"

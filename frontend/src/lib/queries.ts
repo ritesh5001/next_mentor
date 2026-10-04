@@ -497,7 +497,8 @@ export type KycRecord = {
   accountNumberLast4: string;
   ifsc: string;
   aadhaarLast4: string | null;
-  status: "pending" | "approved" | "rejected";
+  /** "draft": documents started, form not yet submitted. */
+  status: "draft" | "pending" | "approved" | "rejected";
   rejectionReason: string | null;
   createdAt: string;
   // Presence flags, not paths. The API deliberately never sends a document's
@@ -551,6 +552,7 @@ export const getTopPerformers = (period: LeaderboardPeriod) =>
       rank: number;
     }>;
     me: { rank: number; earnedInPaise: number } | null;
+    myImage: string | null;
   }>(`/api/affiliate/leaderboard?period=${period}`);
 
 /* ----------------------------------------------------------- certificates */
@@ -837,7 +839,8 @@ export const getUserProfileForAdmin = (userId: string) =>
     state: string | null;
     role: "student" | "instructor" | "admin";
     isBlocked: boolean;
-    doubleEarningsOnDashboard: boolean;
+    availableInPaise: number;
+    pendingInPaise: number;
     emailVerified: string | null;
     memberId: string;
     createdAt: string;

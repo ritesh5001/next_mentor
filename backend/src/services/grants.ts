@@ -245,6 +245,27 @@ export async function enrolPlanCourses(
   return eligible.length;
 }
 
+/**
+ * Enrols everyone on a live subscription to this plan in every course the
+ * plan's tier now covers. Run after a plan's tier is raised, so members who
+ * bought it while the tier was set too low get what they paid for.
+ */
+export async function enrolPlanMembers(planId: string, tier: number) {
+  const members = await db
+    .select({ userId: subscriptions.userId })
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.planId, planId),
+        eq(subscriptions.status, "active"),
+        or(isNull(subscriptions.expiresAt), gt(subscriptions.expiresAt, new Date())),
+      ),
+    );
+
+  for (const m of members) await enrolPlanCourses(db, { userId: m.userId, tier });
+  return members.length;
+}
+
 /** Everyone on a live plan whose tier includes the given course tier. */
 export async function enrolExistingMembersInCourse(courseId: string, minPlanTier: number) {
   const members = await db

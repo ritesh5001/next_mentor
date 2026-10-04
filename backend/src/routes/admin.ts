@@ -30,6 +30,7 @@ import { listUsersForAdmin, listOrdersForAdmin, getAdminStats, getRevenueByDay }
 import { listKycForAdmin, listPayoutsForAdmin } from "@/services/affiliate";
 import { approvePayout, markPayoutPaid, rejectPayout } from "@/services/payouts";
 import { getWeeklyPayoutRun, recordDirectPayout } from "@/services/payout-run";
+import { addEarningCredit, settleMemberBalance } from "@/services/earning-adjustments";
 import {
   createOffer,
   deleteOffer,
@@ -375,8 +376,8 @@ adminRoutes.post("/plans", requireAdmin, async (c) => {
 adminRoutes.patch("/plans/:planId", requireAdmin, async (c) => {
   const body = await parseBody(c, planPatchSchema);
   if (!body.ok) return body.response;
-  await write.updatePlan(c.req.param("planId"), body.data);
-  return ok(c, { updated: true });
+  const result = await write.updatePlan(c.req.param("planId"), body.data);
+  return result.ok ? ok(c, { updated: true }) : fail(c, result.error, "conflict");
 });
 
 const couponSchema = z.object({
@@ -425,7 +426,6 @@ adminRoutes.patch("/users/:userId", requireAdmin, async (c) => {
     z.object({
       role: z.enum(["student", "admin"]).optional(),
       isBlocked: z.boolean().optional(),
-      doubleEarningsOnDashboard: z.boolean().optional(),
     }),
   );
   if (!body.ok) return body.response;
@@ -861,6 +861,39 @@ adminRoutes.post("/payout-run", requireAdmin, async (c) => {
   if (!body.ok) return body.response;
 
   const result = await recordDirectPayout({ ...body.data, adminId: currentUser(c).id });
+  return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
+});
+
+/* --------------------------------------------- manual balance adjustments */
+
+adminRoutes.post("/users/:userId/earning-credit", requireAdmin, async (c) => {
+  const body = await parseBody(
+    c,
+    z.object({
+      amountInRupees: z.coerce.number().positive().max(10_000_000),
+      note: z.string().trim().max(200).optional(),
+    }),
+  );
+  if (!body.ok) return body.response;
+
+  const result = await addEarningCredit({
+    userId: c.req.param("userId"),
+    adminId: currentUser(c).id,
+    amountInPaise: Math.round(body.data.amountInRupees * 100),
+    note: body.data.note,
+  });
+  return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
+});
+
+adminRoutes.post("/users/:userId/settle", requireAdmin, async (c) => {
+  const body = await parseBody(c, z.object({ utrNumber: z.string().trim().max(64).optional() }));
+  if (!body.ok) return body.response;
+
+  const result = await settleMemberBalance({
+    userId: c.req.param("userId"),
+    adminId: currentUser(c).id,
+    utrNumber: body.data.utrNumber,
+  });
   return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
 });
 

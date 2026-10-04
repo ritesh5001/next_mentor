@@ -6,11 +6,12 @@ import { ArrowLeft } from "lucide-react";
 import { GrantAccess } from "@/components/admin/grant-access";
 import { ActionButton } from "@/components/admin/row-actions";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatPrice } from "@/lib/format";
 import {
   grantAccessAction,
   revokeAccessAction,
-  setUserDashboardEarningsAction,
+  addEarningCreditAction,
+  settleBalanceAction,
   setUserPasswordAction,
   updateUserDetailsAction,
 } from "@/actions/admin";
@@ -21,7 +22,12 @@ import {
   getUserProfileForAdmin,
   requireAdmin,
 } from "@/lib/queries";
-import { MemberDetailsForm, SetPasswordForm } from "@/components/admin/member-details-form";
+import {
+  AddEarningForm,
+  MemberDetailsForm,
+  SetPasswordForm,
+  SettleBalanceForm,
+} from "@/components/admin/member-details-form";
 
 export const metadata: Metadata = {
   title: "User",
@@ -119,24 +125,46 @@ export default async function AdminUserPage({
         />
       </section>
 
-      <section className="flex flex-col gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-bold tracking-tight">Dashboard earnings</h2>
-            <p className="text-sm text-[var(--color-muted-foreground)]">
-              Double this member&apos;s earnings figures on the dashboard homepage only. Stored earnings and payouts are unchanged.
-            </p>
-          </div>
-          <ActionButton
-            label={user.doubleEarningsOnDashboard ? "Turn off doubling" : "Double earnings"}
-            variant={user.doubleEarningsOnDashboard ? "secondary" : "primary"}
-            run={async () => {
-              "use server";
-              return setUserDashboardEarningsAction(userId, !user.doubleEarningsOnDashboard);
-            }}
-          />
+      <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-bold tracking-tight">Add earnings</h2>
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            Credits real money to this member today. It goes into their withdrawable balance and
+            counts in Today, 7 days, 30 days, All time, the live income dashboard and the leader
+            board.
+          </p>
         </div>
-        {user.doubleEarningsOnDashboard && <Badge tone="money">Active on dashboard</Badge>}
+        <AddEarningForm action={addEarningCreditAction.bind(null, userId)} />
+      </section>
+
+      <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-lg font-bold tracking-tight">Settle balance</h2>
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            After you have paid this member from the bank, record it here. Their ready and pending
+            balance both become ₹0. Their earnings history is unchanged.
+          </p>
+        </div>
+        <dl className="grid grid-cols-2 gap-3 text-sm">
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--color-muted-foreground)]">Ready to pay</dt>
+            <dd className="tabular font-bold">{formatPrice(user.availableInPaise)}</dd>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--color-muted-foreground)]">Pending</dt>
+            <dd className="tabular font-bold">{formatPrice(user.pendingInPaise)}</dd>
+          </div>
+        </dl>
+        {user.availableInPaise + user.pendingInPaise > 0 ? (
+          <SettleBalanceForm
+            action={settleBalanceAction.bind(null, userId)}
+            totalLabel={formatPrice(
+              Math.max(0, user.availableInPaise) + Math.max(0, user.pendingInPaise),
+            )}
+          />
+        ) : (
+          <p className="text-sm text-[var(--color-muted-foreground)]">Nothing to settle.</p>
+        )}
       </section>
 
       <section className="flex flex-col gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-card)] p-5">

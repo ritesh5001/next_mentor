@@ -273,19 +273,44 @@ export async function setUserBlockedAction(userId: string, isBlocked: boolean): 
   );
 }
 
-export async function setUserDashboardEarningsAction(
+/** Credits real, withdrawable earnings to a member today. */
+export async function addEarningCreditAction(
   userId: string,
-  doubleEarningsOnDashboard: boolean,
+  _p: ActionState,
+  fd: FormData,
 ): Promise<ActionState> {
-  return run(
-    () =>
-      api(`/api/admin/users/${userId}`, {
-        method: "PATCH",
-        body: { doubleEarningsOnDashboard },
-      }),
-    [`/admin/users/${userId}`],
-    doubleEarningsOnDashboard ? "Dashboard earnings doubled" : "Dashboard earnings restored",
-  );
+  try {
+    const res = await api<{ message: string }>(`/api/admin/users/${userId}/earning-credit`, {
+      method: "POST",
+      body: {
+        amountInRupees: String(fd.get("amountInRupees") ?? ""),
+        note: String(fd.get("note") ?? ""),
+      },
+    });
+    revalidatePath(`/admin/users/${userId}`);
+    return { success: res.message };
+  } catch (err) {
+    return { error: err instanceof ApiError ? err.message : "Could not add that amount." };
+  }
+}
+
+/** Records the member as fully paid and zeroes their available and pending balance. */
+export async function settleBalanceAction(
+  userId: string,
+  _p: ActionState,
+  fd: FormData,
+): Promise<ActionState> {
+  try {
+    const res = await api<{ message: string }>(`/api/admin/users/${userId}/settle`, {
+      method: "POST",
+      body: { utrNumber: String(fd.get("utrNumber") ?? "") },
+    });
+    revalidatePath(`/admin/users/${userId}`);
+    revalidatePath("/admin/payout-run");
+    return { success: res.message };
+  } catch (err) {
+    return { error: err instanceof ApiError ? err.message : "Could not settle that balance." };
+  }
 }
 
 /* ------------------------------------------------------------- KYC/payouts */

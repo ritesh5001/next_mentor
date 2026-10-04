@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, max, sql } from "drizzle-orm";
+import { and, asc, desc, eq, max, ne, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import {
@@ -15,7 +15,7 @@ import {
   trainingModules,
   users,
 } from "@/db/schema";
-import { enrolExistingMembersInCourse } from "@/services/grants";
+import { enrolExistingMembersInCourse, enrolPlanMembers } from "@/services/grants";
 import { normalizeReferralCode } from "@/lib/referral-code";
 import { invalidateTag } from "@/lib/cache";
 import { CATALOG_TAG, courseTag, slugify, uniqueSlug } from "./courses";
@@ -436,7 +436,35 @@ function planValues(d: PlanInput) {
   };
 }
 
+/**
+ * The name of another live plan already on this tier, if any.
+ *
+ * Upgrades, the "sell only what you own" rule and content gating all compare
+ * tiers. Two live plans on one tier makes them equal: neither can be upgraded
+ * to from the other, and a member on either may sell both. Every plan once sat
+ * on tier 1 this way, which locked ₹999 members out of upgrading.
+ */
+async function tierTakenBy(tier: number, excludePlanId?: string): Promise<string | null> {
+  const [row] = await db
+    .select({ name: plans.name })
+    .from(plans)
+    .where(
+      and(
+        eq(plans.tier, tier),
+        eq(plans.isActive, true),
+        excludePlanId ? ne(plans.id, excludePlanId) : undefined,
+      ),
+    )
+    .limit(1);
+  return row?.name ?? null;
+}
+
 export async function createPlan(d: PlanInput): Promise<Result> {
+  const clash = await tierTakenBy(d.tier ?? 1);
+  if (clash) {
+    return { ok: false, error: `${clash} is already on pack tier ${d.tier ?? 1}. Each package needs its own tier.` };
+  }
+
   try {
     await db.insert(plans).values({
       ...planValues(d),
@@ -450,7 +478,23 @@ export async function createPlan(d: PlanInput): Promise<Result> {
   return { ok: true };
 }
 
-export async function updatePlan(planId: string, d: Partial<PlanInput>) {
+export async function updatePlan(planId: string, d: Partial<PlanInput>): Promise<Result> {
+  const [before] = await db
+    .select({ tier: plans.tier, isActive: plans.isActive })
+    .from(plans)
+    .where(eq(plans.id, planId))
+    .limit(1);
+  if (!before) return { ok: false, error: "Plan not found." };
+
+  const nextTier = d.tier ?? before.tier;
+  const nextActive = d.isActive ?? before.isActive;
+  if (nextActive && (d.tier !== undefined || d.isActive !== undefined)) {
+    const clash = await tierTakenBy(nextTier, planId);
+    if (clash) {
+      return { ok: false, error: `${clash} is already on pack tier ${nextTier}. Each package needs its own tier.` };
+    }
+  }
+
   const patch: Record<string, unknown> = { updatedAt: new Date() };
 
   if (d.name !== undefined) patch.name = d.name;
@@ -472,6 +516,11 @@ export async function updatePlan(planId: string, d: Partial<PlanInput>) {
 
   await db.update(plans).set(patch).where(eq(plans.id, planId));
   invalidateTag(PLANS_TAG);
+
+  // A raised tier covers more courses; members already on the plan get them now.
+  if (nextTier > before.tier) await enrolPlanMembers(planId, nextTier);
+
+  return { ok: true };
 }
 
 /* ----------------------------------------------------------------- coupons */
@@ -579,7 +628,6 @@ export async function updateUser(
   patch: {
     role?: "student" | "admin";
     isBlocked?: boolean;
-    doubleEarningsOnDashboard?: boolean;
   },
 ): Promise<Result> {
   // Removing your own admin rights locks you out with no way back.
@@ -620,7 +668,8 @@ export async function reviewKyc(
       reviewedAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(kycSubmissions.id, kycId))
+    // A placeholder from a document upload has no bank details to approve.
+    .where(and(eq(kycSubmissions.id, kycId), ne(kycSubmissions.accountNumberEncrypted, "")))
     .returning({ userId: kycSubmissions.userId });
 
   if (updated) {

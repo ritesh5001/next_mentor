@@ -200,6 +200,30 @@ export const walletLedger = pgTable(
 );
 
 /**
+ * Earnings an admin credits by hand — a bonus, an offline sale, a correction.
+ *
+ * Real money: each row is credited to the wallet as withdrawable and counted
+ * everywhere commission is (income tiles, chart, leader board), so what a
+ * member sees as earned is always what they can be paid.
+ */
+export const earningCredits = pgTable(
+  "earning_credits",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    amountInPaise: integer("amount_in_paise").notNull(),
+    note: text("note"),
+    createdById: text("created_by_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("earning_credits_user_created_idx").on(t.userId, t.createdAt)],
+);
+
+/**
  * KYC and bank details — the highest-risk data in the system.
  *
  * The account number is encrypted at rest (AES-256-GCM, see backend/lib/crypto).

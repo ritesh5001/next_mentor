@@ -1,8 +1,10 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 import { db } from "@/db";
+import { publicUrl } from "@/lib/imagekit";
 import {
   commissions,
+  earningCredits,
   kycSubmissions,
   orders,
   payoutRequests,
@@ -168,14 +170,12 @@ export async function getTopPerformers(
 ) {
   const since = periodStart(period);
 
-  const totals = db
+  // Commission and admin credits, one row per earning event, so a credit
+  // ranks a member exactly as a sale of the same size would.
+  const earnings = db
     .select({
-      userId: commissions.earnerId,
-      earnedInPaise: sql<number>`cast(sum(${commissions.amountInPaise}) as int)`.as("earned"),
-      saleCount: sql<number>`cast(count(*) as int)`.as("sale_count"),
-      rank: sql<number>`cast(rank() over (order by sum(${commissions.amountInPaise}) desc) as int)`.as(
-        "rank",
-      ),
+      userId: sql<string>`${commissions.earnerId}`.as("user_id"),
+      amount: sql<number>`${commissions.amountInPaise}`.as("amount"),
     })
     .from(commissions)
     .where(
@@ -184,10 +184,29 @@ export async function getTopPerformers(
         since ? gte(commissions.createdAt, since) : undefined,
       ),
     )
-    .groupBy(commissions.earnerId)
+    .unionAll(
+      db
+        .select({
+          userId: sql<string>`${earningCredits.userId}`.as("user_id"),
+          amount: sql<number>`${earningCredits.amountInPaise}`.as("amount"),
+        })
+        .from(earningCredits)
+        .where(since ? gte(earningCredits.createdAt, since) : undefined),
+    )
+    .as("earnings");
+
+  const totals = db
+    .select({
+      userId: earnings.userId,
+      earnedInPaise: sql<number>`cast(sum(${earnings.amount}) as int)`.as("earned"),
+      saleCount: sql<number>`cast(count(*) as int)`.as("sale_count"),
+      rank: sql<number>`cast(rank() over (order by sum(${earnings.amount}) desc) as int)`.as("rank"),
+    })
+    .from(earnings)
+    .groupBy(earnings.userId)
     .as("totals");
 
-  const [top, mine] = await Promise.all([
+  const [top, mine, viewer] = await Promise.all([
     db
       .select({
         userId: users.id,
@@ -206,9 +225,17 @@ export async function getTopPerformers(
       .from(totals)
       .where(eq(totals.userId, viewerId))
       .limit(1),
+    db.select({ image: users.image }).from(users).where(eq(users.id, viewerId)).limit(1),
   ]);
 
-  return { period, top, me: mine[0] ?? null };
+  return {
+    period,
+    // `image` holds an ImageKit path for uploaded photos; sent raw, every
+    // uploaded avatar on the board was a broken image.
+    top: top.map((t) => ({ ...t, image: publicUrl(t.image) })),
+    me: mine[0] ?? null,
+    myImage: publicUrl(viewer[0]?.image),
+  };
 }
 
 /* ---------------------------------------------------------------------- KYC */
@@ -229,7 +256,11 @@ export async function getMyKyc(userId: string) {
       accountNumberLast4: kycSubmissions.accountNumberLast4,
       ifsc: kycSubmissions.ifsc,
       aadhaarLast4: kycSubmissions.aadhaarLast4,
-      status: kycSubmissions.status,
+      // "draft" until the form is submitted. Uploading a document first saves
+      // a placeholder row whose stored status is already "pending"; reporting
+      // that as-is told the page the KYC was under review, which hid the
+      // upload section after the first document.
+      status: sql<"draft" | "pending" | "approved" | "rejected">`case when ${kycSubmissions.accountNumberEncrypted} = '' then 'draft' else ${kycSubmissions.status}::text end`,
       rejectionReason: kycSubmissions.rejectionReason,
       createdAt: kycSubmissions.createdAt,
       reviewedAt: kycSubmissions.reviewedAt,
@@ -273,7 +304,13 @@ export async function listKycForAdmin(status?: "pending" | "approved" | "rejecte
     })
     .from(kycSubmissions)
     .innerJoin(users, eq(users.id, kycSubmissions.userId))
-    .where(status ? eq(kycSubmissions.status, status) : undefined)
+    .where(
+      and(
+        // Placeholders from document uploads are not submissions yet.
+        sql`${kycSubmissions.accountNumberEncrypted} <> ''`,
+        status ? eq(kycSubmissions.status, status) : undefined,
+      ),
+    )
     .orderBy(desc(kycSubmissions.createdAt));
 }
 

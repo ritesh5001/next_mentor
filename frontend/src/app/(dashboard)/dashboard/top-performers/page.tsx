@@ -60,7 +60,7 @@ export default async function TopPerformersPage({
             className="flex min-w-0 flex-1 items-center gap-3 rounded-[var(--radius-control)] px-4 py-3 text-white"
             style={{ background: GRADIENT }}
           >
-            <Avatar name={me.name ?? me.email} src={me.image} size={36} />
+            <Avatar name={me.name ?? me.email} src={board.myImage} size={36} />
             {board.me ? (
               <>
                 <span className="tabular text-lg font-bold">#{board.me.rank}</span>

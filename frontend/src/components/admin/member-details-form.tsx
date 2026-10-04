@@ -133,3 +133,92 @@ export function SetPasswordForm({
     </form>
   );
 }
+
+/**
+ * Adds real earnings to a member today. It lands in their withdrawable balance
+ * and counts in every income tile and on the leader board.
+ */
+export function AddEarningForm({
+  action,
+}: {
+  action: (p: ActionState, fd: FormData) => Promise<ActionState>;
+}) {
+  const [state, formAction] = useActionState<ActionState, FormData>(action, null);
+
+  return (
+    <form action={formAction} className="flex flex-col gap-4">
+      {state?.error && <Alert tone="error">{state.error}</Alert>}
+      {state?.success && <Alert tone="success">{state.success}</Alert>}
+
+      <div className="grid gap-4 sm:grid-cols-[180px_1fr]">
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="ae-amount" className="text-sm font-medium">Amount (₹)</label>
+          <input
+            id="ae-amount"
+            name="amountInRupees"
+            type="number"
+            inputMode="decimal"
+            min="1"
+            step="0.01"
+            required
+            className="min-h-11 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-card)] px-3 text-[15px]"
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="ae-note" className="text-sm font-medium">Note (optional)</label>
+          <input
+            id="ae-note"
+            name="note"
+            maxLength={200}
+            placeholder="e.g. Offline sale, bonus"
+            className="min-h-11 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-card)] px-3 text-[15px]"
+          />
+        </div>
+      </div>
+
+      <div>
+        <Submit label="Add to today's earnings" busy="Adding…" />
+      </div>
+    </form>
+  );
+}
+
+/** Marks a member as fully paid: available and pending both go to ₹0. */
+export function SettleBalanceForm({
+  action,
+  totalLabel,
+}: {
+  action: (p: ActionState, fd: FormData) => Promise<ActionState>;
+  totalLabel: string;
+}) {
+  const [state, formAction] = useActionState<ActionState, FormData>(action, null);
+
+  return (
+    <form
+      action={formAction}
+      onSubmit={(e) => {
+        if (!window.confirm(`Mark ${totalLabel} as paid and set this member's balance to ₹0?`)) {
+          e.preventDefault();
+        }
+      }}
+      className="flex flex-col gap-4"
+    >
+      {state?.error && <Alert tone="error">{state.error}</Alert>}
+      {state?.success && <Alert tone="success">{state.success}</Alert>}
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="sb-utr" className="text-sm font-medium">Bank UTR / reference (optional)</label>
+        <input
+          id="sb-utr"
+          name="utrNumber"
+          maxLength={64}
+          className="min-h-11 rounded-[var(--radius-control)] border border-[var(--color-border)] bg-[var(--color-card)] px-3 font-mono text-[15px]"
+        />
+      </div>
+
+      <div>
+        <Submit label="Mark paid & set balance to ₹0" busy="Settling…" />
+      </div>
+    </form>
+  );
+}
