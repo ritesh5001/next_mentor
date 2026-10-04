@@ -47,6 +47,11 @@ export type CommissionOutcome =
   | { status: "zero_amount" }
   | { status: "duplicate" };
 
+/** Commission on an amount, in paise, rounded to the nearest whole rupee. */
+export function commissionFor(netAmountInPaise: number, rateBps: number): number {
+  return Math.round((netAmountInPaise * rateBps) / 10_000 / 100) * 100;
+}
+
 /**
  * Awards commission for one paid order.
  *
@@ -80,10 +85,10 @@ export async function awardCommission(
   const rateBps = await getEarnerRateBps(tx, buyer.referredById);
   if (rateBps <= 0) return { status: "no_rate" };
 
-  // Integer arithmetic end to end: (paise * bps) / 10000, floored. Flooring
-  // rather than rounding means the platform never pays a paisa it did not
-  // collect.
-  const amountInPaise = Math.floor((params.netAmountInPaise * rateBps) / 10_000);
+  // Paid in whole rupees, rounded to the nearest one. Prices end in 9, so 50%
+  // of ₹999 is ₹499.50 — the business pays a clean ₹500 (₹2,500 on ₹4,999,
+  // ₹5,000 on ₹9,999) rather than paise members cannot make sense of.
+  const amountInPaise = commissionFor(params.netAmountInPaise, rateBps);
   if (amountInPaise <= 0) return { status: "zero_amount" };
 
   const maturesAt = new Date(Date.now() + COMMISSION_MATURITY_DAYS * 24 * 60 * 60 * 1000);

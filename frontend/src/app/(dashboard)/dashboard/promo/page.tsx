@@ -21,6 +21,29 @@ const TYPE_ICON = {
   pdf: FileText,
 } as const;
 
+const isImageKit = (url: string) =>
+  url.includes("ik.imagekit.io") ||
+  Boolean(
+    process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT &&
+      url.startsWith(process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT),
+  );
+
+/** Adds an ImageKit query parameter to a file URL. */
+function withParam(url: string, param: string): string {
+  return `${url}${url.includes("?") ? "&" : "?"}${param}`;
+}
+
+/**
+ * A link that saves the file instead of opening it.
+ *
+ * The `download` attribute is ignored for another origin, and the files live
+ * on ImageKit — so on phones "Download" only opened the image. ImageKit's
+ * `ik-attachment=true` makes it send the file as an attachment instead.
+ */
+function downloadUrl(url: string): string {
+  return isImageKit(url) ? withParam(url, "ik-attachment=true") : url;
+}
+
 export default async function PromoPage() {
   const user = await requireUser();
   const assets = await getPromoAssets();
@@ -74,10 +97,24 @@ export default async function PromoPage() {
                   )}
                 </div>
 
-                {a.description && (
-                  <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
-                    {a.description}
-                  </p>
+                {/* Banners show the picture itself, not a caption about it. */}
+                {!a.locked && a.type === "banner" && href ? (
+                  <a href={href} target="_blank" rel="noopener noreferrer" className="block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={isImageKit(href) ? withParam(href, "tr=w-800") : href}
+                      alt={a.title}
+                      loading="lazy"
+                      className="max-h-96 w-full rounded-[var(--radius-control)] bg-[var(--color-muted)] object-contain"
+                    />
+                  </a>
+                ) : (
+                  a.description &&
+                  a.type !== "video" && (
+                    <p className="text-sm leading-relaxed text-[var(--color-muted-foreground)]">
+                      {a.description}
+                    </p>
+                  )
                 )}
 
                 {a.dimensions && (
@@ -111,7 +148,7 @@ export default async function PromoPage() {
                     <VideoEmbed src={href} url={a.videoUrl} title={a.title} />
                     {href && (
                       <a
-                        href={href}
+                        href={downloadUrl(href)}
                         download
                         className={buttonClasses({ size: "sm", className: "w-fit" })}
                       >
@@ -122,7 +159,7 @@ export default async function PromoPage() {
                   </div>
                 ) : href ? (
                   <a
-                    href={href}
+                    href={downloadUrl(href)}
                     download
                     className={buttonClasses({ size: "sm", className: "mt-auto w-fit" })}
                   >
