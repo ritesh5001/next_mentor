@@ -4,7 +4,7 @@ import { asc, eq, max } from "drizzle-orm";
 import { courseFormSchema, requestUploadSchema } from "@nextmentor/shared";
 
 import { db } from "@/db";
-import { lessonResources, lessons, modules, plans, users } from "@/db/schema";
+import { kycSubmissions, lessonResources, lessons, modules, plans, users } from "@/db/schema";
 import { listCoursesForAdmin, getCourseForEditor } from "@/services/courses";
 import * as grants from "@/services/grants";
 import { createFreeMember } from "@/services/signup";
@@ -85,6 +85,32 @@ adminRoutes.get("/kyc", requireAdmin, async (c) => {
       },
     })),
   );
+});
+
+/**
+ * One document, signed at the moment the reviewer clicks it.
+ *
+ * Links signed when the queue loaded expired after five minutes, so a
+ * reviewer working down the page found the later documents would not open.
+ */
+adminRoutes.get("/kyc/:kycId/document/:slot", requireAdmin, async (c) => {
+  const column = {
+    aadhaarFront: kycSubmissions.aadhaarFrontPath,
+    aadhaarBack: kycSubmissions.aadhaarBackPath,
+    panFront: kycSubmissions.panFrontPath,
+    panBack: kycSubmissions.panBackPath,
+    bankProof: kycSubmissions.bankProofPath,
+  }[c.req.param("slot")];
+  if (!column) return fail(c, "Unknown document.", "not_found");
+
+  const [row] = await db
+    .select({ path: column })
+    .from(kycSubmissions)
+    .where(eq(kycSubmissions.id, c.req.param("kycId")))
+    .limit(1);
+
+  const url = signedDocumentUrl(row?.path);
+  return url ? ok(c, { url }) : fail(c, "That document is not on file.", "not_found");
 });
 
 adminRoutes.get("/payouts", requireAdmin, async (c) => {

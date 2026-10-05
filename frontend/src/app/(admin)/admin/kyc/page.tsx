@@ -103,7 +103,8 @@ export default async function AdminKycPage({
                         <li key={slot}>
                           {url ? (
                             <a
-                              href={url}
+                              // Signed when clicked, so it never expires on the page.
+                              href={`/admin/kyc/document/${k.id}/${slot}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex min-h-9 items-center gap-1.5 rounded-[var(--radius-control)] border border-[var(--color-border)] px-3 text-xs font-medium transition-colors hover:border-[var(--brand-blue)] hover:text-[var(--brand-blue)]"
@@ -123,7 +124,7 @@ export default async function AdminKycPage({
                     })}
                   </ul>
                   <span className="text-xs text-[var(--color-muted-foreground)]">
-                    Links expire after a few minutes. Reload the page for fresh ones.
+                    Each document opens with a fresh private link.
                   </span>
                 </div>
 

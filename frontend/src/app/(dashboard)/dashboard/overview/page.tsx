@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate, formatPrice } from "@/lib/format";
 import { getOverview, getProfile } from "@/lib/queries";
 import { LiveRefresh } from "@/components/dashboard/live-refresh";
+import { CountUpPrice } from "@/components/dashboard/count-up-price";
 
 export const metadata: Metadata = {
   title: "Live income",
@@ -86,17 +87,8 @@ export default async function OverviewPage() {
               </p>
             </div>
             <p className="tabular bg-[linear-gradient(90deg,#ffffff,#b8f5cc)] bg-clip-text text-[40px] font-bold leading-none tracking-[-1.5px] text-transparent sm:text-[56px]">
-              {formatPrice(data.earned.allTime)}
+              <CountUpPrice paise={data.earned.allTime} />
             </p>
-            {data.wallet.pendingInPaise > 0 && (
-              <p className="text-[12.5px] text-white/70">
-                Includes{" "}
-                <span className="tabular font-semibold text-[var(--brand-green-bright)]">
-                  {formatPrice(data.wallet.pendingInPaise)}
-                </span>{" "}
-                clearing the 7-day refund window
-              </p>
-            )}
             <div className="mt-1.5 flex flex-wrap gap-2 sm:mt-2">
               <Link
                 href="/dashboard/earnings"
@@ -130,12 +122,17 @@ export default async function OverviewPage() {
           >
             <span aria-hidden="true" className="absolute -right-6 -top-6 size-24 rounded-full bg-white/10" />
             <span aria-hidden="true" className="absolute -bottom-10 right-6 size-20 rounded-full bg-white/[0.07]" />
-            <span className="relative flex size-8 items-center justify-center rounded-[10px] bg-white/20 sm:size-10 sm:rounded-[12px]">
-              <t.icon className="size-4 sm:size-5" strokeWidth={1.8} aria-hidden="true" />
-            </span>
-            <p className="relative mt-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/80 sm:mt-4 sm:text-[11.5px] sm:tracking-[0.14em]">{t.label}</p>
-            <p className="tabular relative mt-0.5 text-[20px] font-bold leading-tight tracking-[-0.5px] sm:mt-1 sm:text-[28px]">
-              {formatPrice(t.value)}
+            {/* Label beside the icon, so the amount gets the rest of the tile. */}
+            <div className="relative flex items-center justify-between gap-2">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-white/20 sm:size-10 sm:rounded-[12px]">
+                <t.icon className="size-4 sm:size-5" strokeWidth={1.8} aria-hidden="true" />
+              </span>
+              <p className="text-right text-[10.5px] font-bold uppercase leading-tight tracking-[0.1em] text-white sm:text-[12px] sm:tracking-[0.14em]">
+                {t.label}
+              </p>
+            </div>
+            <p className="tabular relative mt-3 truncate text-[25px] font-bold leading-tight tracking-[-0.6px] sm:mt-5 sm:text-[36px]">
+              <CountUpPrice paise={t.value} />
             </p>
           </div>
         ))}

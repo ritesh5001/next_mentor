@@ -130,12 +130,12 @@ export async function getWeeklyPayoutRun(now = new Date()) {
   const byAmount = (a: PayoutRunMember, b: PayoutRunMember) => b.amountInPaise - a.amountInPaise;
 
   const pay = rows
-    .filter((r) => r.availableInPaise > 0 && r.kycStatus === "approved")
+    .filter((r) => r.availableInPaise > 0 && r.kycStatus === "approved" && !!r.accountNumberLast4)
     .map((r) => toMember(r, r.availableInPaise, true))
     .sort(byAmount);
 
   const blocked = rows
-    .filter((r) => r.availableInPaise > 0 && r.kycStatus !== "approved")
+    .filter((r) => r.availableInPaise > 0 && !(r.kycStatus === "approved" && r.accountNumberLast4))
     .map((r) => toMember(r, r.availableInPaise, false))
     .sort(byAmount);
 
@@ -241,12 +241,17 @@ export async function recordDirectPayout(params: {
 
   return db.transaction(async (tx) => {
     const [kyc] = await tx
-      .select({ id: kycSubmissions.id, status: kycSubmissions.status })
+      .select({
+        id: kycSubmissions.id,
+        status: kycSubmissions.status,
+        accountNumberLast4: kycSubmissions.accountNumberLast4,
+      })
       .from(kycSubmissions)
       .where(eq(kycSubmissions.userId, params.userId))
       .limit(1);
 
-    if (!kyc || kyc.status !== "approved") {
+    // An approved placeholder has no bank account to pay into.
+    if (!kyc || kyc.status !== "approved" || !kyc.accountNumberLast4) {
       return { ok: false as const, error: "That member's KYC is not approved yet." };
     }
 

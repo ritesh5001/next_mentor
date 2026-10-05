@@ -41,12 +41,17 @@ export async function createPayoutRequest(params: {
 
   return db.transaction(async (tx) => {
     const [kyc] = await tx
-      .select({ id: kycSubmissions.id, status: kycSubmissions.status })
+      .select({
+        id: kycSubmissions.id,
+        status: kycSubmissions.status,
+        accountNumberLast4: kycSubmissions.accountNumberLast4,
+      })
       .from(kycSubmissions)
       .where(eq(kycSubmissions.userId, params.userId))
       .limit(1);
 
-    if (!kyc || kyc.status !== "approved") {
+    // An approved placeholder has no bank account to pay into.
+    if (!kyc || kyc.status !== "approved" || !kyc.accountNumberLast4) {
       return { ok: false as const, error: "Complete KYC verification before withdrawing." };
     }
 

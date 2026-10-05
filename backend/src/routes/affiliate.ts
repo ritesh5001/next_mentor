@@ -94,6 +94,7 @@ affiliateRoutes.post("/affiliate/kyc/document", requireUser, async (c) => {
   const [existing] = await db
     .select({
       status: kycSubmissions.status,
+      submitted: kycSubmissions.accountNumberLast4,
       aadhaarFrontPath: kycSubmissions.aadhaarFrontPath,
       aadhaarBackPath: kycSubmissions.aadhaarBackPath,
       panFrontPath: kycSubmissions.panFrontPath,
@@ -104,7 +105,10 @@ affiliateRoutes.post("/affiliate/kyc/document", requireUser, async (c) => {
     .where(eq(kycSubmissions.userId, user.id))
     .limit(1);
 
-  if (existing?.status === "approved") {
+  // Only a real, submitted approval freezes the documents. A placeholder an
+  // admin approved before any bank details were given is not one — blocking it
+  // left those members unable to ever finish KYC.
+  if (existing?.status === "approved" && existing.submitted !== "") {
     return fail(c, "Your KYC is already approved. Contact support to change it.", "forbidden");
   }
 
@@ -188,14 +192,15 @@ affiliateRoutes.post("/affiliate/kyc", requireUser, async (c) => {
   }
 
   const [existing] = await db
-    .select({ status: kycSubmissions.status })
+    .select({ status: kycSubmissions.status, submitted: kycSubmissions.accountNumberLast4 })
     .from(kycSubmissions)
     .where(eq(kycSubmissions.userId, user.id))
     .limit(1);
 
   // Approved details are frozen: silently changing the destination account
-  // after approval is how a compromised session drains a wallet.
-  if (existing?.status === "approved") {
+  // after approval is how a compromised session drains a wallet. An approved
+  // placeholder with no bank details is not an approval, so it may be filled.
+  if (existing?.status === "approved" && existing.submitted !== "") {
     return fail(
       c,
       "Your KYC is already approved. Contact support to change your bank details.",
