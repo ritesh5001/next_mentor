@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Banknote, Briefcase, CalendarDays, IndianRupee, Wallet } from "lucide-react";
+import { Banknote, Briefcase, CalendarDays, CheckCircle2, IndianRupee, Wallet } from "lucide-react";
 
 import { EarningsChart, SalesDonut } from "@/components/dashboard/overview-charts";
 import {
@@ -162,7 +162,7 @@ export default async function OverviewPage() {
         </Panel>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <div className="flex items-center gap-4 rounded-[22px] bg-white p-5 ring-1 ring-[rgb(16_26_71/0.07)] shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)]">
           <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-[linear-gradient(145deg,#3b82f6,#1b3fa0)] text-white">
             <Wallet className="size-6" strokeWidth={1.8} aria-hidden="true" />
@@ -191,6 +191,18 @@ export default async function OverviewPage() {
           >
             Withdraw
           </Link>
+        </div>
+        {/* What has already reached their bank — without it, a member paid on
+            Monday saw ₹0 everywhere and nothing to show it ever happened. */}
+        <div className="flex items-center gap-4 rounded-[22px] bg-white p-5 ring-1 ring-[rgb(16_26_71/0.07)] shadow-[0_18px_40px_-32px_rgb(16_26_71/0.45)] sm:col-span-2 xl:col-span-1">
+          <span className="flex size-12 shrink-0 items-center justify-center rounded-[14px] bg-[linear-gradient(145deg,#22c55e,#0b4a34)] text-white">
+            <CheckCircle2 className="size-6" strokeWidth={1.8} aria-hidden="true" />
+          </span>
+          <div>
+            <p className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted-foreground)]">Paid to you</p>
+            <p className="tabular text-[24px] font-bold text-[var(--brand-green)]">{formatPrice(data.wallet.withdrawnInPaise)}</p>
+            <p className="text-[12px] text-[var(--color-muted-foreground)]">Already sent to your bank account</p>
+          </div>
         </div>
       </div>
 

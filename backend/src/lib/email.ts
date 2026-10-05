@@ -204,25 +204,65 @@ export function sendPayoutApprovedEmail(to: string, amountFormatted: string) {
   });
 }
 
-export function sendPayoutPaidEmail(
-  to: string,
-  amountFormatted: string,
-  utrNumber: string,
-) {
+/**
+ * The payout settlement notice, sent whenever money actually leaves for a
+ * member's bank — the Monday run, a withdrawal request marked paid, or an
+ * admin settling the whole balance. Laid out like the settlement mail members
+ * know from other platforms: the amount up top, then the payment details.
+ */
+export function sendPayoutSettlementEmail(params: {
+  to: string;
+  name: string | null;
+  amountFormatted: string;
+  paidOn: Date;
+  transactionId: string;
+}) {
+  const paidOn = params.paidOn.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  });
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:7px 0;color:#94a3b8">${label}</td><td align="right" style="padding:7px 0;font-weight:600;color:#ffffff">${value}</td></tr>`;
+
   return send({
-    to,
-    subject: `${amountFormatted} sent — NextMentor`,
-    html: layout(
-      "Your money is on its way",
-      `<p style="margin:0">We've transferred <strong>${amountFormatted}</strong> to your bank account.</p>
-       <table role="presentation" cellpadding="0" cellspacing="0" style="margin-top:20px;width:100%;font-size:14px">
-         <tr><td style="padding:6px 0;color:#64748b">Amount</td><td align="right" style="padding:6px 0;font-weight:600">${amountFormatted}</td></tr>
-         <tr><td style="padding:6px 0;color:#64748b">Bank reference (UTR)</td><td align="right" style="padding:6px 0;font-family:ui-monospace,monospace;font-size:13px">${utrNumber}</td></tr>
-       </table>
-       <p style="margin:16px 0 0;font-size:13px;color:#64748b">Quote that reference if you
-       need to trace the payment with your bank.</p>`,
-      { label: "View earnings", url: `${appUrl()}/dashboard/earnings` },
-    ),
+    to: params.to,
+    subject: `Payout settlement — ${params.amountFormatted} paid`,
+    html: `<!doctype html>
+<html lang="en"><body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 12px">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;border-radius:14px;overflow:hidden;background:#101a47">
+        <tr><td align="center" style="padding:22px 24px;background:#0b1233">
+          <span style="font-size:22px;font-weight:800;letter-spacing:0.5px;color:#ffffff">NEXT<span style="color:#3ddc72">MENTOR</span></span>
+        </td></tr>
+        <tr><td align="center" style="padding:18px 24px;background:linear-gradient(90deg,#0f7a45,#1b3fa0);background-color:#0f7a45">
+          <span style="font-size:24px;font-weight:800;letter-spacing:1px;color:#ffffff">PAYOUT SETTLEMENT</span>
+        </td></tr>
+        <tr><td style="padding:28px 28px 8px">
+          <p align="center" style="margin:0 0 20px;font-size:34px;font-weight:800;color:#3ddc72;text-align:center">${params.amountFormatted}/-</p>
+          <p style="margin:0;font-size:15px;line-height:1.7;color:#e2e8f0">
+            Hi <strong style="color:#ffffff">${esc(params.name?.trim() || "there")}</strong>, we are happy to inform you that a payment of
+            <strong style="color:#ffffff">${params.amountFormatted}</strong> has been successfully deposited into your bank account by NextMentor.
+          </p>
+          <p style="margin:22px 0 6px;font-size:15px;font-weight:700;color:#ffffff">Your payout details:</p>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px">
+            ${row("Payout amount", `${params.amountFormatted}/-`)}
+            ${row("Paid on", paidOn)}
+            ${row("Transaction ID", esc(params.transactionId))}
+          </table>
+        </td></tr>
+        <tr><td align="center" style="padding:24px 28px 28px">
+          <a href="${appUrl()}/dashboard/overview" style="display:inline-block;background:#3ddc72;color:#101a47;text-decoration:none;padding:12px 26px;border-radius:999px;font-weight:700;font-size:15px">View my earnings</a>
+        </td></tr>
+        <tr><td align="center" style="padding:16px 24px;background:#0b1233;font-size:13px;color:#94a3b8">
+          { ${paidOn} } &nbsp;·&nbsp; <a href="${appUrl()}" style="color:#93c5fd;text-decoration:none">${appUrl().replace(/^https?:\/\//, "")}</a>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`,
   });
 }
 

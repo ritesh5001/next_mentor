@@ -525,6 +525,8 @@ export const getOverview = () =>
       availableInPaise: number;
       pendingInPaise: number;
       lifetimeEarnedInPaise: number;
+      /** Everything already transferred to the member's bank. */
+      withdrawnInPaise: number;
     };
     recent: Array<{
       userId: string;

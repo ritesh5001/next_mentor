@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle, ChevronRight, Clock, ShieldCheck } from "lucide-react";
 
-import { PayoutRunCsvButton, RecordPayoutControl } from "@/components/admin/payout-run";
+import {
+  PayoutRunCsvButton,
+  RecordPayoutControl,
+  SettleBalanceButton,
+} from "@/components/admin/payout-run";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, formatPrice } from "@/lib/format";
 import { getWeeklyPayoutRun, requireAdmin, type PayoutRunRow } from "@/lib/queries";
@@ -123,6 +127,7 @@ export default async function AdminPayoutRunPage() {
         title="On hold — KYC not approved"
         icon={<AlertTriangle className="size-4 text-[var(--color-warning)]" strokeWidth={2} aria-hidden="true" />}
         rows={run.blocked}
+        settle
         empty="Nobody is held up by KYC."
         note={
           <>
@@ -183,9 +188,12 @@ export default async function AdminPayoutRunPage() {
                         </span>
                       )}
                     </div>
-                    <span className="tabular shrink-0 text-[17px] font-bold">
-                      {formatPrice(m.amountInPaise)}
-                    </span>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <span className="tabular text-[17px] font-bold">
+                        {formatPrice(m.amountInPaise)}
+                      </span>
+                      <SettleBalanceButton userId={m.userId} name={m.name ?? m.email} />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -226,12 +234,15 @@ function Bucket({
   rows,
   empty,
   note,
+  settle = false,
 }: {
   title: string;
   icon: React.ReactNode;
   rows: PayoutRunRow[];
   empty: string;
   note: React.ReactNode;
+  /** Offer "Paid · set ₹0" on each row. Not for open withdrawal requests. */
+  settle?: boolean;
 }) {
   return (
     <section className="flex flex-col gap-3">
@@ -253,7 +264,10 @@ function Bucket({
                   {m.kycStatus !== "approved" && ` · KYC ${m.kycStatus ?? "not submitted"}`}
                 </span>
               </div>
-              <span className="tabular shrink-0 text-[17px] font-bold">{formatPrice(m.amountInPaise)}</span>
+              <div className="flex shrink-0 items-center gap-3">
+                <span className="tabular text-[17px] font-bold">{formatPrice(m.amountInPaise)}</span>
+                {settle && <SettleBalanceButton userId={m.userId} name={m.name ?? m.email} />}
+              </div>
             </li>
           ))}
         </ul>

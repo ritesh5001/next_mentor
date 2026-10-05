@@ -6,7 +6,7 @@ import { Download } from "lucide-react";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { recordPayoutRunAction } from "@/actions/admin";
+import { recordPayoutRunAction, settleBalanceAction } from "@/actions/admin";
 import type { PayoutRunRow } from "@/lib/queries";
 
 const rupees = (paise: number) => (paise / 100).toFixed(2);
@@ -95,6 +95,52 @@ export function RecordPayoutControl({
           Mark paid
         </Button>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Records that a member was paid everything they are owed — ready and still
+ * maturing — and sets their balance to ₹0. For transfers made from the bank
+ * outside this run, without leaving the page to find the member.
+ */
+export function SettleBalanceButton({ userId, name }: { userId: string; name: string }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [message, setMessage] = useState<{ tone: "error" | "success"; text: string } | null>(null);
+
+  function settle() {
+    const utr = window.prompt(`Bank UTR / reference for ${name} (optional):`, "");
+    if (utr === null) return; // cancelled
+    if (!window.confirm(`Mark ${name} as paid and set their whole balance to ₹0?\nThey will get a payout settlement email.`)) {
+      return;
+    }
+    startTransition(async () => {
+      const fd = new FormData();
+      fd.set("utrNumber", utr.trim());
+      const res = await settleBalanceAction(userId, null, fd);
+      if (res?.error) setMessage({ tone: "error", text: res.error });
+      else if (res?.success) setMessage({ tone: "success", text: res.success });
+      router.refresh();
+    });
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-1.5">
+      <Button size="sm" variant="secondary" loading={pending} onClick={settle}>
+        Paid · set ₹0
+      </Button>
+      {message && (
+        <span
+          className={
+            message.tone === "error"
+              ? "text-[12px] text-[var(--color-destructive)]"
+              : "text-[12px] text-[var(--color-success)]"
+          }
+        >
+          {message.text}
+        </span>
+      )}
     </div>
   );
 }

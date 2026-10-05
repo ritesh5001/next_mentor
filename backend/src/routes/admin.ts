@@ -887,7 +887,10 @@ adminRoutes.post("/payout-run", requireAdmin, async (c) => {
   if (!body.ok) return body.response;
 
   const result = await recordDirectPayout({ ...body.data, adminId: currentUser(c).id });
-  return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
+  if (!result.ok) return fail(c, result.error, "validation");
+  // After the commit, so a failed send can never undo a recorded payment.
+  await write.notifyPayout(result.payoutId, "paid");
+  return ok(c, { message: result.message });
 });
 
 /* --------------------------------------------- manual balance adjustments */
@@ -920,7 +923,9 @@ adminRoutes.post("/users/:userId/settle", requireAdmin, async (c) => {
     adminId: currentUser(c).id,
     utrNumber: body.data.utrNumber,
   });
-  return result.ok ? ok(c, { message: result.message }) : fail(c, result.error, "validation");
+  if (!result.ok) return fail(c, result.error, "validation");
+  if (result.payoutId) await write.notifyPayout(result.payoutId, "paid");
+  return ok(c, { message: result.message });
 });
 
 /* ------------------------------------------------------- earnings report */

@@ -33,7 +33,7 @@ import {
   sendKycApprovedEmail,
   sendKycRejectedEmail,
   sendPayoutApprovedEmail,
-  sendPayoutPaidEmail,
+  sendPayoutSettlementEmail,
   sendPayoutRejectedEmail,
 } from "@/lib/email";
 
@@ -698,9 +698,12 @@ export async function notifyPayout(
   try {
     const [row] = await db
       .select({
+        id: payoutRequests.id,
         amountInPaise: payoutRequests.amountInPaise,
         utrNumber: payoutRequests.utrNumber,
+        processedAt: payoutRequests.processedAt,
         email: users.email,
+        name: users.name,
       })
       .from(payoutRequests)
       .innerJoin(users, eq(users.id, payoutRequests.userId))
@@ -712,7 +715,14 @@ export async function notifyPayout(
 
     if (event === "approve") await sendPayoutApprovedEmail(row.email, amount);
     else if (event === "paid") {
-      await sendPayoutPaidEmail(row.email, amount, row.utrNumber ?? detail ?? "—");
+      await sendPayoutSettlementEmail({
+        to: row.email,
+        name: row.name,
+        amountFormatted: amount,
+        paidOn: row.processedAt ?? new Date(),
+        // The bank's UTR when the admin gave one, else our own reference.
+        transactionId: row.utrNumber ?? detail ?? row.id.slice(0, 8).toUpperCase(),
+      });
     } else await sendPayoutRejectedEmail(row.email, amount, detail ?? "No reason given.");
   } catch (err) {
     console.error("[admin] Payout notification failed", payoutId, event, err);

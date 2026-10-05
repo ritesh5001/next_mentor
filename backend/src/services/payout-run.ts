@@ -214,7 +214,9 @@ function safeDecrypt(payload: string): string | null {
   }
 }
 
-export type RecordPayoutResult = { ok: true; message: string } | { ok: false; error: string };
+export type RecordPayoutResult =
+  | { ok: true; message: string; payoutId: string }
+  | { ok: false; error: string };
 
 /**
  * Records a transfer the owner made from their bank during the Monday run.
@@ -312,6 +314,10 @@ export async function recordDirectPayout(params: {
       .set({ status: "paid", payoutRequestId: request.id })
       .where(and(eq(commissions.earnerId, params.userId), eq(commissions.status, "approved")));
 
-    return { ok: true as const, message: `Paid ₹${(params.amountInPaise / 100).toFixed(2)} · UTR ${utr}` };
+    return {
+      ok: true as const,
+      message: `Paid ₹${(params.amountInPaise / 100).toFixed(2)} · UTR ${utr}`,
+      payoutId: request.id,
+    };
   });
 }

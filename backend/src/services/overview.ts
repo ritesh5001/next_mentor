@@ -141,6 +141,7 @@ export async function getOverview(userId: string) {
         availableInPaise: wallets.availableInPaise,
         pendingInPaise: wallets.pendingInPaise,
         lifetimeEarnedInPaise: wallets.lifetimeEarnedInPaise,
+        withdrawnInPaise: wallets.withdrawnInPaise,
       })
       .from(wallets)
       .where(eq(wallets.userId, userId))
@@ -212,6 +213,7 @@ export async function getOverview(userId: string) {
     availableInPaise: 0,
     pendingInPaise: 0,
     lifetimeEarnedInPaise: 0,
+    withdrawnInPaise: 0,
   };
 
   const [sub] = await db

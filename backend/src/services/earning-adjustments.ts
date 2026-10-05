@@ -15,7 +15,7 @@ import {
  * member's dashboard, the leader board and the payout run all agree.
  */
 
-type Result = { ok: true; message: string } | { ok: false; error: string };
+type Result = { ok: true; message: string; payoutId?: string } | { ok: false; error: string };
 
 const rupees = (paise: number) => `₹${(paise / 100).toFixed(2)}`;
 
@@ -179,6 +179,10 @@ export async function settleMemberBalance(params: {
         ),
       );
 
-    return { ok: true as const, message: `Settled ${rupees(total)} · balance is now ₹0` };
+    return {
+      ok: true as const,
+      message: `Settled ${rupees(total)} · balance is now ₹0`,
+      payoutId: request.id,
+    };
   });
 }
