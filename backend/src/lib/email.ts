@@ -246,6 +246,9 @@ export function sendPayoutSettlementEmail(params: {
             Hi <strong style="color:#ffffff">${esc(params.name?.trim() || "there")}</strong>, we are happy to inform you that a payment of
             <strong style="color:#ffffff">${params.amountFormatted}</strong> has been successfully deposited into your bank account by NextMentor.
           </p>
+          <p style="margin:12px 0 0;font-size:14px;line-height:1.6;color:#cbd5e1">
+            The amount will be credited to your bank account after a 2% TDS deduction.
+          </p>
           <p style="margin:22px 0 6px;font-size:15px;font-weight:700;color:#ffffff">Your payout details:</p>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px">
             ${row("Payout amount", `${params.amountFormatted}/-`)}
